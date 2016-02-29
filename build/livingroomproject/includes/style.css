@@ -1,0 +1,1749 @@
+/**
+ * Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/)
+ * http://cssreset.com
+ */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/*
+::-webkit-scrollbar {
+    width: 12px;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(255,0,0,0.8); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(255,0,0,0.4); 
+}
+*/
+
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	margin-left: 0 !important;
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+html,body{
+	background: #333;
+	width: 100%;
+	height: 100%;
+	margin:0;
+	padding:0;
+	/*
+	overflow-y: hidden;
+	overflow-x: hidden;
+	*/
+}
+
+
+
+/* Reset End */
+
+/* General */
+
+#pageslide {
+    /* These styles MUST be included. Do not change. */
+    display: none;
+    position: absolute;
+    position: fixed;
+    height: 100%;
+    z-index: 999999;
+    
+    /* Specify the width of your pageslide here */
+    width: 100%;    
+    /* These styles are optional, and describe how the pageslide will look */
+}
+
+#modal{
+	display: none;
+}
+
+.swooshSound{display: none;}
+
+a:visited{color: #333;}
+a{text-decoration: none;}
+h1{font-family: 'league-gothic'; font-size: 35px; color:#333333; font-weight:400; font-style: normal; line-height: 110%;}
+h2{font-family: 'adelle'; font-size: 15px; color:#333333; line-height: 15px; text-shadow: 0px 1px 0px #fafafa; font-weight: 400; font-style: italic;}
+h3{font-family: 'adelle'; font-size: 15px; color:#333333; line-height: 15px; text-shadow: 0px 1px 0px #fafafa; font-weight: 300; font-style: italic;}
+h4{font-family: 'league-gothic'; font-size: 29px; font-weight:400; font-style: normal; line-height: 110%; color: #e5e5e5;}
+h5{font-family: 'adelle'; font-size: 13px; font-weight: 400; font-style: italic; line-height: 16px;}
+h6{font-family: 'league-gothic'; font-size: 28px; color:#494949; line-height: 32px; font-weight:400; font-style: normal;}
+img{display: block;}
+audio{display: none;}
+::selection {background: white; /* Safari */}
+::-moz-selection {background: white; /* Firefox */}
+
+/* Specific */
+#border{
+	position: absolute;
+	background: #333333;
+	z-index: -1000;
+
+}
+
+.swooshSound{position:absolute; display: none;}
+audio{position:absolute;  display: none;}
+
+
+#mainContainer{
+	position: absolute;
+	top:20px;
+	left:20px;
+	right: 20px;
+	bottom: 20px;
+	background: url(../images/concrete_wall.jpg);
+	overflow-y: hidden; /* make          overflow-y: scroll;              in objects only*/
+	overflow-x: hidden;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; /* future proofing */
+	-khtml-border-radius: 5px; /* for old Konqueror browsers */
+
+}
+
+
+.lvimg {
+	/*width:100%;*/
+	/*position: absolute;*/
+	/*top:0;*/
+	/*left:0;*/
+}
+
+.navStretch{
+	display: block;
+	position: relative;
+	width:100%;
+	height:90px;
+	background:url(../images/concrete_wall.jpg);
+	border-bottom:1px solid #cccccc;
+	-webkit-box-shadow: 0 1px 0px 0px #F7F7F7;
+	-moz-box-shadow: 0 1px 0px 0px #F7F7F7;
+	 box-shadow: 0 1px 0px 0px #F7F7F7;
+	z-index: 1000;
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-top-left-radius:5px;
+	-moz-border-radius-topright:5px;
+	-moz-border-radius-topleft:5px;
+	border-top-left-radius: 5px; /* future proofing */
+	border-top-right-radius: 5px; /* future proofing */
+	-khtml-border-top-left-radius: 5px; /* for old Konqueror browsers */
+	-khtml-border-top-right-radius: 5px; /* for old Konqueror browsers */
+}
+
+.objStretch{
+	display: block;
+	position: relative;
+	width:100%;
+	height:37px;
+	background:url(../images/concrete_wall.jpg);
+	border-bottom:1px solid #cccccc;
+	border-top:1px solid #F7F7F7;
+	-webkit-box-shadow: 0 1px 0px 0px #F7F7F7;
+	-moz-box-shadow: 0 1px 0px 0px #F7F7F7;
+	 box-shadow: 0 1px 0px 0px #F7F7F7;
+	z-index: 1000;
+}
+
+
+.mainNav{
+	height:100%;
+	margin: 0 auto;
+	max-width: 980px;
+	min-width: 360px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.objNav{
+	max-width: 980px;
+	min-width: 360px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin: 0 auto;
+}
+
+.mainLinks{
+	position: relative;
+	top: 20px;
+}
+
+.pageDesc{
+	position: relative;
+	display: block;
+	float: left;
+}
+
+.pageLink{
+	display: block;
+	position: relative;
+	display: block;
+	float: right;
+	top:3px;
+	padding-top: 17px;
+	padding-right: 20px;
+	padding-left: 20px;
+	border-left: 1px solid #e2dcdc;
+	height: 30px;
+}
+
+.rightLink{
+	color: #eae8e8 ;
+	cursor: pointer;
+	z-index: 1003;	
+	position: fixed;
+	right:-120px;
+	height: 90px;
+	background: #333333;
+	top:42%;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; /* future proofing */
+	-khtml-border-radius: 5px; /* for old Konqueror browsers */
+	-webkit-transition-duration: 0.634s;
+  	-moz-transition-duration: 0.634s;
+  	-o-transition-duration: 0.634s;
+  	transition-duration: 0.634s;
+}
+
+.leftLink{
+	color: #eae8e8 ;
+	cursor: pointer;
+	z-index: 1003;	
+	position: fixed;
+	left:-120px;
+	height: 90px;
+	background: #333333;
+	top:42%;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; /* future proofing */
+	-khtml-border-radius: 5px; /* for old Konqueror browsers */
+	-webkit-transition-duration: 0.634s;
+  	-moz-transition-duration: 0.634s;
+  	-o-transition-duration: 0.634s;
+  	transition-duration: 0.634s;
+}
+
+.leftLink .infoLeft h5{
+	color: #b3b3b3;
+}
+
+
+.rightLink .infoRight h5{
+	color: #b3b3b3;
+}
+
+
+.leftLink:hover{
+	left:0px;
+}
+
+.rightLink:hover{
+	right:0px;
+}
+
+.story_rightLink{
+	color: #eae8e8 ;
+	cursor: pointer;
+	z-index: 1003;	
+	position: fixed;
+	right:-120px;
+	height: 90px;
+	background: #333333;
+	top:42%;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; /* future proofing */
+	-khtml-border-radius: 5px; /* for old Konqueror browsers */
+	-webkit-transition-duration: 0.634s;
+  	-moz-transition-duration: 0.634s;
+  	-o-transition-duration: 0.634s;
+  	transition-duration: 0.634s;
+}
+
+.story_leftLink{
+	color: #eae8e8 ;
+	cursor: pointer;
+	z-index: 1003;	
+	position: fixed;
+	left:-120px;
+	height: 90px;
+	background: #333333;
+	top:42%;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; /* future proofing */
+	-khtml-border-radius: 5px; /* for old Konqueror browsers */
+	-webkit-transition-duration: 0.634s;
+  	-moz-transition-duration: 0.634s;
+  	-o-transition-duration: 0.634s;
+  	transition-duration: 0.634s;
+}
+
+.story_leftLink .infoLeft h5{
+	color: #b3b3b3;
+}
+
+
+.story_rightLink .infoRight h5{
+	color: #b3b3b3;
+}
+
+
+.story_leftLink:hover{
+	left:0px;
+}
+
+.story_rightLink:hover{
+	right:0px;
+}
+
+.infoLeft{
+	float: left;
+	padding: 23px 27px 0 50px;
+	height: 90px;
+}
+
+.infoRight{
+	float: right;
+	padding: 23px 53px 0 26px;
+	height: 90px;
+}
+
+.smallLeft{
+	background: url(../images/osalex_small.jpg);
+	width: 119px;
+	height: 90px;
+	float: left;
+	background-repeat: no-repeat;
+}
+
+.smallRight{
+	background: url(../images/osalex_small.jpg);
+	width: 119px;
+	height: 90px;
+	float: right;
+	background-repeat: no-repeat;
+}
+
+.story_smallLeft{
+	background: url(../images/osalex_small.jpg);
+	width: 119px;
+	height: 90px;
+	float: left;
+	background-repeat: no-repeat;
+}
+
+.story_smallRight{
+	background: url(../images/osalex_small.jpg);
+	width: 119px;
+	height: 90px;
+	float: right;
+	background-repeat: no-repeat;
+}
+
+.leftArrow{
+	position: absolute;
+	left: 137px;
+	top:31px;
+	background: url(../images/icon_sprite.png) no-repeat  -95px 0px;
+	width: 15px;
+	height: 27px;
+}
+
+.rightArrow{
+	position: absolute;
+	right: 138px;
+	top:31px;
+	background: url(../images/icon_sprite.png) no-repeat -95px -32px;
+	width: 15px;
+	height: 27px;
+	z-index: 100;
+}
+.story_leftLink a{
+	width: 100%;
+	height: 100%;
+	display: block;
+	position: absolute;
+}
+
+.story_rightLink a{
+	width: 100%;
+	height: 100%;
+	display: block;
+	position: absolute;
+}
+/*
+	Small story photos
+*/
+
+.rachel_tiles{
+	background: url(../images/rachel_tiles.jpg);
+}
+
+.david_duck{
+	background: url(../images/david_duck.jpg);
+}
+
+.jacob_table{
+	background: url(../images/jacob_table.jpg);
+}
+
+.osnat_table{
+	background: url(../images/osnat_table.jpg);
+}
+
+.osnat_swing{
+	background: url(../images/osnat_swing.jpg);
+}
+
+.anna_painting{
+	background: url(../images/anna_painting.jpg);
+}
+
+.anna_couch{
+	background: url(../images/anna_couch.jpg);
+}
+
+.alex_seashells{
+	background: url(../images/alex_seashells.jpg);
+}
+
+.alex_guitar{
+	background: url(../images/alex_guitar.jpg);
+}
+
+.alex_book{
+	background: url(../images/alex_book.jpg);
+}
+
+.alex_carpet{
+	background: url(../images/alex_carpet.jpg);
+}
+/*
+	END Small story photos
+*/
+
+#allLivingrooms{
+	top: 84px;
+	overflow-x: hidden;
+	width: 400%;
+	position: absolute;
+	left:-200%;
+}
+
+.livingRoom{
+	float: left;
+	width:25%;
+	position: relative;
+}
+.livingRoom div{
+	position: absolute;
+}
+
+.objWrapper{
+	position: relative;
+	top: 0px;
+	max-width: 1100px;
+	margin: 0 auto;
+	overflow-y: auto;
+    height: 82.2%;
+    overflow-x: hidden;
+
+}
+
+.objWrapper::-webkit-scrollbar {
+    width: 0px;
+}
+
+
+.objWrapper .mix{
+    opacity: 0;
+    display: none;
+}
+
+.objContainer{
+	margin-top: 20px;
+	margin-left: 46px;
+	/*overflow-y: scroll;*/
+	height: auto;
+}
+.objDescContainer{
+	position: relative;
+	cursor: pointer;
+	width: 230px;
+	height: 120px;
+	display: block;
+	float: left;
+	margin-left: 0px;
+	padding-top: 28px;
+	padding-left: 12px;
+	padding-right: 15.2px;
+	-webkit-transition-timing-function: ease-in;
+  	-moz-transition-timing-function: ease-in;
+  	-o-transition-timing-function: ease-in;
+  	transition-timing-function: ease-in;
+}
+
+.objDescContainer:hover{
+	background: #ddd;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; /* future proofing */
+	-khtml-border-radius: 5px; /* for old Konqueror browsers */
+}
+
+.objDescContainer a{
+	width: 100%;
+	height: 100%;
+	display: block;
+	position: absolute;
+	bottom: 15px;
+}
+
+.objDesc{
+	display: block;
+	float: left;
+}
+
+.progressWrapper{
+	position: absolute;
+	width:128px;
+	height:10px;
+	border: 1px solid #ccc;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+  }
+
+.timeWrap{
+	top:84px;
+	left: 91px;
+}
+
+.costWrap{
+	top:102px;
+	left: 91px;
+}
+
+ .progressBar{
+ 	background-color: #999;
+  background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  -webkit-background-size: 20px 20px;
+     -moz-background-size: 20px 20px;
+       -o-background-size: 20px 20px;
+          background-size: 20px 20px;
+ 	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	overflow: hidden;
+	height: 100%;
+	display: block;
+}
+
+
+.timeIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat -303px -351px;
+	width: 9px;
+	height: 15px;
+	position: relative;
+	top:54px;
+	left: 61px;
+}
+
+.costIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat -287px -351px;
+	width: 13px;
+	height: 17px;
+	position: relative;
+	top: 57px;
+	left: 59px;
+}
+
+.movieFilter .active{
+	background: url(../images/icon_sprite_objects.png) no-repeat -187px -10px !important;
+	height: 41px;
+}
+
+.photosFilter .active{
+	background: url(../images/icon_sprite_objects.png) no-repeat -236px -10px !important;
+	height: 41px;
+}
+
+.allFilter .active{
+	background: url(../images/icon_sprite_objects.png) no-repeat -229px -392px !important;
+	height: 41px;
+}
+
+.ageSort .active{
+	background: url(../images/icon_sprite_objects.png) no-repeat -187px -65px !important;
+	height: 41px;
+}
+
+.costSort .active{
+	background: url(../images/icon_sprite_objects.png) no-repeat -236px -65px !important;
+	height: 41px;
+}
+
+.lvSort .active{
+	background: url(../images/icon_sprite_objects.png) no-repeat -181px -392px !important;
+	height: 41px;
+}
+
+
+.arrow_box {
+	display: none;
+	padding-top: 2px;
+	font-family: 'adelle';
+	font-weight: 100; 
+	line-height: 15px;
+	font-size: 12px; 
+	color:#eae8e8;
+	position: relative;
+	background: #333;
+	border: 4px solid #333;
+	width: 60px;
+	text-align: center;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px; /* future proofing */
+	-khtml-border-radius: 2px; /* for old Konqueror browsers */
+	margin-left: -13px;
+	top: 50px;
+  	opacity: 0;
+  	-webkit-box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.3);
+	-moz-box-shadow:    6px 6px 20px rgba(0, 0, 0, 0.3);
+	box-shadow:         6px 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+
+.arrow_box:after, .arrow_box:before {
+	bottom: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.arrow_box:after {
+	border-color: rgba(51, 51, 51, 0);
+	border-bottom-color: #333;
+	border-width: 2px;
+	left: 50%;
+	margin-left: -2px;
+}
+.arrow_box:before {
+	border-color: rgba(56, 56, 56, 0);
+	border-bottom-color: #383838;
+	border-width: 8px;
+	left: 50%;
+	margin-left: -8px;
+}
+
+
+/* Written Stories
+================================================== */
+.writtenWrapper{
+	background: rgba(241, 238, 231, 0.9);
+	height: 100%;
+	border: 20px solid #333;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; /* future proofing */
+	-khtml-border-radius: 5px; /* for old Konqueror browsers */
+	overflow: auto;
+}
+
+.writtenContainer{
+	max-width:810px;
+	margin: 0 auto;
+	padding-left: 80px;
+	padding-right: 80px;
+	padding-top: 140px;
+}
+
+.HL{
+	background: url(../images/HL.png);
+	width: 1px;
+	height: 1px;
+	}
+
+.closeSlide{
+	background: url(../images/icon_sprite.png) no-repeat -133px -65px;
+	width: 52px;
+	height: 52px;
+	position: absolute;
+	top: 40px;
+	left: 40px;
+}
+
+.slideshowContainer{
+	background: url(../images/icon_sprite.png) no-repeat -311px -56px;
+	width: 52px;
+	height: 52px;
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	cursor: pointer;
+}
+
+.writtenStory{
+	
+	overflow: auto;
+	position: relative;
+	font-family: 'adelle'; 
+	font-size:28px; 
+	color:#333333;
+	line-height: 46px;
+	padding-bottom: 170px;
+	font-weight: 300;
+}
+
+.written_guitar_icon{
+	background: url(../images/icon_sprite_objects.png) no-repeat -15px -543px;
+	width: 54px;
+	height: 54px;
+	position: absolute;
+	left:50%;
+	margin-left: -27px;
+}
+
+.whiteSpace{
+	background: url(../images/concrete_wall.jpg);
+	width: 77px;
+	height: 72px;
+	position: absolute;
+	left:50%;
+	margin-left: -38.5px;
+	top: 58px;
+}
+
+.writtenLink{
+	position: relative;
+	cursor: pointer;
+	border-bottom: 1px solid #99958F;
+}
+
+.linkTooltip {
+	z-index: 1003;
+	display: none;
+	position: absolute;
+	background: white;
+	border: 1px solid #99958F;
+	width: 290px;
+	height: 220px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px; /* future proofing */
+	-khtml-border-radius: 4px; /* for old Konqueror browsers */
+  	opacity: 0;
+  	margin-left: -145px;
+  	padding: 5px;
+  	-webkit-box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow:    6px 6px 20px rgba(0, 0, 0, 0.5);
+	box-shadow:         6px 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.toolPos{
+	left: 50%;
+	top: 150%;
+}
+
+.linkTooltip:after, .linkTooltip:before {
+	bottom: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.linkTooltip:after {
+	border-color: rgba(51, 51, 51, 0);
+	border-bottom-color: white;
+	border-width: 8px;
+	left: 50%;
+	margin-left: -8px;
+}
+.linkTooltip:before {
+	border-color: rgba(56, 56, 56, 0);
+	border-bottom-color: #99958F;
+	border-width: 9px;
+	left: 50%;
+	margin-left: -9px;
+}
+/* Icons
+================================================== */
+
+.icon{
+	width:76px;
+	height: 74px;
+}
+
+.objStoryIcon{
+	float: left;
+	margin-right: 6.5px;
+}
+
+
+.our_guitar_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat -15px -543px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.our_table_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -21px -631px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.our_seashells_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -21px -186px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.our_swing_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -15px -97px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.our_book_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -21px -8px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.our_rug_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -21px -275px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.our_painting_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -21px -360px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.our_couch_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -15px -454px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.anna_painting_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -21px -720px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.anna_couch_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -117px -719px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.anna_ashtray_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -122px -631px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.anna_bookjew_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -121px -543px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.anna_eyes_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -117px -437px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.anna_bookred_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -117px -342px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.jacob_mask_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -121px -244px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.jacob_jeans_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -117px -145px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.jacob_table_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -218px -146px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.jacob_folder_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -222px -240px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.jacob_cabinet_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -282px -471px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.david_painting_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -223px -471px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.david_stand_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -223px -528px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.david_chair_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -223px -585px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.david_duck_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -223px -642px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.david_table_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -223px -699px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.david_tiles_objIcon{
+	background: url(../images/icon_sprite_objects.png) no-repeat  -282px -528px;
+	width: 54px;
+	height: 54px;
+	cursor: pointer;
+}
+
+.david_painting_icon{
+	-webkit-animation: breathAnim ease-in-out 0.6s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.6s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.6s infinite alternate;
+	background: url(../images/icon_sprite.png) no-repeat   -208px -49px;
+	cursor: pointer;
+	position: absolute;
+	top: 12%;
+	left: 61.4%;
+	margin-top: -29px;
+}
+
+.david_couch_icon{
+	-webkit-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	background: url(../images/icon_sprite.png) no-repeat  -210px -334px;
+	cursor: pointer;
+	position: absolute;
+	top: 32%;
+	left: 76.3%;
+	margin-top: -29px;
+}
+
+.david_duck_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.76s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.76s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.76s infinite alternate;
+	background: url(../images/icon_sprite.png) no-repeat  -212px -436px;
+	cursor: pointer;
+	position: absolute;
+	top: 81%;
+	left: 65.2%;
+	margin-top: -67px;
+	margin-left: -38px;
+}
+
+.david_coffeetable_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.73s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.73s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.73s infinite alternate;
+	background: url(../images/icon_sprite.png) no-repeat  -214px -539px;
+	cursor: pointer;
+	position: absolute;
+	top: 47%;
+	left: 52.7%;
+	margin-left: -38px;
+}
+
+.david_tiles_icon{
+	-webkit-animation: breathAnim ease-in-out 0.78s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.78s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.78s infinite alternate;
+	background: url(../images/icon_sprite.png) no-repeat  -214px -722px;
+	cursor: pointer;
+	position: absolute;
+	top: 48%;
+	left: 11.5%;
+	margin-top: -29px;
+	margin-left: -76px;
+}
+
+.david_tvstand_icon{
+	-webkit-animation: breathAnim ease-in-out 0.82s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.82s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.82s infinite alternate;
+	background: url(../images/icon_sprite.png) no-repeat  -311px -143px;
+	cursor: pointer;
+	position: absolute;
+	top: 80%;
+	left: 35.3%;
+	margin-top: -29px;
+}
+
+.our_book_icon{
+	-webkit-animation: breathAnim ease-in-out 0.82s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.82s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.82s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 39.5%;
+	left: 55.85%;
+	background: url(../images/icon_sprite.png) no-repeat -7px -4px;
+	margin-top: -29px;
+}
+
+.our_swing_icon{
+	-webkit-animation: breathAnim ease-in-out 0.73s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.73s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.73 s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 16%;
+	left: 15.5%;
+	background: url(../images/icon_sprite.png) no-repeat -4px -93px;
+	margin-top: -29px;
+	margin-left: -79px;
+}
+
+
+.our_rug_icon{
+	-webkit-animation: breathAnim ease-in-out 0.77s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.77s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.77s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 58%;
+	left: 54.3%;
+	background: url(../images/icon_sprite.png) no-repeat -7px -271px;
+	margin-top: -29px;
+}
+
+.our_couch_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.7s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.7s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.7s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 14.5%;
+	left: 44.8%;
+	background: url(../images/icon_sprite.png) no-repeat -4px -450px;
+	margin-top: -79px;
+	margin-left: -38px;
+	
+}
+
+.our_painting_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.8s infinite alternate;
+
+	-o-animation: breathAnimUp ease-in-out 0.8s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.8s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 84%;
+	left: 86%;
+	background: url(../images/icon_sprite.png) no-repeat -10px -357px;
+	margin-top: -67px;
+	margin-left: -38px;
+}
+
+.our_guitar_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.75s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.75s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.75s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 56.5%;
+	left: 22.5%;
+	background: url(../images/icon_sprite.png) no-repeat -4px -536px;
+	margin-left: -38px;
+}
+
+.our_seashells_icon{
+	-webkit-animation: breathAnim ease-in-out 0.75s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.75s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.75s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 15.6%;
+	left: 76.8%;
+	background: url(../images/icon_sprite.png) no-repeat -7px -182px;
+	margin-top: -29px;
+}
+
+.our_table_icon{
+	-webkit-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 42%;
+	left: 37.7%;
+	background: url(../images/icon_sprite.png) no-repeat -10px -627px;
+	margin-top: -29px;
+	margin-left: -79px;
+}
+
+.jacob_folder_icon{
+	-webkit-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 27.3%;
+	left: 38.7%;
+	background: url(../images/icon_sprite.png) no-repeat -208px -236px;
+	margin-top: -33px;
+	margin-left: -12px;
+}
+
+.jacob_table_icon{
+	-webkit-animation: breathAnim ease-in-out 0.7s infinite alternate;
+	o-animation: breathAnim ease-in-out 0.7s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.7s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 41%;
+	left: 33.8%;
+	background: url(../images/icon_sprite.png) no-repeat -207px -139px;
+	margin-top: -30px;
+	margin-left: -79px;
+}
+
+.jacob_mask_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.7s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.7s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.7s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 35.8%;
+	left: 68%;
+	background: url(../images/icon_sprite.png) no-repeat -110px -237px;
+	margin-left: -38px;
+}
+
+.jacob_jeans_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.75s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.75s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.75s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 18.5%;
+	left: 76.2%;
+	background: url(../images/icon_sprite.png) no-repeat -106px -141px;
+	margin-top: -62px;
+	margin-left: -37px;
+}
+
+.jacob_cabinet_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.8s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.8s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.8s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 71.7%;
+	left: 43.2%;
+	background: url(../images/icon_sprite.png) no-repeat -215px -630px;
+	margin-top: -62px;
+	margin-left: -37px;
+}
+
+.anna_painting_icon{
+	-webkit-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.8s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 13.5%;
+	left: 14.5%;
+	background: url(../images/icon_sprite.png) no-repeat -7px -716px;
+	margin-top: -38px;
+}
+
+.anna_bookred_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.75s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.75s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.75s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 39.5%;
+	left: 48.35%;
+	background: url(../images/icon_sprite.png) no-repeat  -106px -338px;
+	margin-top: -67px;
+	margin-left: -38px;
+}
+
+.anna_bookjew_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.9s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.9s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.9s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 69.3%;
+	left: 70.4%;
+	background: url(../images/icon_sprite.png) no-repeat -110px -536px;
+	margin-left: -38px;
+}
+
+.anna_eyes_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.7s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.7s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.7s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 49.5%;
+	left: 70%;
+	background: url(../images/icon_sprite.png) no-repeat -106px -433px;
+	margin-top: -67px;
+	margin-left: -38px;
+}
+
+.anna_ashtray_icon{
+	-webkit-animation: breathAnim ease-in-out 0.7s infinite alternate;
+	-o-animation: breathAnim ease-in-out 0.7s infinite alternate;
+	-ms-animation: breathAnim ease-in-out 0.7s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 55.3%;
+	left: 38.7%;
+	background: url(../images/icon_sprite.png) no-repeat -111px -627px;
+	margin-top: -35px;
+	margin-left: -68px;
+}
+
+.anna_couch_icon{
+	-webkit-animation: breathAnimUp ease-in-out 0.8s infinite alternate;
+	-o-animation: breathAnimUp ease-in-out 0.8s infinite alternate;
+	-ms-animation: breathAnimUp ease-in-out 0.8s infinite alternate;
+	cursor: pointer;	
+	position: absolute;
+	top: 79.5%;
+	left: 50.4%;
+	background: url(../images/icon_sprite.png) no-repeat -106px -715px;
+	margin-top: -67px;
+	margin-left: -38px;
+}
+
+.objFilterIcon{
+	display: block;
+	width: 41px;
+	height: 40px;
+	margin-top: -12px;
+}
+
+.objShow{
+	float: left;
+	position: relative;
+	top: 10px;
+}
+
+.objSort{
+	float: right;
+	position: relative;
+	top: 10px;
+}
+
+.Show{
+	float: left;
+	margin-right: 18px;
+}
+
+.Sort{
+	float:right;
+	margin-right: 18px;
+}
+.objFilterLvIcon{
+	background: url('../images/icon_sprite_objects.png') no-repeat -181px -337px;
+	float: right;
+	margin-right: -1px;
+}
+
+.objFilterLvIcon:active{
+	background: url('../images/icon_sprite_objects.png') no-repeat -181px -392px;
+	height: 41px;
+}
+
+.objFilterMoneyIcon{
+	background: url('../images/icon_sprite_objects.png') no-repeat -139px -65px;
+	float: right;
+	margin-right: -1px;
+}
+
+.objFilterMoneyIcon:active{
+	background: url('../images/icon_sprite_objects.png') no-repeat -236px -65px;
+	height: 41px;
+}
+
+.objFilterPhotosIcon{
+	background: url('../images/icon_sprite_objects.png') no-repeat -138px -10px;
+	float: left;
+	margin-left: -1px;
+}
+
+
+.objFilterPhotosIcon:active{
+	background: url('../images/icon_sprite_objects.png') no-repeat -236px -10px;
+	height: 41px;
+}
+
+.objFilterAllIcon{
+	background: url('../images/icon_sprite_objects.png') no-repeat -229px -337px;
+	float: left;
+}
+
+
+.objFilterAllIcon:active{
+	background: url('../images/icon_sprite_objects.png') no-repeat -229px -392px;
+	height: 41px;
+}
+
+
+.objFilterTimeIcon{
+	background: url('../images/icon_sprite_objects.png') no-repeat -89px -65px;
+	float: right;
+}
+
+
+
+.objFilterTimeIcon:active{
+	background: url('../images/icon_sprite_objects.png') no-repeat -187px -65px;
+	height: 41px;
+}
+
+
+.objFilterVideosIcon{
+	background: url('../images/icon_sprite_objects.png') no-repeat -89px -10px;
+	float: left;
+	margin-left: -1px;
+
+}
+
+
+.objFilterVideosIcon:active{
+	background: url('../images/icon_sprite_objects.png') no-repeat -187px -10px;
+	height: 41px;
+}
+
+
+
+/*End of Icons
+================================================== */
+
+
+
+/* Places
+================================================== */
+#map_canvas{
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+#zoomin{
+	position: absolute;
+	cursor: pointer;
+	z-index: 1003;
+	top:143px;
+	left: 5px;
+	background: url(../images/icon_sprite_map.png) no-repeat -127px -6px;
+	width: 33px;
+	height: 33px;
+}
+
+#zoomout{
+	cursor: pointer;
+	position: absolute;
+	z-index: 1003;
+	top:179px;
+	left: 5px;
+	background: url(../images/icon_sprite_map.png) no-repeat -164px -6px;
+	width: 33px;
+	height: 33px;
+}
+
+#zoomin:active{
+	background: url(../images/icon_sprite_map.png) no-repeat -201px -6px;
+}
+
+#zoomout:active{
+	background: url(../images/icon_sprite_map.png) no-repeat -238px -6px;
+}
+
+
+/* About
+================================================== */
+
+.aboutWrapper{
+	width: 100%;
+	height: 82%;
+	overflow-y:auto;
+	overflow-x:hidden !important;
+}
+
+.aboutContainer{
+	position: relative;
+	max-width:700px;
+	margin: 0 auto;
+	padding-top: 80px;
+}
+
+.aboutPar{
+	font-family: 'adelle'; 
+	font-size:28px; 
+	color:#555;
+	line-height: 46px;
+	margin-left: 20px;
+	margin-right: 20px;
+	font-weight: 300;
+}
+
+.thanks{
+	line-height: 176%;
+	padding-top: 34px;
+	max-width: 574px;
+	position: relative;
+	left: 20px;
+	font-family: 'adelle'; 
+	font-size:16px; 
+	color:#8c8c8c;
+	padding-right: 70px;
+	font-weight: 300;
+}
+
+.credit{
+	font-family: 'adelle'; 
+	font-size:16px; 
+	color:#8c8c8c;
+	padding: 20px;
+	position: relative;
+	top:40px;
+	font-weight: 300;
+
+}
+/*Videos 
+================================================== */
+.btnCloseVideo{
+	display: block;
+	background: url(../images/icon_sprite.png) no-repeat -133px 0;
+	width: 52px;
+	height: 52px;
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	-webkit-transition-duration: 0.8s;
+    -moz-transition-duration: 0.8s;
+    -o-transition-duration: 0.8s;
+    transition-duration: 0.8s;
+     
+    -webkit-transition-property: -webkit-transform;
+    -moz-transition-property: -moz-transform;
+    -o-transition-property: -o-transform;
+    transition-property: transform;
+     
+    overflow:hidden;
+}
+
+.btnClose_writtenGuitar{
+	display: block;
+	background: url(../images/icon_sprite.png) no-repeat -133px 0;
+	width: 52px;
+	height: 52px;
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	-webkit-transition-duration: 0.8s;
+    -moz-transition-duration: 0.8s;
+    -o-transition-duration: 0.8s;
+    transition-duration: 0.8s;
+     
+    -webkit-transition-property: -webkit-transform;
+    -moz-transition-property: -moz-transform;
+    -o-transition-property: -o-transform;
+    transition-property: transform;
+     
+    overflow:hidden;
+}
+
+
+.btnCloseVideo:hover {
+	-webkit-transform:rotate(360deg);
+    -moz-transform:rotate(360deg);
+    -o-transform:rotate(360deg);
+}
+
+.btnClose_writtenGuitar:hover {
+	-webkit-transform:rotate(360deg);
+    -moz-transform:rotate(360deg);
+    -o-transform:rotate(360deg);
+}
+
+
+
+/*Alert Box # Links*/
+.spreadout{
+	margin:10px;
+}
+
+.noobSulotion{
+	width: 0!important;
+}
+.closeAlert{
+	background: url(../images/icon_sprite_map.png) no-repeat -95px -8px;
+	width: 29px;
+	height: 29px;
+	position: absolute;
+	top:-13px;
+	left: 506px;
+	cursor: pointer;
+}
+
+.alertBox{
+	margin-left: -275px;
+	text-align: center;
+	max-width:469px;
+	padding: 40px;
+	z-index: 1002;
+	position: absolute;
+	top:38.2%;
+	left: 50%;
+	display: none;
+	opacity: 0;
+	background-color: #e5e5e5;
+	border: 1px solid #333;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	-moz-box-shadow: 0px 0px 40px #666;
+	-webkit-box-shadow: 0px 0px 40px #666;
+	box-shadow: 0px 0px 40px #666;
+}
+
+
+/* Animation
+================================================== */
+@-webkit-keyframes breathAnim
+{
+   from { -webkit-transform: translate(0px,0px) }
+   to   { -webkit-transform: translate(2px,0px) }
+
+}
+2
+
+@-moz-keyframes breathAnim
+{
+   from { -moz-transform: translate(0px,0px) }
+   to   { -moz-transform: translate(2px,0px) }
+
+}
+
+@-o-keyframes breathAnim
+{
+   from { -o-transform: translate(0px,0px) }
+   to   { -o-transform: translate(2px,0px) }
+
+}
+
+@-ms-keyframes breathAnim
+{
+   from { -ms-transform: translate(0px,0px) }
+   to   { -ms-transform: translate(2px,0px) }
+
+}
+
+
+@-webkit-keyframes breathAnimUp
+{
+   from { -webkit-transform: translate(0px,0px) }
+   to   { -webkit-transform: translate(0px,2px) }
+
+}
+
+
+@-moz-keyframes breathAnimUp
+{
+   from { -moz-transform: translate(0px,0px) }
+   to   { -moz-transform: translate(0px,2px) }
+
+}
+
+@-o-keyframes breathAnimUp
+{
+   from { -o-transform: translate(0px,0px) }
+   to   { -o-transform: translate(0px,2px) }
+
+}
+
+@-ms-keyframes breathAnimUp
+{
+   from { -ms-transform: translate(0px,0px) }
+   to   { -ms-transform: translate(0px,2px) }
+
+}
+
+
+@-webkit-keyframes scaleAnim
+{
+   from { -webkit-transform: scale(1)}
+   to   { -webkit-transform: scale(0.95)}
+}
+
+@-webkit-keyframes rotateAnim
+{
+   from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+/* Font-Face
+================================================== */
+
+#typekit-badge-akk8gpo {display:none !important;}
+
+.typekit-badge {display:none !important;}
+
+@font-face {
+	font-style: normal;
+    font-family: 'DINNext';
+    src: url('../fonts/dinnextltpro_boldcondensed.eot');
+    src: url('../fonts/dinnextltpro_boldcondensed.eot') format('embedded-opentype'),
+         url('../fonts/dinnextltpro_boldcondensed.woff') format('woff'),
+         url('../fonts/dinnextltpro_boldcondensed.ttf') format('truetype'),
+         url('../fonts/dinnextltpro_boldcondensed.svg#DINNextLTProBoldCondensed') format('svg');
+}
+
+@font-face {
+	font-style: normal;
+    font-family: 'ChaparralPro';
+    src: url('../fonts/chaparralpro_regular.eot');
+    src: url('../fonts/chaparralpro_regular.eot') format('embedded-opentype'),
+         url('../fonts/chaparralpro_regular.woff') format('woff'),
+         url('../fonts/chaparralpro_regular.ttf') format('truetype'),
+         url('../fonts/chaparralpro_regular.svg#ChaparralProRegular') format('svg');
+}
+
+@font-face {
+    font-family: 'adelle_rgitalic';
+    src: url('../fonts/adelle_italic-webfont.eot');
+    src: url('../fonts/adelle_italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/adelle_italic-webfont.woff') format('woff'),
+         url('../fonts/adelle_italic-webfont.ttf') format('truetype'),
+         url('../fonts/adelle_italic-webfont.svg#adelle_rgitalic') format('svg');
+    font-weight: 400;
+    font-style: normal;
+
+}

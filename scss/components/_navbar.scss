@@ -1,0 +1,44 @@
+.navbar {
+    .btn-xs {
+        padding: 0px 12px;
+    }
+    .say-about {
+        margin-top: 10px;
+        a {
+            color: #fff !important;
+            font-size: $font-size-base;
+            line-height: $line-height-base*0.4;
+        }
+    }
+    .navbar-brand {
+        color: darken($brand-primary, 53%);
+    }
+    div {
+        &:first-child {
+            float: left;
+        }
+    }
+    div {
+        &:last-child {
+            li {
+                float: right;
+            }
+        }
+    }
+    .navbar-right {
+        margin-right: 10px;
+    }
+    .navbar-left {
+        margin-left: 10px;
+    }
+    .navbar-brand {
+        // letter-spacing: 3px;
+        color: $gray-light;
+        font-weight: 600;
+        font-size: 16px;
+        i {
+            font-weight: 100;
+            color: $gray;
+        }
+    }
+}

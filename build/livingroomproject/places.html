@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset=utf-8 />
+		<script type="text/javascript" src="//use.typekit.net/qzf1stc.js"></script>
+		<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+		<link rel="stylesheet" href="includes/style.css" />
+		<script type="text/javascript" src="scripts/jquery-1.10.1.min.js"></script>
+		<script type="text/javascript" src="scripts/myScripts.js"></script>		
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+		<div class="alertBox">
+				<div class="closeAlert" ></div>
+				<h1 style="line-height: 120%; color: #444;">PLEASE CHOOSE A DIFFERENT OBJECT, THIS ONE <br>IS NOT QUITE READY YET :)</h1>
+				<!-- <div class="our_guitar_objIcon spreadout " style="float:left;"></div>
+				<div class="our_table_objIcon spreadout " style="float:left;"></div>
+				<div class="our_seashells_objIcon spreadout " style="float:left;"></div>
+				<div class="our_swing_objIcon spreadout " style="float:left;"></div>
+				<div class="anna_painting_objIcon spreadout " style="float:left;"></div>
+				<div class="anna_couch_objIcon spreadout " style="float:left;"></div>
+				<div class="david_duck_objIcon spreadout " style="float:left;"></div>
+				<div class="david_tiles_objIcon spreadout " style="float:left;"></div>
+				<div class="jacob_table_objIcon spreadout " style="float:left;"></div> -->
+			</div>
+		<script type="text/javascript">
+
+				function initialize() 
+				{
+					var latlng = new google.maps.LatLng(10.0442, -20.9116);
+
+					var stylez = 
+					[
+						 {
+    "elementType": "geometry.fill",
+    "stylers": [
+      { "saturation": -100 },
+      { "lightness": -21 },
+      { "gamma": 1.04 }
+    ]
+  },{
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      { "saturation": -100 },
+      { "gamma": 1 },
+      { "lightness": -53 }
+    ]
+  },{
+    "featureType": "water",
+    "elementType": "labels.text",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },{
+    "elementType": "labels.icon",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },{
+    "featureType": "administrative",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },{
+    "featureType": "road",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      { "saturation": -100 },
+      { "weight": 0.1 }
+    ]
+  },{
+    "featureType": "road",
+    "elementType": "labels",
+    "stylers": [
+      { "saturation": -100 }
+    ]
+  },{
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      { "saturation": -100 },
+      { "weight": 0.1 },
+      { "lightness": 5 }
+    ]
+  },{
+    "elementType": "labels.text.fill",
+    "stylers": [
+      { "saturation": -3 },
+      { "lightness": 18 }
+    ]
+  },{
+    "featureType": "poi",
+    "elementType": "labels.text",
+    "stylers": [
+      { "saturation": -100 },
+      { "lightness": -22 }
+    ]
+  },{
+    "elementType": "labels.text",
+    "stylers": [
+      { "saturation": -100 },
+      { "visibility": "off" }
+    ]
+  },{
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  }
+				];
+
+					var settings = 
+						{
+							zoom: 3,
+              minZoom: 2,
+							center: latlng,
+							styles: stylez,
+              navigationControl: false,
+              panControl: false,
+							mapTypeControl: false,
+              zoomControl: false,
+              streetViewControl: true,
+							mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
+							navigationControl: true,
+							navigationControlOptions: {style: google.maps.NavigationControlStyle.MEDIU},
+							mapTypeId: google.maps.MapTypeId.TERRAIN
+						};
+					
+					
+					var map = new google.maps.Map(document.getElementById("map_canvas"), settings);
+
+
+
+					var davidStand = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(118, 46));
+
+					var davidTable = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(225, 542));
+
+          var davidTiles = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(224, 725));
+
+          var davidPicture = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(221, 53));
+
+          var davidChair = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(223, 338));
+
+          var davidDuck = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(223, 442));
+
+          var jacobPants = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(118, 146));
+
+          var jacobMask = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(122, 244));
+
+          var jacobFolder = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(224, 240));
+
+          var jacobTable = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(219, 146));
+
+          var jacobCabinet = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(226, 634));
+
+          var osalexBook = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(22, 9));
+
+          var osalexSwing = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(20, 98));
+
+          var osalexSeashells = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(22, 187));
+
+          var osalexCarpet = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(22, 275));
+
+          var osalexPainting = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(22, 361));
+
+          var osalexCouch = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(16, 455));
+
+          var osalexGuitar = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(16, 544));
+
+          var osalexTable = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(22, 632));
+
+          var annaPainting = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(22, 722));
+
+          var annaBookred = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(118, 343));
+
+          var annaBookjew = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(122, 543));
+
+          var annaAshtray = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(123, 631));
+
+          var annaCouch = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(118, 720));
+
+          var annaEyes = new google.maps.MarkerImage("images/icon_sprite_map.png", new google.maps.Size(52, 57), new google.maps.Point(118, 438));
+
+
+
+
+
+          var objPos = [];
+					objPos[0] = new google.maps.LatLng(32.164124,34.809653);
+					objPos[1] = new google.maps.LatLng(31.785384,35.21888);
+					objPos[2] = new google.maps.LatLng(31.76125,35.179957);
+					objPos[3] = new google.maps.LatLng(33.984791,-118.471051);
+					objPos[4] = new google.maps.LatLng(47.683,17.642194);
+          objPos[5] = new google.maps.LatLng(31.60639,34.893766);
+          objPos[6] = new google.maps.LatLng(31.753642,35.189674);
+          objPos[7] = new google.maps.LatLng(31.753469,35.216888);
+          objPos[8] = new google.maps.LatLng(31.819723,35.25446);
+          objPos[9] = new google.maps.LatLng(31.804461,35.150621);
+          objPos[10] = new google.maps.LatLng(50.461288,30.473625);
+          objPos[11] = new google.maps.LatLng(32.050635,34.849404);
+          objPos[12] = new google.maps.LatLng(32.073266,34.824573);
+          objPos[13] = new google.maps.LatLng(37.26449,23.131859);
+          objPos[14] = new google.maps.LatLng(-20.458459,-66.825213);
+          objPos[15] = new google.maps.LatLng(32.063074,34.770439);
+          objPos[16] = new google.maps.LatLng(32.088883,34.806488);
+          objPos[17] = new google.maps.LatLng(32.110478,34.885751);
+          objPos[18] = new google.maps.LatLng(-34.608875,-58.380706);
+          objPos[19] = new google.maps.LatLng(50.485474,30.482833);
+          objPos[20] = new google.maps.LatLng(31.754892,35.214313);
+          objPos[21] = new google.maps.LatLng(50.447667,30.523056);
+          objPos[22] = new google.maps.LatLng(31.787026,35.223604);
+          objPos[23] = new google.maps.LatLng(50.448214,30.512399);
+          objPos[24] = new google.maps.LatLng(48.886561,2.340728);
+          
+
+
+ 					var davidStandMarker = new google.maps.Marker({
+    					position: objPos[0],
+    					map: map,
+    					icon: davidStand,
+    					title:"David's T.V Stand"
+					});
+					
+					google.maps.event.addListener(davidStandMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+         
+
+					var davidTableMarker = new google.maps.Marker({
+    					position: objPos[1],
+    					map: map,
+    					icon: davidTable,
+    					title:"Rachel's Table"
+					});
+					
+					google.maps.event.addListener(davidTableMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+          
+         
+
+          var davidTilesMarker = new google.maps.Marker({
+              position: objPos[2],
+              map: map,
+              icon: davidTiles,
+              title:"Rachel's Tiles"
+          });
+
+            google.maps.event.addListener(davidTilesMarker, 'click', function() {
+            window.location.href='interview_rachel_tiles.html?l=9';
+
+          });
+
+          var davidPictureMarker = new google.maps.Marker({
+              position: objPos[3],
+              map: map,
+              icon: davidPicture,
+              title:"Rachel's Painting"
+          });
+          
+            google.maps.event.addListener(davidPictureMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+          var davidChairMarker = new google.maps.Marker({
+              position: objPos[4],
+              map: map,
+              icon: davidChair,
+              title:"David's Chair"
+          });
+          
+          google.maps.event.addListener(davidChairMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+           var davidDuckMarker = new google.maps.Marker({
+              position: objPos[5],
+              map: map,
+              icon: davidDuck,
+              title:"David's Duck"
+          });
+          
+          
+           google.maps.event.addListener(davidDuckMarker, 'click', function() {
+            window.location.href='interview_david_duck.html?l=9';
+
+          });
+
+
+           var jacobPantsMarker = new google.maps.Marker({
+              position: objPos[6],
+              map: map,
+              icon: jacobPants,
+              title:"Jacob's Pants"
+          });
+          
+          google.maps.event.addListener(jacobPantsMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+
+           var jacobFolderMarker = new google.maps.Marker({
+              position: objPos[7],
+              map: map,
+              icon: jacobFolder,
+              title:"Jacob's Folder"
+          });
+          
+          google.maps.event.addListener(jacobFolderMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+           var jacobTableMarker = new google.maps.Marker({
+              position: objPos[8],
+              map: map,
+              icon: jacobTable,
+              title:"Jacob's Table"
+          });
+
+           google.maps.event.addListener(jacobTableMarker, 'click', function() {
+            window.location.href='interview_jacob_table.html?l=9';
+
+          });
+
+
+           var jacobMaskMarker = new google.maps.Marker({
+              position: objPos[9],
+              map: map,
+              icon: jacobMask,
+              title:"Jacob's Mask"
+          });
+          
+          google.maps.event.addListener(jacobMaskMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+           var jacobCabinetMarker = new google.maps.Marker({
+              position: objPos[10],
+              map: map,
+              icon: jacobCabinet,
+              title:"Jacob's Cabinet"
+          });
+          
+          google.maps.event.addListener(jacobCabinetMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+           var osalexBookMarker = new google.maps.Marker({
+              position: objPos[11],
+              map: map,
+              icon: osalexBook,
+              title:"Alex's Book"
+          });
+          
+          google.maps.event.addListener(osalexBookMarker, 'click', function() {
+            window.location.href='written_alex_book.html?l=9';
+
+          });
+
+           var osalexSwingMarker = new google.maps.Marker({
+              position: objPos[12],
+              map: map,
+              icon: osalexSwing,
+              title:"Osnat's Chair"
+          });
+
+           google.maps.event.addListener(osalexSwingMarker, 'click', function() {
+            window.location.href='interview_os_swing.html?l=9';
+
+          });
+
+           var osalexSeashellsMarker = new google.maps.Marker({
+              position: objPos[13],
+              map: map,
+              icon: osalexSeashells,
+              title:"Alex's Seashells"
+          });
+
+           google.maps.event.addListener(osalexSeashellsMarker, 'click', function() {
+            window.location.href='interview_alex_seashells.html?l=9';
+
+          });
+
+           var osalexCarpetMarker = new google.maps.Marker({
+              position: objPos[14],
+              map: map,
+              icon: osalexCarpet,
+              title:"Alex's Carpet"
+          });
+          
+          google.maps.event.addListener(osalexCarpetMarker, 'click', function() {
+            window.location.href='written_alex_carpet.html?l=9';
+
+          });
+
+
+           var osalexPaintingMarker = new google.maps.Marker({
+              position: objPos[15],
+              map: map,
+              icon: osalexPainting,
+              title:"Osnat's Painting"
+          });
+          
+          google.maps.event.addListener(osalexPaintingMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+          
+
+           var osalexCouchMarker = new google.maps.Marker({
+              position: objPos[16],
+              map: map,
+              icon: osalexCouch,
+              title:"Osnat's Couch"
+          });
+          
+          google.maps.event.addListener(osalexCouchMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+           var osalexTableMarker = new google.maps.Marker({
+              position: objPos[17],
+              map: map,
+              icon: osalexTable,
+              title:"Osnat's Table"
+          });
+
+           google.maps.event.addListener(osalexTableMarker, 'click', function() {
+            window.location.href='interview_os_table.html?l=9';
+
+          });
+
+           var osalexGuitarMarker = new google.maps.Marker({
+              position: objPos[18],
+              map: map,
+              icon: osalexGuitar,
+              title:"Alex's Guitar"
+          });
+          
+          google.maps.event.addListener(osalexGuitarMarker, 'click', function() {
+            window.location.href='written_alex_guitar.html?l=9';
+
+          });
+
+          
+          
+
+           var annaEyesMarker = new google.maps.Marker({
+              position: objPos[19],
+              map: map,
+              icon: annaEyes,
+              title:"Anna's Toy"
+          });
+          
+          google.maps.event.addListener(annaEyesMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+           var annaCouchMarker = new google.maps.Marker({
+              position: objPos[20],
+              map: map,
+              icon: annaCouch,
+              title:"Anna's Couch"
+          });
+
+           google.maps.event.addListener(annaCouchMarker, 'click', function() {
+            window.location.href='interview_anna_couch.html?l=9';
+
+          });
+
+            var annaAshtrayMarker = new google.maps.Marker({
+              position: objPos[21],
+              map: map,
+              icon: annaAshtray,
+              title:"Anna's Ashtray"
+          });
+          
+          
+          google.maps.event.addListener(annaAshtrayMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+           var annaBookjewMarker = new google.maps.Marker({
+              position: objPos[22],
+              map: map,
+              icon: annaBookjew,
+              title:"Anna's Book"
+          });
+          
+          google.maps.event.addListener(annaBookjewMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+           var annaBookredMarker = new google.maps.Marker({
+              position: objPos[23],
+              map: map,
+              icon: annaBookred,
+              title:"Anna's Book"
+          });
+          
+           google.maps.event.addListener(annaBookredMarker, 'click', function() {
+            	$(".alertBox").css("display","block");
+				$(".alertBox").animate({
+						opacity : '0.9'
+					}, 100);
+
+          });
+
+           var annaPaintingMarker = new google.maps.Marker({
+              position: objPos[24],
+              map: map,
+              icon: annaPainting,
+              title:"Anna's Painting"
+          });
+
+            google.maps.event.addListener(annaPaintingMarker, 'click', function() {
+            window.location.href='interview_anna_painting.html?l=9';
+
+          });
+															
+				  
+
+			             //Start Zoom function
+
+          $(function(){
+            $("#zoomin").click(function(){
+              var zoom = map.getZoom();
+              map.setZoom(zoom+1);
+              return false;
+            });
+
+            $("#zoomout").click(function(){
+              var zoom = map.getZoom();
+              map.setZoom(zoom-1);
+              return false;
+            });
+          }); 
+
+
+          }
+
+			</script>
+			<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-42577861-1', 'livingroomproject.org');
+  ga('send', 'pageview');
+
+</script>
+	</head>
+
+
+	<body onload="initialize()">
+		<div id="border"></div>
+		<div id="mainContainer">
+			
+			<header>
+				<section class="navStretch" style="border-bottom: 1px solid #777;
+                                          -webkit-box-shadow: 0 0px 0px 0px;
+                                          -moz-box-shadow: 0 1px 0px 0px;
+                                          box-shadow: 0 0px 0px 0px;">
+					<nav class="mainNav">
+						<ul class="mainLinks">					
+							<li><a href="#" class="pageDesc"><h1>STORY</h1><h3>origins</h3></a></li>
+							<li><a href="about.html" class="pageLink" style="border-left: none;"><h2>About</h2></a></li>
+							<li><a href="places.html" class="pageLink" style="border-left: none; 
+																	border: 1px solid rgba(153, 153, 153, 1);
+																	-webkit-border-radius: 4px;
+																	-moz-border-radius: 4px;
+																	border-radius: 4px;
+																	"><h2>Origins</h2></a></li>
+							<li><a href="objects.html" class="pageLink"><h2>Objects</h2></a></li>
+							<li><a href="index.html" class="pageLink" style="border-left: none;"><h2>Living Rooms</h2></a></li>
+						</ul>
+					</nav>
+				</section>
+			</header>
+
+      <div id="zoomin"></div>
+      <div id="zoomout"></div>
+
+			<div id="map_canvas" class="mapStyle" style="width:100%; height:100%"></div>
+		
+	</body>
+</html>
