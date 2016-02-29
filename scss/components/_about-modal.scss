@@ -1,0 +1,59 @@
+.modal {
+    
+   .modal-content {
+      overflow: hidden;
+   }
+   .modal-dialog {
+      &.say-about-modal {
+         .modal-header {
+            height: 120px;
+            background-color: $brand-primary;
+            // background-image: url('../img/about-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+         }
+         .modal-footer {
+            text-align: center;
+            font-size: $font-size-large;
+            a {
+               margin: 0px 7px;
+               &:hover {
+                  text-decoration: none;
+               }
+            }
+         }
+         // @media (max-width: $screen-sm-min) {
+         //    width: 80%;
+         // }
+         // margin: 0;
+         // top: 50%;
+         // position: absolute;
+         // left: 50%;
+         // transform: translate(-50%, -50%);
+         .modal-header {
+            text-align: center;
+         }
+         .modal-body {
+            padding: 120px 40px 10px 40px;
+            border: none;
+         }
+      }
+   }
+}
+
+.portrait-container {
+   position: absolute;
+   left: 50%;
+   transform: translate(-50%);
+   top: 50px;
+   img {
+      width: 120px;
+      border: 4px solid white;
+      overflow: hidden;
+      border-radius: 50%;
+   }
+   .job-title {
+      color: lighten($gray-light, 10%);
+   }
+}
