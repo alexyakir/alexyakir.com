@@ -3698,6 +3698,17 @@
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0
 		},
+	"\/build\/img\/alex-yakir-02.jpg": {
+		"fileType": 16384,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 71359,
+		"inputAbbreviatedPath": "\/build\/img\/alex-yakir-02.jpg",
+		"outputAbbreviatedPath": "\/build\/img\/alex-yakir-02.jpg",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/build\/img\/alex-yakir.jpg": {
 		"fileType": 16384,
 		"ignore": 0,
@@ -6348,9 +6359,9 @@
 	},
 "projectAttributes": {
 	"bowerAbbreviatedPath": "",
-	"displayValue": "SAY-Portfolio-V2",
+	"displayValue": "alexyakir.com",
 	"displayValueWasSetByUser": 0,
-	"iconImageName": "globe_yellow"
+	"iconImageName": "pencil_orange"
 	},
 "projectSettings": {
 	"alwaysUseExternalServer": 0,
@@ -6936,7 +6947,7 @@
 	"markdownProcessHTML": 0,
 	"markdownRandomFootnoteNumbers": 0,
 	"markdownUseCompatibilityMode": 0,
-	"reloadFileURLs": 0,
+	"reloadFileURLs": 1,
 	"sassAutoOutputPathEnabled": 1,
 	"sassAutoOutputPathFilenamePattern": "*.css",
 	"sassAutoOutputPathRelativePath": "..\/css",
