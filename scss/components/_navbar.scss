@@ -1,57 +1,79 @@
-.navbar {
-    .btn-xs {
+    .navbar {
+      .btn-xs {
         padding: 0px 12px;
-    }
-    .say-about {
+      }
+      .say-about {
         margin-top: 10px;
         a {
-            color: #fff !important;
-            font-size: $font-size-base;
-            line-height: $line-height-base*0.4;
+          color: #fff !important;
+          font-size: $font-size-base;
+          line-height: $line-height-base*0.4;
         }
-    }
-    .navbar-brand {
+      }
+      .navbar-brand {
         color: darken($brand-primary, 53%);
-    }
-    div {
+      }
+      div {
         &:first-child {
-            float: left;
+          float: left;
         }
-    }
-    div {
+      }
+      div {
         &:last-child {
-            li {
-                float: right;
-            }
+          li {
+            float: right;
+          }
         }
-    }
-    .navbar-right {
+      }
+      .navbar-right {
         margin-right: 10px;
-    }
-    .navbar-left {
+      }
+      .navbar-left {
         margin-left: 10px;
+      }
     }
-}
-.navbar-fixed-bottom{
-    margin-bottom: 15px;
-}
-.navbar-brand {
-    // letter-spacing: 3px;
-    color: $gray-light;
-    font-weight: 600;
-    font-size: 16px;
-    padding: 0px 0px 0px 5px !important;
-    i { 
+    
+    .navbar-fixed-bottom {
+      margin-bottom: 15px;
+    }
+    
+    .navbar-brand {
+      // letter-spacing: 3px;
+      color: $gray-light;
+      font-weight: 600;
+      font-size: 16px;
+      // padding: 0px 0px 0px 5px !important;
+      i {
         font-weight: 100;
         color: $gray;
-    }
-    .brand-portrait{
+      }
+      // @media (max-width: $screen-xs-max) {
+      //     position: static !important;
+      // }
+      .brand-portrait {
         width: 50px;
         border-radius: 50%;
-        @include box-shadow(0 1px 1px rgba(0,0,0,.5));
+        @include box-shadow(0 1px 1px rgba(0, 0, 0, .5));
         top: 50%;
         position: relative;
         transform: translateY(-50%);
         margin: 0;
+        // @media (max-width: $screen-xs-max) {
+        //     position: absolute;
+        //     right: 20px;
+        // }
+      }
     }
-}
+    
+    .navbar-left {
+      li {
+        &:first-child {
+          margin-left: 15px;
+        }
+        a {
+          padding-left: 0;
+          white-space: nowrap;
+        }
+      }
+      width: 100%;
+    }
