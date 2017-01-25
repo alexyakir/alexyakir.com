@@ -36,8 +36,6 @@ $(document).ready(function() {
          "00.png",
          "01.png",
          "02.png",
-         "03.png"
-
       ]
    }, {
       id: 2,
