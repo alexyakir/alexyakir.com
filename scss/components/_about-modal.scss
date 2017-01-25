@@ -8,6 +8,7 @@
          .modal-header {
             height: 120px;
             background-color: $brand-primary;
+            @include gradient-vertical($start-color: #1B1A18, $end-color: #000000, $start-percent: 0%, $end-percent: 100%);
             // background-image: url('../img/about-bg.jpg');
             background-size: cover;
             background-position: center;

@@ -103,7 +103,10 @@
                         opacity: 0.8;
                     }
                     img {
-                        vertical-align: baseline;
+                        &:nth-child(1) {
+                            vertical-align: baseline;
+                            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+                        }
                     }
                 }
                 .arrow-grey {
@@ -111,6 +114,9 @@
                     left: -145px;
                     width: 125px;
                     top: -64px;
+                    img{
+                        filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.0)) !important;
+                    }
                 }
                 position: absolute;
                 top: 50%;
@@ -223,6 +229,8 @@
 .flickity-prev-next-button:disabled {
     opacity: 0.2;
 }
+
+
 /* arrow color */
 
 .flickity-prev-next-button .arrow {
@@ -232,6 +240,8 @@
 .flickity-prev-next-button.no-svg {
     color: #1F1F1F;
 }
+
+
 /* position outside */
 
 .flickity-prev-next-button.previous {
