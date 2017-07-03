@@ -15,7 +15,7 @@
 		},
 	"\/bower_components\/bootstrap-sass-official\/assets\/javascripts\/bootstrap.js": {
 		"fileType": 64,
-		"ignore": 1,
+		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/bower_components\/bootstrap-sass-official\/assets\/javascripts\/bootstrap.js",
 		"outputAbbreviatedPath": "\/bower_components\/bootstrap-sass-official\/assets\/javascripts\/min\/bootstrap-min.js",
@@ -1348,7 +1348,7 @@
 		},
 	"\/bower_components\/bootstrap-sass-official\/CHANGELOG.md": {
 		"criticStyle": 0,
-		"enableFootnotes": 0,
+		"enableFootnotes": 1,
 		"enableLabels": 1,
 		"enableSmartQuotes": 1,
 		"escapeLineBreaks": 0,
@@ -1380,7 +1380,7 @@
 		},
 	"\/bower_components\/bootstrap-sass-official\/CONTRIBUTING.md": {
 		"criticStyle": 0,
-		"enableFootnotes": 0,
+		"enableFootnotes": 1,
 		"enableLabels": 1,
 		"enableSmartQuotes": 1,
 		"escapeLineBreaks": 0,
@@ -1412,7 +1412,7 @@
 		},
 	"\/bower_components\/bootstrap-sass-official\/README.md": {
 		"criticStyle": 0,
-		"enableFootnotes": 0,
+		"enableFootnotes": 1,
 		"enableLabels": 1,
 		"enableSmartQuotes": 1,
 		"escapeLineBreaks": 0,
@@ -2703,7 +2703,7 @@
 		},
 	"\/bower_components\/bourbon\/LICENSE.md": {
 		"criticStyle": 0,
-		"enableFootnotes": 0,
+		"enableFootnotes": 1,
 		"enableLabels": 1,
 		"enableSmartQuotes": 1,
 		"escapeLineBreaks": 0,
@@ -2724,7 +2724,7 @@
 		},
 	"\/bower_components\/bourbon\/README.md": {
 		"criticStyle": 0,
-		"enableFootnotes": 0,
+		"enableFootnotes": 1,
 		"enableLabels": 1,
 		"enableSmartQuotes": 1,
 		"escapeLineBreaks": 0,
@@ -2745,7 +2745,7 @@
 		},
 	"\/build\/css\/main.css": {
 		"fileType": 16,
-		"ignore": 1,
+		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/build\/css\/main.css",
 		"outputAbbreviatedPath": "No Output Path",
@@ -2756,7 +2756,7 @@
 		"fileType": 16384,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
-		"initialSize": 71359,
+		"initialSize": 66007,
 		"inputAbbreviatedPath": "\/build\/img\/alex-yakir-02.jpg",
 		"outputAbbreviatedPath": "\/build\/img\/alex-yakir-02.jpg",
 		"outputPathIsOutsideProject": 0,
@@ -4274,7 +4274,7 @@
 		"fileType": 32768,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
-		"initialSize": 127530,
+		"initialSize": 168363,
 		"inputAbbreviatedPath": "\/build\/img\/Projects\/xplenty\/00.png",
 		"outputAbbreviatedPath": "\/build\/img\/Projects\/xplenty\/00.png",
 		"outputPathIsOutsideProject": 0,
@@ -4285,7 +4285,7 @@
 		"fileType": 32768,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
-		"initialSize": 247124,
+		"initialSize": 127530,
 		"inputAbbreviatedPath": "\/build\/img\/Projects\/xplenty\/01.png",
 		"outputAbbreviatedPath": "\/build\/img\/Projects\/xplenty\/01.png",
 		"outputPathIsOutsideProject": 0,
@@ -4369,7 +4369,7 @@
 		},
 	"\/build\/js\/bootstrap-modal-carousel-min.js": {
 		"fileType": 64,
-		"ignore": 1,
+		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/build\/js\/bootstrap-modal-carousel-min.js",
 		"outputAbbreviatedPath": "\/build\/js\/min\/bootstrap-modal-carousel-min-min.js",
@@ -4380,7 +4380,7 @@
 		},
 	"\/build\/js\/main-min.js": {
 		"fileType": 64,
-		"ignore": 1,
+		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/build\/js\/main-min.js",
 		"outputAbbreviatedPath": "\/build\/js\/min\/main-min-min.js",
@@ -4397,8 +4397,8 @@
 		"outputAbbreviatedPath": "\/build\/js\/min\/main-min.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
-		"outputStyle": 2,
-		"syntaxCheckerStyle": 0
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
 		},
 	"\/build\/js\/min\/main-min.js": {
 		"fileType": 64,
@@ -5198,7 +5198,7 @@
 		},
 	"\/build\/README.md": {
 		"criticStyle": 0,
-		"enableFootnotes": 0,
+		"enableFootnotes": 1,
 		"enableLabels": 1,
 		"enableSmartQuotes": 1,
 		"escapeLineBreaks": 0,
@@ -5219,40 +5219,40 @@
 		},
 	"\/js\/bootstrap-modal-carousel.js": {
 		"fileType": 64,
-		"ignore": 1,
-		"ignoreWasSetByUser": 1,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/js\/bootstrap-modal-carousel.js",
-		"outputAbbreviatedPath": "\/build\/js\/bootstrap-modal-carousel-min.js",
+		"outputAbbreviatedPath": "\/js\/min\/bootstrap-modal-carousel-min.js",
 		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 1,
+		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,
-		"syntaxCheckerStyle": 2
+		"syntaxCheckerStyle": 1
 		},
 	"\/js\/custom.js": {
 		"fileType": 64,
 		"ignore": 0,
-		"ignoreWasSetByUser": 1,
+		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/js\/custom.js",
-		"outputAbbreviatedPath": "\/build\/js\/main-min.js",
+		"outputAbbreviatedPath": "\/js\/min\/custom-min.js",
 		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 1,
+		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,
-		"syntaxCheckerStyle": 0
+		"syntaxCheckerStyle": 1
 		},
 	"\/js\/flickity.js": {
 		"fileType": 64,
-		"ignore": 1,
-		"ignoreWasSetByUser": 1,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/js\/flickity.js",
 		"outputAbbreviatedPath": "\/js\/min\/flickity-min.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,
-		"syntaxCheckerStyle": 0
+		"syntaxCheckerStyle": 1
 		},
 	"\/js\/jquery-3.1.1.min.js": {
 		"fileType": 64,
-		"ignore": 1,
+		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/js\/jquery-3.1.1.min.js",
 		"outputAbbreviatedPath": "\/js\/min\/jquery-3.1.1.min-min.js",
@@ -5379,7 +5379,7 @@
 		"decimalPrecision": 10,
 		"fileType": 4,
 		"ignore": 1,
-		"ignoreWasSetByUser": 1,
+		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/scss\/components\/_variables-custom.scss",
 		"outputAbbreviatedPath": "\/scss\/css\/_variables-custom.css",
 		"outputPathIsOutsideProject": 0,
@@ -5390,52 +5390,26 @@
 		"useLibsass": 0
 		},
 	"\/scss\/main.scss": {
-		"createSourceMap": 1,
+		"createSourceMap": 0,
 		"debugStyle": 0,
 		"decimalPrecision": 10,
 		"fileType": 4,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/scss\/main.scss",
-		"outputAbbreviatedPath": "\/build\/css\/main.css",
+		"outputAbbreviatedPath": "\/css\/main.css",
 		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 1,
-		"outputStyle": 3,
-		"shouldRunAutoprefixer": 1,
-		"shouldRunBless": 1,
-		"useLibsass": 1
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 0,
+		"shouldRunAutoprefixer": 0,
+		"shouldRunBless": 0,
+		"useLibsass": 0
 		}
 	},
 "hooks": [
 	],
 "lastSavedByUser": "Alex Yakir",
 "manualImportLinks": {
-	"\/build\/js\/main.js": [
-		{
-			"followForSyntaxChecking": 1,
-			"linkedFileAbbreviatedPath": "\/js\/jquery-3.1.1.min.js",
-			"position": 0,
-			"type": 0
-			},
-		{
-			"followForSyntaxChecking": 1,
-			"linkedFileAbbreviatedPath": "\/js\/flickity.js",
-			"position": 1,
-			"type": 0
-			},
-		{
-			"followForSyntaxChecking": 1,
-			"linkedFileAbbreviatedPath": "\/bower_components\/bootstrap-sass-official\/assets\/javascripts\/bootstrap.js",
-			"position": 2,
-			"type": 0
-			},
-		{
-			"followForSyntaxChecking": 1,
-			"linkedFileAbbreviatedPath": "\/js\/custom.js",
-			"position": 3,
-			"type": 0
-			}
-		]
 	},
 "projectAttributes": {
 	"bowerAbbreviatedPath": "",
@@ -6016,7 +5990,7 @@
 	"markdownAutoOutputPathReplace2": "",
 	"markdownAutoOutputPathStyle": 0,
 	"markdownCriticStyle": 0,
-	"markdownEnableFootnotes": 0,
+	"markdownEnableFootnotes": 1,
 	"markdownEnableLabels": 1,
 	"markdownEnableSmartQuotes": 1,
 	"markdownEscapeLineBreaks": 0,
@@ -6027,7 +6001,7 @@
 	"markdownProcessHTML": 0,
 	"markdownRandomFootnoteNumbers": 0,
 	"markdownUseCompatibilityMode": 0,
-	"reloadFileURLs": 1,
+	"reloadFileURLs": 0,
 	"sassAutoOutputPathEnabled": 1,
 	"sassAutoOutputPathFilenamePattern": "*.css",
 	"sassAutoOutputPathRelativePath": "..\/css",
@@ -6075,7 +6049,7 @@
 	"typescriptJSXMode": 0,
 	"typescriptMinifyOutput": 0,
 	"typescriptModuleResolutionType": 0,
-	"typescriptModuleType": 0,
+	"typescriptModuleType": 2,
 	"typescriptNoImplicitAny": 0,
 	"typescriptPreserveConstEnums": 0,
 	"typescriptRemoveComments": 0,
