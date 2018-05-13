@@ -1,7 +1,7 @@
 .modal {
-    
+
    .modal-content {
-      overflow: hidden;
+      overflow-y: auto;
    }
    .modal-dialog {
       &.say-about-modal {
@@ -38,6 +38,7 @@
          .modal-body {
             padding: 120px 40px 10px 40px;
             border: none;
+            height: 100%;
          }
       }
    }
