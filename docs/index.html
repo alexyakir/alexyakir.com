@@ -227,13 +227,13 @@
                             var time = d.getHours();
 
                             if (time < 12) {
-                                document.write("Welcome & good morning.");
+                                document.write("Welcome and good morning.");
                             }
-                            if (time > 12) {
-                                document.write("Welcome & good afternoon.");
+                            else if (17 >= time >= 12) {
+                                document.write("Welcome and good afternoon.");
                             }
-                            if (time == 12) {
-                                document.write("Welcome!");
+                            else if (time >= 17) {
+                                document.write("Welcome and good evening.");
                             }
                             </script> I aim to build digital experiences that are simple to use and easy to look at.
 
