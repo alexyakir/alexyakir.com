@@ -110,14 +110,16 @@ $(document).ready(function() {
     ]
   }, {
     id: 8,
-    folderName: "dorbel/",
+    folderName: "varsaty/",
     counter: 0,
     files: [
       "00.png",
       "01.png",
       "02.png",
       "03.png",
-      "04.png"
+      "04.png",
+      "05.png",
+      "06.png"
     ]
   }, {
     id: 9,

@@ -3102,6 +3102,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/docs\/img\/DeviceResources\/desktop-safari-1440-837.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 30345,
+		"inputAbbreviatedPath": "\/docs\/img\/DeviceResources\/desktop-safari-1440-837.png",
+		"outputAbbreviatedPath": "\/docs\/img\/DeviceResources\/desktop-safari-1440-837.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/docs\/img\/DeviceResources\/desktop-safari-1440-900.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -3876,9 +3887,64 @@
 		"fileType": 32768,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
-		"initialSize": 896497,
+		"initialSize": 1.52502e+06,
 		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/00.png",
 		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/00.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/dorbel\/000.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 896497,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/000.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/000.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/dorbel\/001.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 611954,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/001.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/001.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/dorbel\/002.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 441950,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/002.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/002.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/dorbel\/003.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 880388,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/003.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/003.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/dorbel\/004.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 410591,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/004.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/004.png",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
@@ -3887,7 +3953,7 @@
 		"fileType": 32768,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
-		"initialSize": 611954,
+		"initialSize": 949579,
 		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/01.png",
 		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/01.png",
 		"outputPathIsOutsideProject": 0,
@@ -3898,7 +3964,7 @@
 		"fileType": 32768,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
-		"initialSize": 441950,
+		"initialSize": 1.2315e+06,
 		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/02.png",
 		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/02.png",
 		"outputPathIsOutsideProject": 0,
@@ -3909,7 +3975,7 @@
 		"fileType": 32768,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
-		"initialSize": 880388,
+		"initialSize": 1.12326e+06,
 		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/03.png",
 		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/03.png",
 		"outputPathIsOutsideProject": 0,
@@ -3920,9 +3986,31 @@
 		"fileType": 32768,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
-		"initialSize": 410591,
+		"initialSize": 1.19128e+06,
 		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/04.png",
 		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/04.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/dorbel\/05.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 1.14932e+06,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/05.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/05.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/dorbel\/06.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 1.15188e+06,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/06.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/dorbel\/06.png",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
@@ -4290,6 +4378,83 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/docs\/img\/Projects\/varsaty\/00.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 1.52502e+06,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/00.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/00.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/varsaty\/01.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 949579,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/01.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/01.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/varsaty\/02.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 1.2315e+06,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/02.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/02.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/varsaty\/03.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 1.12326e+06,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/03.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/03.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/varsaty\/04.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 1.19128e+06,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/04.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/04.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/varsaty\/05.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 1.14932e+06,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/05.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/05.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/docs\/img\/Projects\/varsaty\/06.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 1.15188e+06,
+		"inputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/06.png",
+		"outputAbbreviatedPath": "\/docs\/img\/Projects\/varsaty\/06.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/docs\/img\/Projects\/xplenty\/00.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -4412,7 +4577,7 @@
 	"\/docs\/js\/main-min.js": {
 		"fileType": 64,
 		"ignore": 0,
-		"ignoreWasSetByUser": 0,
+		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/docs\/js\/main-min.js",
 		"outputAbbreviatedPath": "\/docs\/js\/min\/main-min-min.js",
 		"outputPathIsOutsideProject": 0,
@@ -4423,9 +4588,20 @@
 	"\/docs\/js\/main.js": {
 		"fileType": 64,
 		"ignore": 0,
-		"ignoreWasSetByUser": 0,
+		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/docs\/js\/main.js",
 		"outputAbbreviatedPath": "\/docs\/js\/min\/main-min.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
+	"\/docs\/js\/min\/main-min-min.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/docs\/js\/min\/main-min-min.js",
+		"outputAbbreviatedPath": "\/docs\/js\/min\/min\/main-min-min-min.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,
@@ -5261,12 +5437,12 @@
 		},
 	"\/js\/custom.js": {
 		"fileType": 64,
-		"ignore": 0,
+		"ignore": 1,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/js\/custom.js",
-		"outputAbbreviatedPath": "\/js\/min\/custom-min.js",
+		"outputAbbreviatedPath": "\/docs\/js\/custom-min.js",
 		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
+		"outputPathIsSetByUser": 1,
 		"outputStyle": 1,
 		"syntaxCheckerStyle": 1
 		},
@@ -5452,6 +5628,22 @@
 	],
 "lastSavedByUser": "Alex Yakir",
 "manualImportLinks": {
+	"\/docs\/js\/main-min.js": [
+		{
+			"followForSyntaxChecking": 1,
+			"linkedFileAbbreviatedPath": "\/js\/custom.js",
+			"position": 0,
+			"type": 1
+			}
+		],
+	"\/docs\/js\/main.js": [
+		{
+			"followForSyntaxChecking": 1,
+			"linkedFileAbbreviatedPath": "\/js\/custom.js",
+			"position": 0,
+			"type": 1
+			}
+		]
 	},
 "projectAttributes": {
 	"bowerAbbreviatedPath": "",

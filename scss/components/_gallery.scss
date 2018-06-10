@@ -83,7 +83,7 @@
                 &.iphone4s {
                     left: 67%;
                 }
-                
+
             }
             .project-desc {
                 opacity: 1;
@@ -204,6 +204,17 @@
                 }
             }
             &.safari-1440 {
+                cursor: url(../img/my-cursor-b.svg), auto;
+                .project-img {
+                    left: 50%;
+                    transform: translate(-50%, -104.3%);
+                    width: 82.4%;
+                    // @media (max-width: $screen-sm-min) {
+                    //     width: 65.5%;
+                    //     transform: translate(-50%, -127%);
+                    // }
+                }
+            }&.safari-1440-837 {
                 cursor: url(../img/my-cursor-b.svg), auto;
                 .project-img {
                     left: 50%;

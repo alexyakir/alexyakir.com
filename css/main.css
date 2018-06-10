@@ -5982,6 +5982,12 @@ http://flickity.metafizzy.co
         left: 50%;
         transform: translate(-50%, -104.3%);
         width: 82.4%; }
+    .gallery .gallery-cell .project-img-container.safari-1440-837 {
+      cursor: url(../img/my-cursor-b.svg), auto; }
+      .gallery .gallery-cell .project-img-container.safari-1440-837 .project-img {
+        left: 50%;
+        transform: translate(-50%, -104.3%);
+        width: 82.4%; }
   .gallery .is-selected {
     transition: all 0.5s ease; }
     .gallery .is-selected .project-img {
