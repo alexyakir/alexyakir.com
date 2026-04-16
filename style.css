@@ -1,52 +1,392 @@
-:root {
-  --ay-color-bg: #ffe9b1;
-  --ay-color-navy: rgb(1, 22, 79);
-  --ay-color-navy-dots: rgba(1, 22, 79, 0.18);
-  --ay-color-hero-bg: rgb(0, 22, 79);
-  --ay-color-brown-title: rgb(51, 46, 33);
-  --ay-color-brown-muted: rgb(120, 104, 62);
-  --ay-color-brown-dots: rgba(23, 16, 1, 0.18);
-  --ay-color-cta-bg: rgb(255, 222, 140);
-  --ay-color-cta-text: rgb(71, 58, 24);
-  --ay-font: "Bricolage Grotesque", system-ui, sans-serif;
-  --ay-font-condensed: "IBM Plex Sans Condensed", system-ui, sans-serif;
-  --ay-content-width: 350px;
+/* Tokens — light is alexwidua.com (warm gradient + strong title/muted body),
+   dark is joshpuckett.me (near-black + muted body). Blue stays ours.
+   Theme applied via [data-theme] on <html> — set before paint by inline script
+   in index.html, sourced from localStorage or prefers-color-scheme on first load. */
+:root,
+:root[data-theme="light"] {
+  --ink:         #0a0a0a;
+  --ink-strong:  #000;
+  --ink-soft:    #929292;       /* was #737373 — more muted, stronger title/body diff */
+  --blue:        #2563eb;
+  --blue-soft:   rgba(37, 99, 235, 0.45);
+  --surface:     #ffffff;        /* gradient top — pure white */
+  --surface-end: #fdf1e6;        /* gradient bottom — warm cream (Widua) */
+
+  /* Top of the identity stack — lamp's lit color the text fades FROM at
+     the top. Bottom of the stack fades to --ink-soft. */
+  --name-lit:    #4f91ff;
+
+  /* Lamp — LIGHT MODE = crisp saturated blue LED on white.
+     Key physics for "blue light on white": the source reads DARKER than bg
+     (saturated blue on white = visible deep-blue rectangle), and the halo
+     reads LIGHTER (washes of blue at decreasing alpha blend toward white).
+     So halo lightens outward — opposite of dark mode. Same eased radius
+     curve [1, 2, 5, 11, 22, 40], asymmetric downward. */
+  --lamp-fill: #2563eb;
+  --lamp-glow:
+    0 0px   1px  rgba( 37,  99, 235, 1.00),
+    0 1px   2px  rgba( 59, 130, 246, 0.85),
+    0 3px   5px  rgba( 90, 150, 250, 0.60),
+    0 7px  11px  rgba(120, 170, 255, 0.38),
+    0 14px 22px  rgba(150, 190, 255, 0.20),
+    0 24px 40px  rgba(170, 205, 255, 0.09);
+  --lamp-glow-hover:
+    0 0px   1px  rgba( 37,  99, 235, 1.00),
+    0 1px   2px  rgba( 50, 120, 245, 1.00),
+    0 3px   5px  rgba( 80, 145, 250, 0.78),
+    0 7px  11px  rgba(110, 165, 255, 0.52),
+    0 14px 22px  rgba(140, 185, 255, 0.30),
+    0 24px 40px  rgba(165, 200, 255, 0.14);
+  --lamp-pool: radial-gradient(
+    ellipse 90px 70px at 50% 0%,
+    rgba( 59, 130, 246, 0.65)  0%,
+    rgba( 90, 150, 250, 0.45)  8%,
+    rgba(120, 170, 255, 0.26) 22%,
+    rgba(150, 190, 255, 0.13) 45%,
+    rgba(170, 205, 255, 0.05) 75%,
+    transparent 100%);
+  --lamp-pool-hover: radial-gradient(
+    ellipse 100px 80px at 50% 0%,
+    rgba( 50, 120, 245, 0.80)  0%,
+    rgba( 80, 145, 250, 0.60)  8%,
+    rgba(110, 165, 255, 0.38) 22%,
+    rgba(140, 185, 255, 0.20) 45%,
+    rgba(165, 200, 255, 0.08) 75%,
+    transparent 100%);
 }
 
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: var(--ay-color-bg); font-family: var(--ay-font); -webkit-font-smoothing: antialiased; }
-.ay-page { max-width: var(--ay-content-width); margin: 0 auto; padding: 48px 0 40px; }
-@media (max-width: 382px) { .ay-page { padding-left: 16px; padding-right: 16px; } }
+:root[data-theme="dark"] {
+  --ink:         #fafafa;
+  --ink-strong:  #fff;
+  --ink-soft:    #a3a3a3;        /* muted body, matches Josh's rendered feel */
+  --blue:        #7aa2ff;
+  --blue-soft:   rgba(122, 162, 255, 0.4);
+  --surface:     #0a0a0a;
+  --surface-end: #0a0a0a;        /* flat in dark — no gradient */
 
-.ay-hero { background: var(--ay-color-hero-bg); display: flex; align-items: flex-end; justify-content: center; aspect-ratio: 1 / 1.486; overflow: hidden; margin-bottom: 32px; }
-.ay-hero img { width: 256px; height: auto; image-rendering: pixelated; display: block; }
+  /* Top of the identity stack — lamp is white in dark mode. */
+  --name-lit:    #ffffff;
 
-.ay-entries { display: flex; flex-direction: column; gap: 22px; }
-.ay-entries--exp { margin-top: 54px; }
+  /* Lamp — DARK MODE = white fluorescent tube emission, unconstrained.
+     Crisp source + luminous halo (the defining structure of GLOW vs BLUR).
+     Halo uses full figma-glow eased curve [1, 2, 5, 11, 22, 40], y-offset
+     grows with blur (directional downward spill). Colors shift warm-white
+     core → cool blue periphery, mimicking real atmospheric scatter. */
+  --lamp-fill: #ffffff;
+  --lamp-glow:
+    0 0px   1px  rgba(255, 255, 255, 1.00),
+    0 1px   2px  rgba(255, 255, 255, 0.85),
+    0 3px   5px  rgba(235, 245, 255, 0.60),
+    0 7px  11px  rgba(200, 225, 255, 0.35),
+    0 14px 22px  rgba(170, 205, 255, 0.18),
+    0 24px 40px  rgba(150, 195, 255, 0.08);
+  --lamp-glow-hover:
+    0 0px   1px  rgba(255, 255, 255, 1.00),
+    0 1px   2px  rgba(255, 255, 255, 1.00),
+    0 3px   5px  rgba(245, 250, 255, 0.80),
+    0 7px  11px  rgba(215, 235, 255, 0.52),
+    0 14px 22px  rgba(185, 215, 255, 0.30),
+    0 24px 40px  rgba(165, 205, 255, 0.16);
+  /* Pool matches the long tube — wide ellipse (90x70) so light fills
+     horizontally and falls off vertically. Inverse-square stops preserved. */
+  --lamp-pool: radial-gradient(
+    ellipse 90px 70px at 50% 0%,
+    rgba(255, 255, 255, 0.75)  0%,
+    rgba(240, 248, 255, 0.45)  8%,
+    rgba(220, 235, 255, 0.24) 22%,
+    rgba(190, 215, 255, 0.12) 45%,
+    rgba(170, 205, 255, 0.04) 75%,
+    transparent 100%);
+  --lamp-pool-hover: radial-gradient(
+    ellipse 100px 80px at 50% 0%,
+    rgba(255, 255, 255, 0.90)  0%,
+    rgba(248, 252, 255, 0.62)  8%,
+    rgba(230, 242, 255, 0.36) 22%,
+    rgba(205, 225, 255, 0.18) 45%,
+    rgba(180, 210, 255, 0.07) 75%,
+    transparent 100%);
+}
 
-.ay-entry { display: flex; flex-wrap: wrap; align-items: baseline; }
-.ay-entry__title { font-size: 15px; font-weight: 700; line-height: 18px; letter-spacing: 0.45px; color: var(--ay-color-navy); white-space: nowrap; }
-.ay-entry__dots { flex: 1; font-size: 16px; font-weight: 400; line-height: 19.2px; letter-spacing: 0.96px; color: var(--ay-color-navy-dots); overflow: hidden; white-space: nowrap; margin: 0 2px; }
-.ay-entry__year { font-size: 15px; font-weight: 500; line-height: 18px; letter-spacing: 0.45px; color: var(--ay-color-navy); white-space: nowrap; }
-.ay-entry__desc { flex-basis: 100%; font-size: 14px; font-weight: 300; line-height: 21px; letter-spacing: 0.42px; color: var(--ay-color-navy); margin-top: 2px; }
-.ay-entry__desc a { color: inherit; text-decoration: underline solid rgba(0, 0, 0, 0.15); text-decoration-thickness: 2px; text-underline-offset: 1px; }
-.ay-entry__desc a:hover { text-decoration-color: currentColor; }
+/* Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.ay-entry--muted { opacity: 0.32; }
-.ay-entry--muted .ay-entry__title { font-size: 14px; line-height: 16.8px; letter-spacing: 0.42px; }
-.ay-entry--muted .ay-entry__year { font-size: 14px; line-height: 16.8px; letter-spacing: 0.42px; }
+html { background: var(--surface); }
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--surface), var(--surface-end));
+  background-attachment: fixed;
+  color: var(--ink);
+  /* Type: 18px / 1.5 — Widua scale, system-ui. Flat hierarchy: same size for
+     body and titles, weight (400/600) does the work. */
+  font: 18px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Inter, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
 
-.ay-entries--exp .ay-entry__title { color: var(--ay-color-brown-title); }
-.ay-entries--exp .ay-entry__year { color: var(--ay-color-brown-muted); }
-.ay-entries--exp .ay-entry__desc { color: var(--ay-color-brown-muted); }
-.ay-entries--exp .ay-entry__dots { color: var(--ay-color-brown-dots); }
+/* Page grid — left col auto-sizes to its widest content (max-content),
+   so "hi@alexyakir.com" defines the width. Add or remove items, column
+   adjusts itself. Right column gets the remainder. */
+.cv {
+  max-width: 650px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 64px;
+  align-items: start;
+}
 
-.ay-badge { display: inline-block; background: var(--ay-color-hero-bg); color: #fff; font-family: var(--ay-font-condensed); font-size: 10px; font-weight: 500; letter-spacing: 0.3px; padding: 4px; border-radius: 4px; vertical-align: baseline; translate: 0 -1px; margin-right: 6px; }
+/* Identity (left column, single row) — rhythm comes from inherited 1.5 line-height, no extra gap */
+.cv-id { display: flex; flex-direction: column; }
 
-.ay-cta { display: flex; align-items: center; justify-content: center; background: var(--ay-color-cta-bg); color: var(--ay-color-cta-text); font-family: var(--ay-font); font-size: 13px; font-weight: 400; letter-spacing: 0.39px; line-height: 16.9px; text-decoration: none; height: 44px; border-radius: 22px; margin-top: 32px; transition: opacity 0.15s; }
-.ay-cta:hover { opacity: 0.8; }
+/* Identity stack — all text shares ONE 200px-tall vertical gradient that
+   maps the lamp's light across the entire column. Each element shows a
+   SLICE of that gradient, positioned by its y-offset within .cv-id, so
+   the fade visually penetrates from h1 (lit) all the way down to LinkedIn
+   (muted). Stack: button (32) + 8px margin + 7 lines × 27px = 229px. */
+.cv-id__name,
+.cv-id > p,
+.cv-id > a {
+  background-image: linear-gradient(to bottom,
+    var(--name-lit) 0,
+    var(--ink-soft) 200px);
+  background-size: 100% 200px;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
 
-.ay-social { display: flex; justify-content: center; gap: 20px; margin-top: 32px; padding-bottom: 16px; }
-.ay-social a { color: var(--ay-color-brown-muted); transition: opacity 0.15s; }
-.ay-social a:hover { opacity: 0.7; }
-.ay-social svg { width: 18px; height: 18px; display: block; fill: currentColor; }
+/* h1 — top of the stack, fully lit. Weight 800 = SF Pro "Heavy" / Inter
+   ExtraBold — real weights, no faux bold. Segoe UI falls back to 700. */
+.cv-id__name {
+  font-size: inherit;
+  font-weight: 800;
+  background-position: 0 0;
+}
+
+/* Email — only <p> direct child. Sits at row 1 below h1. */
+.cv-id > p {
+  font-weight: 500;
+  background-position: 0 -27px;
+}
+
+/* Anchors — direct children of .cv-id (no <p> wrapper). Display block so
+   each takes its own row in the flex column. Weight 500 (Medium) is
+   universally available across system fonts — no faux bold. */
+.cv-id > a {
+  display: block;
+  font-weight: 500;
+  text-decoration: none;
+}
+.cv-id > a:nth-of-type(1) { background-position: 0 -54px;  }  /* @alexyakir */
+.cv-id > a:nth-of-type(2) { background-position: 0 -81px;  }  /* Download CV*/
+.cv-id > a:nth-of-type(3) { background-position: 0 -108px; }  /* Figma      */
+.cv-id > a:nth-of-type(4) { background-position: 0 -135px; }  /* GitHub     */
+.cv-id > a:nth-of-type(5) { background-position: 0 -162px; }  /* LinkedIn   */
+
+/* Chevron on hover — slides in from the left and fades up. Split-easing:
+   opacity uses Vercel's snappy out-curve (fast in, no overshoot possible
+   on opacity); transform uses a spring-out cubic-bezier with mild
+   overshoot so the chevron settles with a tiny pop. Different durations
+   (180ms opacity / 280ms transform) let the chevron *appear* quickly,
+   then *settle* — feels more designed than a single linear ease.
+   `color: var(--name-lit)` is explicit because pseudo-elements inherit
+   `color: transparent` from the parent's bg-clip:text setup, which would
+   render the chevron invisible without an override. */
+.cv-id > a::after {
+  content: "→";
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--name-lit);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition:
+    opacity   180ms cubic-bezier(0.32, 0.72, 0, 1),
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cv-id > a:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-id > a::after { transition: none; }
+}
+
+/* Right column flow */
+.cv-body { display: flex; flex-direction: column; gap: 48px; }
+
+/* Entries */
+.cv-entry { display: flex; flex-direction: column; }
+.cv-entry__head { font-size: inherit; font-weight: 400; }
+.cv-entry__title { font-weight: 600; color: var(--ink-strong); }
+.cv-entry__meta { color: var(--ink-soft); margin-left: 8px; }
+.cv-entry--muted .cv-entry__title { color: var(--ink-soft); font-weight: 400; }
+
+/* Intro is plain muted gray — no gradient, sits as quiet body copy. */
+.cv-intro { color: var(--ink-soft); }
+
+/* Entry bodies keep the muted-to-blue gradient so links/titles still pop
+   inside the entry blocks. */
+.cv-entry__body {
+  background-image: linear-gradient(to right, var(--ink-soft), var(--blue));
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+/* Links — one treatment everywhere */
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--blue-soft);
+  text-decoration-skip-ink: auto;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* NEW badge */
+.cv-badge {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--surface);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: 1px;
+  text-transform: uppercase;
+}
+
+/* ---------- Theme toggle — the lamp ----------
+   Square button, top-right, fixed. In dark it's a lit lamp strip; in light it's
+   the same strip unlit, casting a faint blue shadow (pencil on paper). The glow
+   itself sells the affordance in dark mode — no icon needed. */
+.theme-toggle {
+  position: relative;           /* containing block for the lamp + pool */
+  width: 100%;                  /* span the full left column (140px on desktop) */
+  height: 32px;
+  padding: 0;
+  margin-bottom: 8px;           /* breathing room between fixture and the name */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  isolation: isolate;           /* stacking context keeps ::after below strip */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mobile: cv-id becomes a horizontal flex row; force the lamp onto its own
+   line so the beam still casts down onto the name block. */
+@media (max-width: 600px) {
+  .cv-id > .theme-toggle { flex-basis: 100%; }
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* The strip — 2px crisp source spanning the full column width (140px).
+   A long linear tube instead of a small fixture. No filter:blur on the
+   source; crispness + luminous halo is what makes it read GLOW not BLUR. */
+.theme-toggle__lamp {
+  position: absolute;
+  top: 9px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--lamp-fill);
+  box-shadow: var(--lamp-glow);
+  transition: background 220ms ease, box-shadow 240ms ease;
+}
+
+/* Volumetric pool — wide rectangular fall of light matching the long tube.
+   Linear sources cast light uniformly along their length, so the pool is
+   wider than it is tall. Ellipse soft-caps the ends so the light doesn't
+   visibly "cut off" at the tube edges. */
+.theme-toggle__lamp::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 200px;
+  height: 110px;
+  transform: translateX(-50%);
+  background: var(--lamp-pool);
+  pointer-events: none;
+  z-index: -1;
+  transition: background 240ms ease;
+}
+
+.theme-toggle:hover .theme-toggle__lamp {
+  box-shadow: var(--lamp-glow-hover);
+}
+
+.theme-toggle:hover .theme-toggle__lamp::after {
+  background: var(--lamp-pool-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle__lamp,
+  .theme-toggle__lamp::after { transition: none; }
+}
+
+/* Mobile stack */
+@media (max-width: 600px) {
+  .cv {
+    grid-template-columns: 1fr;
+    row-gap: 40px;
+    padding: 0 20px;
+  }
+  .cv-id { flex-direction: row; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
+}
+
+/* ---------- Page-load reveal ----------
+   Elements marked with `.reveal` start hidden; Motion (in script.js) fades
+   them to visible with a staggered y-lift. Emil Kowalski's rules: short
+   duration (< 300ms), transform + opacity only — no blur, no layout props. */
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Print — clean black-on-white CV, no gradient, no footer */
+@media print {
+  :root {
+    --ink: #000;
+    --ink-strong: #000;
+    --ink-soft: #444;
+    --blue: #000;
+    --blue-soft: rgba(0, 0, 0, 0.3);
+    --surface: #fff;
+    --surface-end: #fff;
+  }
+  body { background: #fff; }
+  .cv-intro,
+  .cv-entry__body {
+    background: none;
+    -webkit-background-clip: border-box;
+            background-clip: border-box;
+    color: var(--ink);
+  }
+  .cv { padding: 48px; }
+  @page { margin: 0.5in; size: letter; }
+}
