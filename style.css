@@ -20,39 +20,43 @@
      Key physics for "blue light on white": the source reads DARKER than bg
      (saturated blue on white = visible deep-blue rectangle), and the halo
      reads LIGHTER (washes of blue at decreasing alpha blend toward white).
-     So halo lightens outward — opposite of dark mode. Same eased radius
-     curve [1, 2, 5, 11, 22, 40], asymmetric downward. */
-  --lamp-fill: #2563eb;
+     So halo lightens outward — opposite of dark mode. figma-glow eased
+     radius curve extended to 14 layers reaching ~1080px downward, with
+     asymmetric positive y-offsets for directional spill. Box-shadow on a
+     wide thin rectangle gives line-source falloff for free — no radial
+     pool needed. Line-source physics: near-field (r < tube length ~140px)
+     falls off roughly 1/r; far-field transitions toward 1/r². */
+  --lamp-fill: #1d4ed8;            /* blue-700, darker than --blue for lamp source */
   --lamp-glow:
-    0 0px   1px  rgba( 37,  99, 235, 1.00),
-    0 1px   2px  rgba( 59, 130, 246, 0.85),
-    0 3px   5px  rgba( 90, 150, 250, 0.60),
-    0 7px  11px  rgba(120, 170, 255, 0.38),
-    0 14px 22px  rgba(150, 190, 255, 0.20),
-    0 24px 40px  rgba(170, 205, 255, 0.09);
+    0 0px      1px  rgba( 29,  78, 216, 1.00),
+    0 1px      2px  rgba( 29,  78, 216, 0.92),
+    0 3px      5px  rgba( 37,  99, 235, 0.78),
+    0 7px     11px  rgba( 59, 130, 246, 0.62),
+    0 14px    22px  rgba( 90, 150, 250, 0.45),
+    0 24px    40px  rgba(120, 170, 255, 0.30),
+    0 42px    70px  rgba(150, 190, 255, 0.21),
+    0 70px   115px  rgba(170, 205, 255, 0.15),
+    0 110px  180px  rgba(185, 215, 255, 0.125),
+    0 170px  270px  rgba(195, 222, 255, 0.082),
+    0 260px  400px  rgba(205, 228, 255, 0.052),
+    0 380px  560px  rgba(212, 232, 255, 0.030),
+    0 550px  780px  rgba(218, 236, 255, 0.018),
+    0 780px 1080px  rgba(222, 240, 255, 0.010);
   --lamp-glow-hover:
-    0 0px   1px  rgba( 37,  99, 235, 1.00),
-    0 1px   2px  rgba( 50, 120, 245, 1.00),
-    0 3px   5px  rgba( 80, 145, 250, 0.78),
-    0 7px  11px  rgba(110, 165, 255, 0.52),
-    0 14px 22px  rgba(140, 185, 255, 0.30),
-    0 24px 40px  rgba(165, 200, 255, 0.14);
-  --lamp-pool: radial-gradient(
-    ellipse 90px 70px at 50% 0%,
-    rgba( 59, 130, 246, 0.65)  0%,
-    rgba( 90, 150, 250, 0.45)  8%,
-    rgba(120, 170, 255, 0.26) 22%,
-    rgba(150, 190, 255, 0.13) 45%,
-    rgba(170, 205, 255, 0.05) 75%,
-    transparent 100%);
-  --lamp-pool-hover: radial-gradient(
-    ellipse 100px 80px at 50% 0%,
-    rgba( 50, 120, 245, 0.80)  0%,
-    rgba( 80, 145, 250, 0.60)  8%,
-    rgba(110, 165, 255, 0.38) 22%,
-    rgba(140, 185, 255, 0.20) 45%,
-    rgba(165, 200, 255, 0.08) 75%,
-    transparent 100%);
+    0 0px      1px  rgba( 29,  78, 216, 1.00),
+    0 1px      2px  rgba( 29,  78, 216, 1.00),
+    0 3px      5px  rgba( 37,  99, 235, 0.95),
+    0 7px     11px  rgba( 59, 130, 246, 0.80),
+    0 14px    22px  rgba( 90, 150, 250, 0.60),
+    0 24px    40px  rgba(120, 170, 255, 0.44),
+    0 42px    70px  rgba(150, 190, 255, 0.31),
+    0 70px   115px  rgba(170, 205, 255, 0.22),
+    0 110px  180px  rgba(185, 215, 255, 0.185),
+    0 170px  270px  rgba(195, 222, 255, 0.12),
+    0 260px  400px  rgba(205, 228, 255, 0.078),
+    0 380px  560px  rgba(212, 232, 255, 0.048),
+    0 550px  780px  rgba(218, 236, 255, 0.027),
+    0 780px 1080px  rgba(222, 240, 255, 0.015);
 }
 
 :root[data-theme="dark"] {
@@ -69,48 +73,75 @@
 
   /* Lamp — DARK MODE = white fluorescent tube emission, unconstrained.
      Crisp source + luminous halo (the defining structure of GLOW vs BLUR).
-     Halo uses full figma-glow eased curve [1, 2, 5, 11, 22, 40], y-offset
-     grows with blur (directional downward spill). Colors shift warm-white
-     core → cool blue periphery, mimicking real atmospheric scatter. */
+     figma-glow eased curve extended to 14 layers reaching ~1080px downward,
+     y-offset grows with blur (directional spill). Colors shift warm-white
+     core → cool blue periphery, mimicking real atmospheric scatter. Line-
+     source physics: near-field (r < tube length) falls off roughly 1/r;
+     far-field transitions toward 1/r². Box-shadow on the rectangular strip
+     handles the geometry directly — no radial pool needed. */
   --lamp-fill: #ffffff;
   --lamp-glow:
-    0 0px   1px  rgba(255, 255, 255, 1.00),
-    0 1px   2px  rgba(255, 255, 255, 0.85),
-    0 3px   5px  rgba(235, 245, 255, 0.60),
-    0 7px  11px  rgba(200, 225, 255, 0.35),
-    0 14px 22px  rgba(170, 205, 255, 0.18),
-    0 24px 40px  rgba(150, 195, 255, 0.08);
+    0 0px      1px  rgba(255, 255, 255, 1.00),
+    0 1px      2px  rgba(255, 255, 255, 0.95),
+    0 3px      5px  rgba(235, 245, 255, 0.75),
+    0 7px     11px  rgba(210, 230, 255, 0.62),
+    0 14px    22px  rgba(180, 215, 255, 0.48),
+    0 24px    40px  rgba(160, 200, 255, 0.36),
+    0 42px    70px  rgba(145, 190, 255, 0.28),
+    0 70px   115px  rgba(135, 185, 250, 0.23),
+    0 110px  180px  rgba(125, 175, 245, 0.22),
+    0 170px  270px  rgba(120, 170, 240, 0.17),
+    0 260px  400px  rgba(115, 165, 235, 0.12),
+    0 380px  560px  rgba(112, 162, 232, 0.080),
+    0 550px  780px  rgba(110, 160, 230, 0.050),
+    0 780px 1080px  rgba(108, 158, 228, 0.030);
   --lamp-glow-hover:
-    0 0px   1px  rgba(255, 255, 255, 1.00),
-    0 1px   2px  rgba(255, 255, 255, 1.00),
-    0 3px   5px  rgba(245, 250, 255, 0.80),
-    0 7px  11px  rgba(215, 235, 255, 0.52),
-    0 14px 22px  rgba(185, 215, 255, 0.30),
-    0 24px 40px  rgba(165, 205, 255, 0.16);
-  /* Pool matches the long tube — wide ellipse (90x70) so light fills
-     horizontally and falls off vertically. Inverse-square stops preserved. */
-  --lamp-pool: radial-gradient(
-    ellipse 90px 70px at 50% 0%,
-    rgba(255, 255, 255, 0.75)  0%,
-    rgba(240, 248, 255, 0.45)  8%,
-    rgba(220, 235, 255, 0.24) 22%,
-    rgba(190, 215, 255, 0.12) 45%,
-    rgba(170, 205, 255, 0.04) 75%,
-    transparent 100%);
-  --lamp-pool-hover: radial-gradient(
-    ellipse 100px 80px at 50% 0%,
-    rgba(255, 255, 255, 0.90)  0%,
-    rgba(248, 252, 255, 0.62)  8%,
-    rgba(230, 242, 255, 0.36) 22%,
-    rgba(205, 225, 255, 0.18) 45%,
-    rgba(180, 210, 255, 0.07) 75%,
-    transparent 100%);
+    0 0px      1px  rgba(255, 255, 255, 1.00),
+    0 1px      2px  rgba(255, 255, 255, 1.00),
+    0 3px      5px  rgba(245, 250, 255, 0.92),
+    0 7px     11px  rgba(220, 238, 255, 0.78),
+    0 14px    22px  rgba(195, 222, 255, 0.62),
+    0 24px    40px  rgba(175, 212, 255, 0.48),
+    0 42px    70px  rgba(158, 200, 255, 0.38),
+    0 70px   115px  rgba(145, 192, 250, 0.30),
+    0 110px  180px  rgba(138, 185, 245, 0.28),
+    0 170px  270px  rgba(132, 178, 240, 0.22),
+    0 260px  400px  rgba(128, 174, 235, 0.15),
+    0 380px  560px  rgba(125, 170, 232, 0.10),
+    0 550px  780px  rgba(122, 167, 230, 0.062),
+    0 780px 1080px  rgba(118, 163, 225, 0.038);
 }
 
 /* Reset */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { background: var(--surface); }
+/* ---------- Drum foundation (Layer 1) ----------
+   The <html> element is the scroll container. Notch y-coordinate is 42vh —
+   where the user's eye rests, just above center. scroll-padding-top aligns
+   snap targets' top edges to that line. Proximity (not mandatory) so the
+   page still feels like a page; entries just magnetize when close. */
+html {
+  background: var(--surface);
+  scroll-snap-type: y proximity;
+  scroll-padding-top: var(--notch, 42vh);
+  scroll-behavior: smooth;
+}
+
+:root {
+  --notch: 42vh;
+  /* Lamp-to-title gap — the vertical distance from the lamp's center line
+     to the title line below it. Equals .cv-id padding-top (notch - 26)
+     plus lamp center offset (1px = half of 2px) inside its flex row,
+     subtracted from the title's y (which sits at notch). Empirically 25px
+     in the current layout; centralized here so every alignment-dependent
+     piece (entry ticks, ruler position) derives from one number.
+     If .cv-id padding or .theme-toggle height changes, update this. */
+  --lamp-gap: 25px;
+  /* Dial y — the horizontal line where the lamp center lives, and where
+     entry ticks and ruler ticks must align. */
+  --dial-y: calc(var(--notch) - var(--lamp-gap));
+}
+
 body {
   min-height: 100vh;
   background: linear-gradient(180deg, var(--surface), var(--surface-end));
@@ -136,14 +167,25 @@ body {
   align-items: start;
 }
 
-/* Identity (left column, single row) — rhythm comes from inherited 1.5 line-height, no extra gap */
-.cv-id { display: flex; flex-direction: column; }
+/* Identity (left column) — sticky + full viewport so the card can float at
+   any y-position independent of the right-column flow. justify-content
+   anchors the stack such that the name-line lands on the notch: we push
+   from the top with padding equal to notch minus the content above the
+   name (theme-toggle 26px). */
+.cv-id {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  padding-top: calc(var(--notch) - 26px);
+}
 
 /* Identity stack — all text shares ONE 200px-tall vertical gradient that
    maps the lamp's light across the entire column. Each element shows a
    SLICE of that gradient, positioned by its y-offset within .cv-id, so
    the fade visually penetrates from h1 (lit) all the way down to LinkedIn
-   (muted). Stack: button (32) + 8px margin + 7 lines × 27px = 229px. */
+   (muted). Stack: button (26) + 7 lines × 27px = 215px. */
 .cv-id__name,
 .cv-id > p,
 .cv-id > a {
@@ -214,15 +256,52 @@ body {
   .cv-id > a::after { transition: none; }
 }
 
-/* Right column flow */
+/* Right column flow — the drum track. Breathing room above the first entry
+   and below the last entry so they can both reach the notch line. Without
+   these spacers the first entry can never scroll up to 42vh (nothing above
+   it to scroll away) and the last entry can never scroll up to 42vh either
+   (nothing below it). */
 .cv-body { display: flex; flex-direction: column; gap: 48px; }
+.cv-body::before { content: ""; display: block; block-size: var(--notch); }
+.cv-body::after  { content: ""; display: block; block-size: calc(100dvh - var(--notch) - 2lh); }
 
-/* Entries */
-.cv-entry { display: flex; flex-direction: column; }
+/* Snap targets — each position on the dial. Align start = the title line
+   parks exactly at scroll-padding-top (= notch y). scroll-snap-stop: always
+   forces the browser to honor every snap point it passes during a scroll
+   action — no more skipping past entries with tall bodies (e.g. Wix).
+   Combined with proximity snap-type, you can still *rest* between entries
+   when you stop scrolling; you just can't fly past one when you're moving. */
+.cv-intro,
+.cv-entry {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Entries — position: relative establishes the containing block for the
+   tick pseudo-element that floats above each title. */
+.cv-entry { display: flex; flex-direction: column; position: relative; }
+.cv-intro { position: relative; }
 .cv-entry__head { font-size: inherit; font-weight: 400; }
 .cv-entry__title { font-weight: 600; color: var(--ink-strong); }
-.cv-entry__meta { color: var(--ink-soft); margin-left: 8px; }
 .cv-entry--muted .cv-entry__title { color: var(--ink-soft); font-weight: 400; }
+
+/* Dial tick — one per snap target. Sits --lamp-gap above the title line,
+   so when the entry parks at the notch the tick aligns horizontally with
+   the lamp's center (--dial-y). Extends ~18px to the left, into the gutter.
+   currentColor picks up the surrounding ink and inherits the falloff
+   opacity on the parent entry — no separate opacity wiring needed. */
+.cv-entry::before,
+.cv-intro::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--lamp-gap));
+  left: -32px;                /* tick lives left of the entry, in the gutter */
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.18;              /* subtle — rides on top of the entry's falloff */
+  pointer-events: none;
+}
 
 /* Intro is plain muted gray — no gradient, sits as quiet body copy. */
 .cv-intro { color: var(--ink-soft); }
@@ -252,35 +331,21 @@ a:focus-visible {
   border-radius: 2px;
 }
 
-/* NEW badge */
-.cv-badge {
-  display: inline-block;
-  background: var(--ink);
-  color: var(--surface);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  padding: 2px 4px;
-  border-radius: 3px;
-  margin-right: 6px;
-  vertical-align: 1px;
-  text-transform: uppercase;
-}
-
 /* ---------- Theme toggle — the lamp ----------
-   Square button, top-right, fixed. In dark it's a lit lamp strip; in light it's
-   the same strip unlit, casting a faint blue shadow (pencil on paper). The glow
-   itself sells the affordance in dark mode — no icon needed. */
+   Fluorescent-tube geometry: a 2px strip spanning the full column width,
+   glow delivered entirely through stacked box-shadows on the strip itself.
+   Line sources radiate from their rectangle, not from a point — box-shadow
+   respects that geometry for free (no radial pool, no centered hotspot).
+   Dark = lit tube, light = same tube unlit casting a faint blue halo
+   (pencil on paper). The glow sells the affordance; no icon needed. */
 .theme-toggle {
-  position: relative;           /* containing block for the lamp + pool */
+  display: flex;                /* span child becomes a flex item — no display:block needed */
   width: 100%;                  /* span the full left column (140px on desktop) */
-  height: 32px;
+  height: 26px;
   padding: 0;
-  margin-bottom: 8px;           /* breathing room between fixture and the name */
   background: transparent;
   border: none;
   cursor: pointer;
-  isolation: isolate;           /* stacking context keeps ::after below strip */
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -296,59 +361,109 @@ a:focus-visible {
   border-radius: 4px;
 }
 
-/* The strip — 2px crisp source spanning the full column width (140px).
-   A long linear tube instead of a small fixture. No filter:blur on the
-   source; crispness + luminous halo is what makes it read GLOW not BLUR. */
+/* The strip — crisp 2px rectangular source, full column width. No filter:
+   blur on the source; crispness + luminous halo is what makes it read GLOW
+   not BLUR. clip-path cuts the box-shadow above the tube's top edge — real
+   fluorescent fixtures have an opaque reflector housing on top, so light
+   spills only downward and sideways. Horizontal/downward spread preserved
+   via large negative insets. */
 .theme-toggle__lamp {
-  position: absolute;
-  top: 9px;
-  left: 0;
-  right: 0;
+  width: 100%;
   height: 2px;
   background: var(--lamp-fill);
   box-shadow: var(--lamp-glow);
+  clip-path: inset(0 -9999px -9999px -9999px);
   transition: background 220ms ease, box-shadow 240ms ease;
-}
-
-/* Volumetric pool — wide rectangular fall of light matching the long tube.
-   Linear sources cast light uniformly along their length, so the pool is
-   wider than it is tall. Ellipse soft-caps the ends so the light doesn't
-   visibly "cut off" at the tube edges. */
-.theme-toggle__lamp::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  width: 200px;
-  height: 110px;
-  transform: translateX(-50%);
-  background: var(--lamp-pool);
-  pointer-events: none;
-  z-index: -1;
-  transition: background 240ms ease;
 }
 
 .theme-toggle:hover .theme-toggle__lamp {
   box-shadow: var(--lamp-glow-hover);
 }
 
-.theme-toggle:hover .theme-toggle__lamp::after {
-  background: var(--lamp-pool-hover);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .theme-toggle__lamp,
-  .theme-toggle__lamp::after { transition: none; }
+  .theme-toggle__lamp { transition: none; }
 }
 
-/* Mobile stack */
+/* ---------- Ruler ----------
+   Fixed strip in the gutter between columns, full viewport height, holding
+   a repeating-linear-gradient of 1px ticks stacked every 10px. Hidden by
+   default (opacity 0); JS fades it in on scroll start and out on scroll
+   stop. One of the ticks is positioned exactly on the --dial-y line so it
+   aligns with the lamp and with any entry tick currently at the notch.
+   Mask fade at top/bottom so the ruler feels like it extends off-screen
+   rather than having hard edges. */
+.dial-ruler {
+  position: fixed;
+  top: 0;
+  height: 100dvh;
+  /* Width = tick length. The strip sits aligned with entry ticks, so their
+     rightmost pixel lines up with the entry tick's leftmost position. */
+  width: 6px;
+  /* Tiny subtle. currentColor would inherit <body>'s ink; we want it even
+     softer than that. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    currentColor 0,
+    currentColor 1px,
+    transparent 1px,
+    transparent 10px
+  );
+  /* Offset so one tick's top edge aligns with (--dial-y) — the lamp line.
+     Using background-position shifts the whole stripe up/down. */
+  background-position: 0 var(--dial-y);
+  color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity;
+  /* Ruler fades at top/bottom so it feels like it extends off-screen rather
+     than snapping to hard edges. 18% mask band at each end. */
+  -webkit-mask-image: linear-gradient(to bottom,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%);
+          mask-image: linear-gradient(to bottom,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%);
+}
+
+/* Reduced motion: don't render the ruler at all (it only exists as a
+   scroll-revealed affordance — no scroll event triggers means it'd just
+   sit invisible anyway, but skipping the element is cleaner). */
+@media (prefers-reduced-motion: reduce) {
+  .dial-ruler { display: none; }
+}
+
+/* Mobile stack — drum metaphor off. Revert identity column to normal flow;
+   page scrolls like a normal document. scroll-snap stays on (it's harmless
+   and gives free native magnetism on mobile too). */
 @media (max-width: 600px) {
   .cv {
     grid-template-columns: 1fr;
     row-gap: 40px;
     padding: 0 20px;
   }
-  .cv-id { flex-direction: row; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
+  .cv-id {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    align-items: baseline;
+    position: static;
+    height: auto;
+    padding-top: 0;
+  }
+  .cv-body::before,
+  .cv-body::after { content: none; }
+  /* Hide dial ornaments on mobile — no notch metaphor. */
+  .dial-ruler { display: none; }
+  .cv-entry::before,
+  .cv-intro::before { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
 
 /* ---------- Page-load reveal ----------
