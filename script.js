@@ -101,11 +101,10 @@ window.addEventListener("keydown", (e) => {
   scrollToIndex(targets, currentIndex(targets) + step);
 });
 
-const mobileQuery = window.matchMedia("(max-width: 600px)");
 const LOAD_OFFSET = 80;
 const LOAD_DELAY_MS = 700;
 
-if (!reduced && !mobileQuery.matches) {
+if (!reduced) {
   window.scrollTo(0, LOAD_OFFSET);
 }
 
@@ -175,7 +174,7 @@ if (!reduced) {
     }
 
     function updateCursorBloom(clientX, clientY) {
-      if (mobileQuery.matches || !lampEl) { cursorBloom = 0; return; }
+      if (!lampEl) { cursorBloom = 0; return; }
       const dx = clientX - lampCx;
       const dy = clientY - lampCy;
       const dist = Math.hypot(dx, dy);
@@ -185,7 +184,6 @@ if (!reduced) {
 
     function updateFalloff() {
       raf = 0;
-      if (mobileQuery.matches) return;
       const dial = dialY();
       const maxDist = window.innerHeight * MAX_DIST_RATIO;
       const targets = getTargets();
@@ -249,22 +247,6 @@ if (!reduced) {
       cursorBloom = 0;
       schedule();
     });
-    mobileQuery.addEventListener("change", () => {
-      if (mobileQuery.matches) {
-        for (const el of getTargets()) el.style.opacity = "";
-        clearTimeout(scrollIdleTimer);
-        scrollIdleTimer = 0;
-        velEMA = 0;
-        scrollBloom = 0;
-        cursorBloom = 0;
-        lampIntensity = 0;
-        root.style.setProperty("--lamp-intensity", "0");
-        prevDialedIdx = null;
-      } else {
-        measureLamp();
-        schedule();
-      }
-    });
     updateFalloff();
 
     if (window.scrollY > 0) {
@@ -281,7 +263,7 @@ if (!reduced) {
   }, LOAD_DELAY_MS);
 }
 
-if (!reduced && !mobileQuery.matches) {
+if (!reduced) {
   const ruler = document.querySelector(".dial-ruler");
   const body = document.querySelector(".cv-body");
   const FADE_IN_MS = 180;

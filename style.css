@@ -291,10 +291,6 @@ a:focus-visible {
   -webkit-tap-highlight-color: transparent;
 }
 
-@media (max-width: 600px) {
-  .cv-id > .theme-toggle { flex-basis: 100%; }
-}
-
 .theme-toggle:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
@@ -371,30 +367,6 @@ a:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .dial-ruler { display: none; }
-}
-
-@media (max-width: 600px) {
-  .cv {
-    grid-template-columns: 1fr;
-    row-gap: 40px;
-    padding: 0 20px;
-  }
-  .cv-id {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 4px 16px;
-    align-items: baseline;
-    position: static;
-    height: auto;
-    padding-top: 0;
-  }
-  .cv-body::before,
-  .cv-body::after { content: none; }
-  .dial-ruler { display: none; }
-  html { scroll-padding-top: var(--dial-y); }
-  .cv-body { gap: 48px; }
-  .cv-entry,
-  .cv-intro { border-top: 0; padding-top: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
