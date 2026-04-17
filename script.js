@@ -129,6 +129,56 @@ if (!reduced) {
 
     const NOTCHED_THRESHOLD = 20;  // px — within this, the entry is "the one"
 
+    // ---------- Lamp acknowledgment driver ----------
+    // When an entry becomes "the one" (dial-in moment), the fluorescent lamp
+    // briefly blooms then holds slightly brighter. One CSS custom property —
+    // --lamp-intensity, 0..1 — drives both the peak-glow overlay on the lamp
+    // AND the identity gradient stretch, so they move in lockstep. Future
+    // cursor-proximity can compose into the same variable (take the max, or
+    // additive with a clamp) without a second system.
+    //
+    // Motion character is "dial detent," not "fluorescent physics." The rise
+    // is the click of a rotary detent catching the notch: ~120ms, circOut
+    // (front-loaded, reads as a crisp engagement). The decay to the held
+    // level is ~420ms easeOut — smooth enough not to feel mechanical, quick
+    // enough to complete before the eye returns from the scroll.
+    //
+    // Release is *deferred* by RELEASE_GRACE_MS. A dial passing through the
+    // zone between two detents isn't "un-anchored" — it's mid-rotation. If
+    // the next entry notches within the grace window, the release never
+    // fires and the next acknowledge pulses from the current held level
+    // (no dim-then-flash flicker). Only a genuine rest between entries
+    // (or scroll to the top/bottom spacer) lets release run.
+    const RELEASE_GRACE_MS = 180;
+    let prevNotchedIdx = null;   // null = no observation yet; -1 = between entries; >=0 = dialed-in
+    let lampAnim = null;
+    let releaseTimer = 0;
+
+    function acknowledge() {
+      clearTimeout(releaseTimer);
+      releaseTimer = 0;
+      lampAnim?.stop();
+      const from = parseFloat(getComputedStyle(root).getPropertyValue("--lamp-intensity")) || 0;
+      lampAnim = animate(
+        root,
+        { "--lamp-intensity": [from, 1, 0.3] },
+        { duration: 0.54, times: [0, 0.22, 1], ease: [circOut, easeOut] }
+      );
+    }
+
+    function scheduleRelease() {
+      clearTimeout(releaseTimer);
+      releaseTimer = setTimeout(() => {
+        releaseTimer = 0;
+        lampAnim?.stop();
+        lampAnim = animate(
+          root,
+          { "--lamp-intensity": 0 },
+          { duration: 0.26, ease: easeOut }
+        );
+      }, RELEASE_GRACE_MS);
+    }
+
     function updateFalloff() {
       raf = 0;
       if (mobileQuery.matches) return;
@@ -146,6 +196,23 @@ if (!reduced) {
         if (d < closestDist) { closestDist = d; closestIdx = i; }
       }
       const notchedIdx = closestDist <= NOTCHED_THRESHOLD ? closestIdx : -1;
+
+      // Lamp acknowledgment — fire on state transitions only. The first
+      // observation (prevNotchedIdx === null) seeds silently: if the page
+      // loaded with an entry already parked, the sustained lift is a truth
+      // of that state, not a moment we're transitioning into. Subsequent
+      // changes animate — entering a notch (or re-notching onto a different
+      // entry) pulses; leaving all notches releases.
+      if (notchedIdx !== prevNotchedIdx) {
+        if (prevNotchedIdx === null) {
+          if (notchedIdx !== -1) root.style.setProperty("--lamp-intensity", "0.3");
+        } else if (notchedIdx === -1) {
+          scheduleRelease();
+        } else {
+          acknowledge();
+        }
+        prevNotchedIdx = notchedIdx;
+      }
 
       // Second pass — apply opacity (circOut falloff) and toggle is-notched.
       // circOut matches iOS pickers: sharp drop near the notch, gentle tail.
@@ -168,6 +235,11 @@ if (!reduced) {
     mobileQuery.addEventListener("change", () => {
       if (mobileQuery.matches) {
         for (const el of getTargets()) el.style.opacity = "";
+        clearTimeout(releaseTimer);
+        releaseTimer = 0;
+        lampAnim?.stop();
+        root.style.setProperty("--lamp-intensity", "0");
+        prevNotchedIdx = null;
       } else {
         schedule();
       }
