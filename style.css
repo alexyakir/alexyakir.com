@@ -1,13 +1,3 @@
-/* Tokens — light is alexwidua.com (warm gradient + strong title/muted body),
-   dark is joshpuckett.me (near-black + muted body). Blue stays ours.
-   Theme applied via [data-theme] on <html> — set before paint by inline script
-   in index.html, sourced from localStorage or prefers-color-scheme on first load. */
-
-/* --lamp-intensity — 0..1 driver for "lit more" acknowledgment. One unified
-   signal: dial-in animates it via Motion, cursor proximity (later) composes
-   into the same value. Registered so it interpolates as a real number, and
-   so calc()s that reference it (gradient size, ::after opacity) update
-   smoothly instead of snapping between whole values. */
 @property --lamp-intensity {
   syntax: "<number>";
   inherits: true;
@@ -18,27 +8,18 @@
 :root[data-theme="light"] {
   --ink:         #0a0a0a;
   --ink-strong:  #000;
-  --ink-soft:    #929292;       /* was #737373 — more muted, stronger title/body diff */
+  --ink-soft:    #929292;
   --blue:        #2563eb;
   --blue-soft:   rgba(37, 99, 235, 0.45);
-  --surface:     #ffffff;        /* gradient top — pure white */
-  --surface-end: #fdf1e6;        /* gradient bottom — warm cream (Widua) */
+  --surface:     #ffffff;
+  --surface-end: #fdf1e6;
 
-  /* Top of the identity stack — lamp's lit color the text fades FROM at
-     the top. Bottom of the stack fades to --ink-soft. */
-  --name-lit:    #4f91ff;
+  --ink-lit:     #1e40af;
+  --ink-fade:    color-mix(in srgb, var(--ink-soft) 70%, var(--surface));
+  --ink-lit-fade: var(--ink);
+  --ink-lit-rest: var(--ink);
 
-  /* Lamp — LIGHT MODE = crisp saturated blue LED on white.
-     Key physics for "blue light on white": the source reads DARKER than bg
-     (saturated blue on white = visible deep-blue rectangle), and the halo
-     reads LIGHTER (washes of blue at decreasing alpha blend toward white).
-     So halo lightens outward — opposite of dark mode. figma-glow eased
-     radius curve extended to 14 layers reaching ~1080px downward, with
-     asymmetric positive y-offsets for directional spill. Box-shadow on a
-     wide thin rectangle gives line-source falloff for free — no radial
-     pool needed. Line-source physics: near-field (r < tube length ~140px)
-     falls off roughly 1/r; far-field transitions toward 1/r². */
-  --lamp-fill: #1d4ed8;            /* blue-700, darker than --blue for lamp source */
+  --lamp-fill: #1d4ed8;
   --lamp-glow:
     0 0px      1px  rgba( 29,  78, 216, 1.00),
     0 1px      2px  rgba( 29,  78, 216, 0.92),
@@ -69,14 +50,6 @@
     0 380px  560px  rgba(212, 232, 255, 0.048),
     0 550px  780px  rgba(218, 236, 255, 0.027),
     0 780px 1080px  rgba(222, 240, 255, 0.015);
-  /* Peak glow — additive layer on ::after for dial-in acknowledgment. Its
-     opacity is bound to --lamp-intensity, so at intensity=0.3 (sustained
-     dial-in state) this contributes a subtle ambient lift above baseline,
-     and at intensity=1 (pulse peak) the full layer stacks. Near-field
-     layers (the 7–100px range the eye can see most clearly) are cranked
-     harder than hover values so the pulse reads as a real brighten, not
-     just a faint halo extension. Far-field stays modest so the pulse
-     doesn't light up the whole page. */
   --lamp-glow-peak:
     0 0px      1px  rgba( 29,  78, 216, 1.00),
     0 1px      2px  rgba( 29,  78, 216, 1.00),
@@ -97,23 +70,16 @@
 :root[data-theme="dark"] {
   --ink:         #fafafa;
   --ink-strong:  #fff;
-  --ink-soft:    #a3a3a3;        /* muted body, matches Josh's rendered feel */
+  --ink-soft:    #a3a3a3;
   --blue:        #7aa2ff;
   --blue-soft:   rgba(122, 162, 255, 0.4);
   --surface:     #0a0a0a;
-  --surface-end: #0a0a0a;        /* flat in dark — no gradient */
+  --surface-end: #0a0a0a;
 
-  /* Top of the identity stack — lamp is white in dark mode. */
-  --name-lit:    #ffffff;
+  --ink-lit:      #ffffff;
+  --ink-lit-fade: color-mix(in srgb, var(--ink-lit) 60%, var(--surface));
+  --ink-lit-rest: color-mix(in srgb, var(--ink-lit) 35%, var(--surface));
 
-  /* Lamp — DARK MODE = white fluorescent tube emission, unconstrained.
-     Crisp source + luminous halo (the defining structure of GLOW vs BLUR).
-     figma-glow eased curve extended to 14 layers reaching ~1080px downward,
-     y-offset grows with blur (directional spill). Colors shift warm-white
-     core → cool blue periphery, mimicking real atmospheric scatter. Line-
-     source physics: near-field (r < tube length) falls off roughly 1/r;
-     far-field transitions toward 1/r². Box-shadow on the rectangular strip
-     handles the geometry directly — no radial pool needed. */
   --lamp-fill: #ffffff;
   --lamp-glow:
     0 0px      1px  rgba(255, 255, 255, 1.00),
@@ -145,8 +111,6 @@
     0 380px  560px  rgba(125, 170, 232, 0.10),
     0 550px  780px  rgba(122, 167, 230, 0.062),
     0 780px 1080px  rgba(118, 163, 225, 0.038);
-  /* Peak glow — see comment in light block. Near-field boosted for a
-     visible acknowledgment pulse. */
   --lamp-glow-peak:
     0 0px      1px  rgba(255, 255, 255, 1.00),
     0 1px      2px  rgba(255, 255, 255, 1.00),
@@ -164,38 +128,21 @@
     0 780px 1080px  rgba(118, 163, 225, 0.045);
 }
 
-/* Reset */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ---------- Drum foundation (Layer 1) ----------
-   The <html> element is the scroll container. Notch y-coordinate is 42vh —
-   where the user's eye rests, just above center. scroll-padding-top aligns
-   snap targets' top edges to that line. Proximity (not mandatory) so the
-   page still feels like a page; entries just magnetize when close. */
 html {
   background: var(--surface);
   scroll-snap-type: y proximity;
-  scroll-padding-top: var(--notch, 42vh);
+  scroll-padding-top: calc(var(--dial-y) - var(--lamp-gap));
   scroll-behavior: smooth;
 }
 
 :root {
-  --notch: 42vh;
-  /* Lamp-to-title gap — the vertical distance from the lamp's center line
-     to the title line below it. Equals .cv-id padding-top (notch - 26)
-     plus lamp center offset (1px = half of 2px) inside its flex row,
-     subtracted from the title's y (which sits at notch). Empirically 25px
-     in the current layout; centralized here so every alignment-dependent
-     piece (entry ticks, ruler position) derives from one number.
-     If .cv-id padding or .theme-toggle height changes, update this. */
+  --dial-y: 42vh;
   --lamp-gap: 25px;
-  /* Dial y — the horizontal line where the lamp center lives, and where
-     entry ticks and ruler ticks must align. */
-  --dial-y: calc(var(--notch) - var(--lamp-gap));
+  --tick-y: calc(var(--dial-y) - var(--lamp-gap));
 }
 
-/* Dial tick and ruler opacity — theme-tuned. Dark mode gets a subtle bump
-   since the same alpha on near-black reads softer than on white. */
 :root, :root[data-theme="light"] {
   --tick-alpha: 0.18;
   --ruler-alpha: 0.08;
@@ -210,105 +157,55 @@ body {
   background: linear-gradient(180deg, var(--surface), var(--surface-end));
   background-attachment: fixed;
   color: var(--ink);
-  /* Type: 18px / 1.5 — Widua scale, system-ui. Flat hierarchy: same size for
-     body and titles, weight (400/600) does the work. */
   font: 18px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Inter, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/* Page grid — left col auto-sizes to its widest content (max-content),
-   so "hi@alexyakir.com" defines the width. Add or remove items, column
-   adjusts itself. Right column gets the remainder. */
 .cv {
-  max-width: 650px;
+  max-width: 600px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: max-content 1fr;
-  column-gap: 64px;
+  column-gap: 80px;
   align-items: start;
 }
 
-/* Identity (left column) — sticky + full viewport so the card can float at
-   any y-position independent of the right-column flow. justify-content
-   anchors the stack such that the name-line lands on the notch: we push
-   from the top with padding equal to notch minus the content above the
-   name (theme-toggle 26px). */
 .cv-id {
   display: flex;
   flex-direction: column;
   position: sticky;
   top: 0;
   height: 100dvh;
-  padding-top: calc(var(--notch) - 26px);
+  padding-top: calc(var(--dial-y) - 26px);
 }
 
-/* Identity stack — all text shares ONE 200px-tall vertical gradient that
-   maps the lamp's light across the entire column. Each element shows a
-   SLICE of that gradient, positioned by its y-offset within .cv-id, so
-   the fade visually penetrates from h1 (lit) all the way down to LinkedIn
-   (muted). Stack: button (26) + 7 lines × 27px = 215px. */
-.cv-id__name,
-.cv-id > p,
-.cv-id > a {
-  /* Stops implicit (0%→100% of bg-size) — as --lamp-intensity rises the
-     gradient tile stretches, pushing the lit color further down the
-     absolute-pixel slice each element occupies. LinkedIn at y=-162 sees
-     ~81% into a 200px gradient (mostly muted) at rest; at intensity=1 it
-     sees ~62% into a 260px gradient (noticeably more lit). Base 200px
-     matches the original resting geometry; +60px stretch is the range the
-     cursor-proximity extension can share. */
-  background-image: linear-gradient(to bottom, var(--name-lit), var(--ink-soft));
-  background-size: 100% calc(200px + var(--lamp-intensity) * 90px);
+.cv-id__line {
+  background-image: linear-gradient(to bottom, var(--ink-lit), var(--ink-lit-rest));
+  background-size: 100% calc(200px + var(--lamp-intensity) * 300px);
   background-repeat: no-repeat;
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
+  font-weight: 300;
+  line-height: 1.35;
 }
 
-/* h1 — top of the stack, fully lit. Weight 800 = SF Pro "Heavy" / Inter
-   ExtraBold — real weights, no faux bold. Segoe UI falls back to 700. */
-.cv-id__name {
-  font-size: inherit;
-  font-weight: 800;
-  background-position: 0 0;
-}
+.cv-id__name           { font-size: inherit;                                    }
+.cv-id > a             { text-decoration: none;                                  }
+.cv-id > a:nth-of-type(1) { background-position: 0 -1lh; }
+.cv-id > a:nth-of-type(2) { background-position: 0 -2lh; }
+.cv-id > a:nth-of-type(3) { background-position: 0 -3lh; }
+.cv-id > a:nth-of-type(4) { background-position: 0 -4lh; }
+.cv-id > a:nth-of-type(5) { background-position: 0 -5lh; }
+.cv-id > p             { background-position: 0 -6lh;                            }
 
-/* Email — only <p> direct child. Sits at row 1 below h1. */
-.cv-id > p {
-  font-weight: 500;
-  background-position: 0 -27px;
-}
-
-/* Anchors — direct children of .cv-id (no <p> wrapper). Display block so
-   each takes its own row in the flex column. Weight 500 (Medium) is
-   universally available across system fonts — no faux bold. */
-.cv-id > a {
-  display: block;
-  font-weight: 500;
-  text-decoration: none;
-}
-.cv-id > a:nth-of-type(1) { background-position: 0 -54px;  }  /* @alexyakir */
-.cv-id > a:nth-of-type(2) { background-position: 0 -81px;  }  /* Download CV*/
-.cv-id > a:nth-of-type(3) { background-position: 0 -108px; }  /* Figma      */
-.cv-id > a:nth-of-type(4) { background-position: 0 -135px; }  /* GitHub     */
-.cv-id > a:nth-of-type(5) { background-position: 0 -162px; }  /* LinkedIn   */
-
-/* Chevron on hover — slides in from the left and fades up. Split-easing:
-   opacity uses Vercel's snappy out-curve (fast in, no overshoot possible
-   on opacity); transform uses a spring-out cubic-bezier with mild
-   overshoot so the chevron settles with a tiny pop. Different durations
-   (180ms opacity / 280ms transform) let the chevron *appear* quickly,
-   then *settle* — feels more designed than a single linear ease.
-   `color: var(--name-lit)` is explicit because pseudo-elements inherit
-   `color: transparent` from the parent's bg-clip:text setup, which would
-   render the chevron invisible without an override. */
 .cv-id > a::after {
   content: "→";
   display: inline-block;
   margin-left: 6px;
-  color: var(--name-lit);
+  color: var(--ink-lit);
   opacity: 0;
   transform: translateX(-8px);
   transition:
@@ -324,88 +221,51 @@ body {
   .cv-id > a::after { transition: none; }
 }
 
-/* Right column flow — the drum track. Breathing room above the first entry
-   and below the last entry so they can both reach the notch line. Without
-   these spacers the first entry can never scroll up to 42vh (nothing above
-   it to scroll away) and the last entry can never scroll up to 42vh either
-   (nothing below it). */
-.cv-body { display: flex; flex-direction: column; gap: 48px; }
-.cv-body::before { content: ""; display: block; block-size: var(--notch); }
-.cv-body::after  { content: ""; display: block; block-size: calc(100dvh - var(--notch) - 2lh); }
+.cv-body { display: flex; flex-direction: column; gap: calc(48px - var(--lamp-gap)); }
+.cv-body::before { content: ""; display: block; block-size: var(--dial-y); }
+.cv-body::after  { content: ""; display: block; block-size: calc(100dvh - var(--dial-y) - 2lh); }
 
-/* Snap targets — each position on the dial. Align start = the title line
-   parks exactly at scroll-padding-top (= notch y). scroll-snap-stop: always
-   forces the browser to honor every snap point it passes during a scroll
-   action — no more skipping past entries with tall bodies (e.g. Wix).
-   Combined with proximity snap-type, you can still *rest* between entries
-   when you stop scrolling; you just can't fly past one when you're moving. */
 .cv-intro,
 .cv-entry {
   scroll-snap-align: start;
   scroll-snap-stop: always;
+  border-top: 1px solid color-mix(in srgb, currentColor calc(var(--tick-alpha) * 100%), transparent);
+  /* lamp-gap minus 1px border, so the title's top edge lands at --dial-y
+     (matching the identity column) rather than 1px below it. */
+  padding-top: calc(var(--lamp-gap) - 1px);
 }
 
-/* Entries — position: relative establishes the containing block for the
-   tick pseudo-element that floats above each title. */
-.cv-entry { display: flex; flex-direction: column; position: relative; }
-.cv-intro { position: relative; }
-.cv-entry__head { font-size: inherit; font-weight: 400; }
+.cv-entry { display: flex; flex-direction: column; }
+.cv-entry__head { font-size: inherit; font-weight: 400; line-height: 1.35; }
 .cv-entry__title { font-weight: 600; color: var(--ink-strong); }
 .cv-entry--muted .cv-entry__title { color: var(--ink-soft); font-weight: 400; }
 
-/* Dial tick — one per snap target. Sits --lamp-gap above the title line,
-   so when the entry parks at the notch the tick aligns horizontally with
-   the lamp's center (--dial-y). Spans the full entry width plus a 32px
-   tip to the left into the gutter — reads as a continuous notch line when
-   the entry is parked.
-   currentColor picks up the surrounding ink and inherits the falloff
-   opacity on the parent entry — no separate opacity wiring needed. */
-.cv-entry::before,
-.cv-intro::before {
-  content: "";
-  position: absolute;
-  top: calc(-1 * var(--lamp-gap));
-  left: -32px;                /* tip extends into the gutter */
-  right: 0;                   /* stretches to the entry's right edge */
-  height: 1px;
-  background: currentColor;
-  opacity: var(--tick-alpha); /* theme-tuned; rides on the entry's falloff */
-  pointer-events: none;
-}
-
-/* Intro is plain muted gray — no gradient, sits as quiet body copy. */
 .cv-intro { color: var(--ink-soft); }
 
-/* Entry bodies keep the muted-to-blue gradient so links/titles still pop
-   inside the entry blocks. */
 .cv-entry__body {
-  background-image: linear-gradient(to right, var(--ink-soft), var(--blue));
+  background-image: linear-gradient(to right, var(--ink-soft), var(--ink-fade));
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
+  font-weight: 300;
 }
 
-/* Focused entry — when parked at the notch, text reads solid and full
-   contrast. The gradient treatment drops; ink comes back to full strength.
-   JS toggles .is-notched on whichever snap target is within 20px of the
-   notch (and only one at a time). Removes the gradient background AND its
-   text-transparency so color: wins decisively. */
-.cv-intro.is-notched {
+.cv-intro.is-dialed-in,
+.cv-entry.is-dialed-in .cv-entry__title,
+.cv-entry.is-dialed-in .cv-entry__body {
+  background-image: linear-gradient(to bottom right, var(--ink-lit), var(--ink-lit-fade) 70%);
+  -webkit-background-clip: text;
+          background-clip: text;
   color: var(--ink-strong);
-}
-.cv-entry.is-notched .cv-entry__body {
-  background-image: none;
-  color: var(--ink-strong);
+  -webkit-text-fill-color: transparent;
 }
 
-/* Links — one treatment everywhere */
 a {
   color: inherit;
   text-decoration: underline;
-  text-decoration-color: var(--blue-soft);
-  text-decoration-skip-ink: auto;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--surface), var(--ink) 20%);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 1.5px;
 }
 
 a:focus-visible {
@@ -414,16 +274,15 @@ a:focus-visible {
   border-radius: 2px;
 }
 
-/* ---------- Theme toggle — the lamp ----------
-   Fluorescent-tube geometry: a 2px strip spanning the full column width,
-   glow delivered entirely through stacked box-shadows on the strip itself.
-   Line sources radiate from their rectangle, not from a point — box-shadow
-   respects that geometry for free (no radial pool, no centered hotspot).
-   Dark = lit tube, light = same tube unlit casting a faint blue halo
-   (pencil on paper). The glow sells the affordance; no icon needed. */
+.cv-entry__body a:hover,
+.cv-intro a:hover {
+  color: var(--ink-strong);
+  -webkit-text-fill-color: var(--ink-strong);
+}
+
 .theme-toggle {
-  display: flex;                /* span child becomes a flex item — no display:block needed */
-  width: 100%;                  /* span the full left column (140px on desktop) */
+  display: flex;
+  width: 100%;
   height: 26px;
   padding: 0;
   background: transparent;
@@ -432,8 +291,6 @@ a:focus-visible {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Mobile: cv-id becomes a horizontal flex row; force the lamp onto its own
-   line so the beam still casts down onto the name block. */
 @media (max-width: 600px) {
   .cv-id > .theme-toggle { flex-basis: 100%; }
 }
@@ -444,14 +301,8 @@ a:focus-visible {
   border-radius: 4px;
 }
 
-/* The strip — crisp 2px rectangular source, full column width. No filter:
-   blur on the source; crispness + luminous halo is what makes it read GLOW
-   not BLUR. clip-path cuts the box-shadow above the tube's top edge — real
-   fluorescent fixtures have an opaque reflector housing on top, so light
-   spills only downward and sideways. Horizontal/downward spread preserved
-   via large negative insets. */
 .theme-toggle__lamp {
-  position: relative;            /* anchor for the peak-glow ::after overlay */
+  position: relative;
   width: 100%;
   height: 2px;
   background: var(--lamp-fill);
@@ -464,15 +315,6 @@ a:focus-visible {
   box-shadow: var(--lamp-glow-hover);
 }
 
-/* Peak-glow overlay — same 2px strip overlaid on the tube, casting an
-   additive halo whose opacity tracks --lamp-intensity. At intensity=0 this
-   is invisible and inert (opacity:0). At intensity=0.3 (sustained dial-in)
-   it contributes a subtle extra halo. At intensity=1 (pulse moment) the
-   full peak stacks on top of the baseline glow.
-   Kept as a separate layer (rather than transitioning --lamp-glow itself)
-   because 14-shadow lists can't be interpolated by a scalar — stacking by
-   opacity is the only way to cleanly dial one continuous "more/less"
-   control across the whole halo curve. */
 .theme-toggle__lamp::after {
   content: "";
   position: absolute;
@@ -490,29 +332,15 @@ a:focus-visible {
   .theme-toggle__lamp::after { transition: none; }
 }
 
-/* ---------- Ruler ----------
-   Two-layer architecture:
-   • .dial-ruler is a fixed, viewport-sized clip window. It owns opacity
-     (JS-animated on scroll start/stop) and the top/bottom mask fade.
-   • .dial-ruler__track is a 10000px-tall child whose top edge sits at
-     --dial-y MINUS 5000px (a multiple of the 10px tick period). So element
-     y=5000 of the track is exactly --dial-y on the viewport, AND it is a
-     tick position. The tick pattern repeats in clean integer pixels from
-     the track's origin — no background-position phase drift, no subpixel
-     rounding variance between adjacent ticks.
-   The viewport clips whatever of the track is visible. */
 .dial-ruler {
   position: fixed;
   top: 0;
   bottom: 0;
-  /* Width = tick length. The strip sits aligned with entry ticks. */
   width: 6px;
   overflow: hidden;
   opacity: 0;
   pointer-events: none;
   will-change: opacity;
-  /* Top/bottom mask fade so the ruler feels like it extends off-screen
-     rather than cutting hard. 18% fade band on each end. */
   -webkit-mask-image: linear-gradient(to bottom,
     transparent 0%,
     #000 18%,
@@ -529,13 +357,8 @@ a:focus-visible {
   position: absolute;
   left: 0;
   right: 0;
-  /* 5000px is a multiple of the 10px tick period, so element y=5000 is a
-     tick position. Element top offset by -5000 means that tick lands at
-     --dial-y on the viewport. */
-  top: calc(var(--dial-y) - 5000px);
+  top: calc(var(--tick-y) - 5000px);
   height: 10000px;
-  /* Ticks at element y = 0, 10, 20, ..., 5000, ..., 9990. Y=5000 = lamp
-     line. All other ticks are exactly 10px apart from their neighbors. */
   background-image: repeating-linear-gradient(
     to bottom,
     currentColor 0,
@@ -546,16 +369,10 @@ a:focus-visible {
   color: var(--ink);
 }
 
-/* Reduced motion: don't render the ruler at all (it only exists as a
-   scroll-revealed affordance — no scroll event triggers means it'd just
-   sit invisible anyway, but skipping the element is cleaner). */
 @media (prefers-reduced-motion: reduce) {
   .dial-ruler { display: none; }
 }
 
-/* Mobile stack — drum metaphor off. Revert identity column to normal flow;
-   page scrolls like a normal document. scroll-snap stays on (it's harmless
-   and gives free native magnetism on mobile too). */
 @media (max-width: 600px) {
   .cv {
     grid-template-columns: 1fr;
@@ -573,20 +390,17 @@ a:focus-visible {
   }
   .cv-body::before,
   .cv-body::after { content: none; }
-  /* Hide dial ornaments on mobile — no notch metaphor. */
   .dial-ruler { display: none; }
-  .cv-entry::before,
-  .cv-intro::before { display: none; }
+  html { scroll-padding-top: var(--dial-y); }
+  .cv-body { gap: 48px; }
+  .cv-entry,
+  .cv-intro { border-top: 0; padding-top: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
 
-/* ---------- Page-load reveal ----------
-   Elements marked with `.reveal` start hidden; Motion (in script.js) fades
-   them to visible with a staggered y-lift. Emil Kowalski's rules: short
-   duration (< 300ms), transform + opacity only — no blur, no layout props. */
 .reveal {
   opacity: 0;
   transform: translateY(8px);
@@ -600,12 +414,14 @@ a:focus-visible {
   }
 }
 
-/* Print — clean black-on-white CV, no gradient, no footer */
 @media print {
   :root {
     --ink: #000;
     --ink-strong: #000;
     --ink-soft: #444;
+    --ink-lit: #000;
+    --ink-fade: #444;
+    --ink-lit-fade: #000;
     --blue: #000;
     --blue-soft: rgba(0, 0, 0, 0.3);
     --surface: #fff;
@@ -613,11 +429,15 @@ a:focus-visible {
   }
   body { background: #fff; }
   .cv-intro,
-  .cv-entry__body {
+  .cv-intro.is-dialed-in,
+  .cv-entry__body,
+  .cv-entry.is-dialed-in .cv-entry__title,
+  .cv-entry.is-dialed-in .cv-entry__body {
     background: none;
     -webkit-background-clip: border-box;
             background-clip: border-box;
     color: var(--ink);
+    -webkit-text-fill-color: currentColor;
   }
   .cv { padding: 48px; }
   @page { margin: 0.5in; size: letter; }
