@@ -127,20 +127,34 @@ if (!reduced) {
     const MAX_DIST_RATIO = 0.35;
     let raf = 0;
 
+    const NOTCHED_THRESHOLD = 20;  // px — within this, the entry is "the one"
+
     function updateFalloff() {
       raf = 0;
       if (mobileQuery.matches) return;
       const notch = notchY();
       const maxDist = window.innerHeight * MAX_DIST_RATIO;
-      for (const el of getTargets()) {
-        const dist = Math.abs(el.getBoundingClientRect().top - notch);
-        const t = Math.min(1, dist / maxDist);
-        // circOut = circular ease-out. Same curve iOS pickers use for the
-        // focal-item dim. Sharp drop-off near the notch (neighbors visibly
-        // fade, center reads as selected) and a gentle tail at the periphery
-        // (far entries don't slam into the floor).
+      const targets = getTargets();
+
+      // First pass — measure, find the entry closest to the notch.
+      const dists = new Array(targets.length);
+      let closestIdx = -1;
+      let closestDist = Infinity;
+      for (let i = 0; i < targets.length; i++) {
+        const d = Math.abs(targets[i].getBoundingClientRect().top - notch);
+        dists[i] = d;
+        if (d < closestDist) { closestDist = d; closestIdx = i; }
+      }
+      const notchedIdx = closestDist <= NOTCHED_THRESHOLD ? closestIdx : -1;
+
+      // Second pass — apply opacity (circOut falloff) and toggle is-notched.
+      // circOut matches iOS pickers: sharp drop near the notch, gentle tail.
+      for (let i = 0; i < targets.length; i++) {
+        const el = targets[i];
+        const t = Math.min(1, dists[i] / maxDist);
         const eased = circOut(t);
         el.style.opacity = (1 - eased * (1 - MIN_OPACITY)).toFixed(3);
+        el.classList.toggle("is-notched", i === notchedIdx);
       }
     }
 
@@ -170,10 +184,19 @@ if (!reduced) {
 if (!reduced && !mobileQuery.matches) {
   const ruler = document.querySelector(".dial-ruler");
   const body = document.querySelector(".cv-body");
-  const RULER_ALPHA = 0.08;      // final opacity when visible
   const FADE_IN_MS = 180;
   const FADE_OUT_MS = 320;
   const IDLE_MS = 220;           // ms of scroll silence before fading out
+
+  // Target alpha comes from CSS (--ruler-alpha), which is theme-tuned.
+  // Read at animate-time so a theme swap is reflected on the next fade.
+  function rulerTargetAlpha() {
+    const raw = getComputedStyle(document.documentElement)
+      .getPropertyValue("--ruler-alpha")
+      .trim();
+    const parsed = parseFloat(raw);
+    return isFinite(parsed) ? parsed : 0.08;
+  }
 
   if (ruler && body) {
     // Horizontal alignment: entry ticks extend from .cv-body.left - 32 to
@@ -199,7 +222,7 @@ if (!reduced && !mobileQuery.matches) {
       current?.stop();
       current = animate(
         ruler,
-        { opacity: RULER_ALPHA },
+        { opacity: rulerTargetAlpha() },
         { duration: FADE_IN_MS / 1000, ease: circOut }
       );
     }

@@ -142,6 +142,17 @@ html {
   --dial-y: calc(var(--notch) - var(--lamp-gap));
 }
 
+/* Dial tick and ruler opacity — theme-tuned. Dark mode gets a subtle bump
+   since the same alpha on near-black reads softer than on white. */
+:root, :root[data-theme="light"] {
+  --tick-alpha: 0.18;
+  --ruler-alpha: 0.08;
+}
+:root[data-theme="dark"] {
+  --tick-alpha: 0.26;
+  --ruler-alpha: 0.14;
+}
+
 body {
   min-height: 100vh;
   background: linear-gradient(180deg, var(--surface), var(--surface-end));
@@ -287,7 +298,9 @@ body {
 
 /* Dial tick — one per snap target. Sits --lamp-gap above the title line,
    so when the entry parks at the notch the tick aligns horizontally with
-   the lamp's center (--dial-y). Extends ~18px to the left, into the gutter.
+   the lamp's center (--dial-y). Spans the full entry width plus a 32px
+   tip to the left into the gutter — reads as a continuous notch line when
+   the entry is parked.
    currentColor picks up the surrounding ink and inherits the falloff
    opacity on the parent entry — no separate opacity wiring needed. */
 .cv-entry::before,
@@ -295,11 +308,11 @@ body {
   content: "";
   position: absolute;
   top: calc(-1 * var(--lamp-gap));
-  left: -32px;                /* tick lives left of the entry, in the gutter */
-  width: 18px;
+  left: -32px;                /* tip extends into the gutter */
+  right: 0;                   /* stretches to the entry's right edge */
   height: 1px;
   background: currentColor;
-  opacity: 0.18;              /* subtle — rides on top of the entry's falloff */
+  opacity: var(--tick-alpha); /* theme-tuned; rides on the entry's falloff */
   pointer-events: none;
 }
 
@@ -313,6 +326,19 @@ body {
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
+}
+
+/* Focused entry — when parked at the notch, text reads solid and full
+   contrast. The gradient treatment drops; ink comes back to full strength.
+   JS toggles .is-notched on whichever snap target is within 20px of the
+   notch (and only one at a time). Removes the gradient background AND its
+   text-transparency so color: wins decisively. */
+.cv-intro.is-notched {
+  color: var(--ink-strong);
+}
+.cv-entry.is-notched .cv-entry__body {
+  background-image: none;
+  color: var(--ink-strong);
 }
 
 /* Links — one treatment everywhere */
@@ -385,38 +411,28 @@ a:focus-visible {
 }
 
 /* ---------- Ruler ----------
-   Fixed strip in the gutter between columns, full viewport height, holding
-   a repeating-linear-gradient of 1px ticks stacked every 10px. Hidden by
-   default (opacity 0); JS fades it in on scroll start and out on scroll
-   stop. One of the ticks is positioned exactly on the --dial-y line so it
-   aligns with the lamp and with any entry tick currently at the notch.
-   Mask fade at top/bottom so the ruler feels like it extends off-screen
-   rather than having hard edges. */
+   Two-layer architecture:
+   • .dial-ruler is a fixed, viewport-sized clip window. It owns opacity
+     (JS-animated on scroll start/stop) and the top/bottom mask fade.
+   • .dial-ruler__track is a 10000px-tall child whose top edge sits at
+     --dial-y MINUS 5000px (a multiple of the 10px tick period). So element
+     y=5000 of the track is exactly --dial-y on the viewport, AND it is a
+     tick position. The tick pattern repeats in clean integer pixels from
+     the track's origin — no background-position phase drift, no subpixel
+     rounding variance between adjacent ticks.
+   The viewport clips whatever of the track is visible. */
 .dial-ruler {
   position: fixed;
   top: 0;
-  height: 100dvh;
-  /* Width = tick length. The strip sits aligned with entry ticks, so their
-     rightmost pixel lines up with the entry tick's leftmost position. */
+  bottom: 0;
+  /* Width = tick length. The strip sits aligned with entry ticks. */
   width: 6px;
-  /* Tiny subtle. currentColor would inherit <body>'s ink; we want it even
-     softer than that. */
-  background-image: repeating-linear-gradient(
-    to bottom,
-    currentColor 0,
-    currentColor 1px,
-    transparent 1px,
-    transparent 10px
-  );
-  /* Offset so one tick's top edge aligns with (--dial-y) — the lamp line.
-     Using background-position shifts the whole stripe up/down. */
-  background-position: 0 var(--dial-y);
-  color: var(--ink);
+  overflow: hidden;
   opacity: 0;
   pointer-events: none;
   will-change: opacity;
-  /* Ruler fades at top/bottom so it feels like it extends off-screen rather
-     than snapping to hard edges. 18% mask band at each end. */
+  /* Top/bottom mask fade so the ruler feels like it extends off-screen
+     rather than cutting hard. 18% fade band on each end. */
   -webkit-mask-image: linear-gradient(to bottom,
     transparent 0%,
     #000 18%,
@@ -427,6 +443,27 @@ a:focus-visible {
     #000 18%,
     #000 82%,
     transparent 100%);
+}
+
+.dial-ruler__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* 5000px is a multiple of the 10px tick period, so element y=5000 is a
+     tick position. Element top offset by -5000 means that tick lands at
+     --dial-y on the viewport. */
+  top: calc(var(--dial-y) - 5000px);
+  height: 10000px;
+  /* Ticks at element y = 0, 10, 20, ..., 5000, ..., 9990. Y=5000 = lamp
+     line. All other ticks are exactly 10px apart from their neighbors. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    currentColor 0,
+    currentColor 1px,
+    transparent 1px,
+    transparent 10px
+  );
+  color: var(--ink);
 }
 
 /* Reduced motion: don't render the ruler at all (it only exists as a

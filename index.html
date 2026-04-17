@@ -131,8 +131,13 @@
 
   <!-- Dial ruler — fixed strip of 1px ticks in the gutter between columns.
        Invisible until scroll starts; fades out on scroll stop. JS positions
-       it horizontally so it aligns with the entry ticks' left edge. -->
-  <div class="dial-ruler" aria-hidden="true"></div>
+       it horizontally so it aligns with the entry ticks' left edge. The
+       outer .dial-ruler is a viewport-sized clipping mask; the inner track
+       is a 10000px tall element anchored so its tick pattern starts from
+       one pixel coinciding with --dial-y — no subpixel phase drift. -->
+  <div class="dial-ruler" aria-hidden="true">
+    <span class="dial-ruler__track"></span>
+  </div>
 
   <script type="module" src="script.js"></script>
 </body>
