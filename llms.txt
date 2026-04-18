@@ -1,0 +1,27 @@
+# Alex Yakir
+
+> Craft-driven designer and systems thinker. 14 years shaping human-computer interaction. Deep frontend expertise with a focus on signal over noise.
+
+## About
+
+Design engineer — a designer at core who went all in on engineering. Works across interaction design, design systems, and frontend craft. From Douglas Engelbart to today, each generation thins the surface between humans and machines.
+
+## Areas of expertise
+
+- Design systems and design engineering
+- Interaction design and motion
+- Frontend craft
+- Figma plugins and design tooling
+- Teaching design and frontend
+
+## Contact
+
+- Email: hi@alexyakir.com
+- Site: https://alexyakir.com/
+
+## Profiles
+
+- [GitHub](https://github.com/alexyakir)
+- [Figma](https://www.figma.com/@alexyakir)
+- [LinkedIn](https://www.linkedin.com/in/alexyakir/)
+- [X/Twitter](https://x.com/alexyakir)

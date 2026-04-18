@@ -17,18 +17,106 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
-  <title>Alex Yakir</title>
-  <meta name="description" content="Design engineer with 14 years of experience. Design systems, features, and frontend development.">
-  <meta property="og:title" content="Alex Yakir">
-  <meta property="og:description" content="Design engineer with 14 years of experience.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://alexyakir.com">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+
+  <title>Alex Yakir — Design Engineer</title>
+  <meta name="description" content="Craft-driven designer and systems thinker. 14 years shaping human-computer interaction. Deep frontend expertise with a focus on signal over noise.">
+  <meta name="author" content="Alex Yakir">
+  <link rel="canonical" href="https://alexyakir.com/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+  <meta property="og:type" content="profile">
+  <meta property="og:site_name" content="Alex Yakir">
+  <meta property="og:url" content="https://alexyakir.com/">
+  <meta property="og:title" content="Alex Yakir — Design Engineer">
+  <meta property="og:description" content="Craft-driven designer and systems thinker. 14 years shaping human-computer interaction. Deep frontend expertise with a focus on signal over noise.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://alexyakir.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Alex Yakir — Design Engineer">
+  <meta property="profile:first_name" content="Alex">
+  <meta property="profile:last_name" content="Yakir">
+  <meta property="profile:username" content="alexyakir">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@alexyakir">
+  <meta name="twitter:creator" content="@alexyakir">
+  <meta name="twitter:title" content="Alex Yakir — Design Engineer">
+  <meta name="twitter:description" content="Craft-driven designer and systems thinker. 14 years shaping human-computer interaction. Deep frontend expertise with a focus on signal over noise.">
+  <meta name="twitter:image" content="https://alexyakir.com/og.png">
+  <meta name="twitter:image:alt" content="Alex Yakir — Design Engineer">
+
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://alexyakir.com/#website",
+        "url": "https://alexyakir.com/",
+        "name": "Alex Yakir",
+        "inLanguage": "en",
+        "publisher": { "@id": "https://alexyakir.com/#person" }
+      },
+      {
+        "@type": "ProfilePage",
+        "@id": "https://alexyakir.com/#profile",
+        "url": "https://alexyakir.com/",
+        "name": "Alex Yakir — Design Engineer",
+        "inLanguage": "en",
+        "isPartOf": { "@id": "https://alexyakir.com/#website" },
+        "mainEntity": { "@id": "https://alexyakir.com/#person" }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://alexyakir.com/#person",
+        "name": "Alex Yakir",
+        "alternateName": "AY",
+        "url": "https://alexyakir.com/",
+        "image": "https://alexyakir.com/og.png",
+        "email": "hi@alexyakir.com",
+        "jobTitle": "Design Engineer",
+        "description": "Craft-driven designer and systems thinker with 14 years of experience shaping human-computer interaction. Combines deep frontend expertise with a focus on signal over noise.",
+        "knowsAbout": [
+          "Design Systems",
+          "Design Engineering",
+          "Frontend Development",
+          "Interaction Design",
+          "CSS",
+          "TypeScript",
+          "Figma",
+          "Human-Computer Interaction"
+        ],
+        "sameAs": [
+          "https://www.figma.com/@alexyakir",
+          "https://github.com/alexyakir",
+          "https://www.linkedin.com/in/alexyakir/",
+          "https://x.com/alexyakir"
+        ]
+      }
+    ]
+  }
+  </script>
+
   <script>
     (function () {
+      var html = document.documentElement;
       var stored = null;
       try { stored = localStorage.getItem("theme"); } catch (e) {}
-      var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-      document.documentElement.setAttribute("data-theme", theme);
+      html.setAttribute("data-theme", stored || "dark");
+      html.setAttribute("data-boot", "scroll");
+      // Park scroll before the browser restores or snaps. data-boot CSS also
+      // disables scroll-snap-type and scroll-behavior so nothing fights the
+      // boot animation's transform; script.js clears data-boot on finish.
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      try { window.scrollTo(0, 0); } catch (e) {}
     })();
   </script>
   <link rel="stylesheet" href="style.css">
@@ -52,69 +140,70 @@
 
     <div class="dial-ruler" aria-hidden="true">
       <span class="dial-ruler__track"></span>
+      <span class="dial-ruler__detent"></span>
     </div>
 
     <div class="cv-body">
 
-      <p class="cv-intro reveal">I'm a craft-driven designer and systems thinker with 14 years of experience shaping human-computer interaction. I combine deep frontend expertise with a strong focus on signal over noise.</p>
+      <p class="cv-intro">I'm a craft-driven designer and systems thinker with 14 years of experience shaping human-computer interaction. I combine deep frontend expertise with a strong focus on signal over noise.</p>
 
-      <div class="cv-entry reveal">
+      <div class="cv-entry">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Figma 3D Tilt</span>
         </h2>
         <p class="cv-entry__body">Explore your Figma layer structure in 3D with <a href="https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt">this plugin</a>.</p>
       </div>
 
-      <div class="cv-entry reveal">
+      <div class="cv-entry">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Functional UI Kit</span>
         </h2>
         <p class="cv-entry__body">Award-winning <a href="https://functional-ui-kit.com/">design system</a> aligning what's possible.</p>
       </div>
 
-      <div class="cv-entry reveal">
+      <div class="cv-entry">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">HTML/CSS Course</span>
         </h2>
         <p class="cv-entry__body">A branded <a href="https://www.youtube.com/playlist?list=PLQIQtBQtKNiKEpIRzZS8i087vVqPruPLl">HTML/CSS course</a> for designers that caught on.</p>
       </div>
 
-      <div class="cv-entry reveal">
+      <div class="cv-entry">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">EasySizes</span>
         </h2>
         <p class="cv-entry__body">Shopify app for real-life size comparisons, <a href="https://apps.shopify.com/easysizes">live on the App Store</a>.</p>
       </div>
 
-      <div class="cv-entry reveal">
+      <div class="cv-entry">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Design Engineer</span>
         </h2>
         <p class="cv-entry__body">A designer at core who went all in on engineering. TypeScript, TDD, smart/dumb components, team PRs, code reviews, cicd. Broke production once, never since. Shipped at <a href="https://www.wix.com">Wix</a>, <a href="https://www.agoda.com">Agoda</a>, &amp; <a href="https://navina.ai">Navina</a>.</p>
       </div>
 
-      <div class="cv-entry reveal">
+      <div class="cv-entry">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Advise &amp; Support</span>
         </h2>
         <p class="cv-entry__body">Been fortunate to advise &amp; support teams like <a href="https://github.com/qwibitai/nanoclaw">NanoClaw</a>, <a href="https://www.honeybook.com">HoneyBook</a>, &amp; <a href="https://www.animaapp.com">Anima</a>. Story &amp; brand ahead of a funding round. Hands on code support. Advisory on product market fit.</p>
       </div>
 
-      <div class="cv-entry reveal">
+      <div class="cv-entry">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Design Management</span>
         </h2>
         <p class="cv-entry__body">Helped companies needing stronger interaction design principles &amp; frontend practice. Convinced leadership to back ux patterns, worked with engineers new to frontend.</p>
       </div>
 
-      <div class="cv-entry reveal">
+      <div class="cv-entry">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Teaching</span>
         </h2>
         <p class="cv-entry__body">From Douglas Engelbart to today, each generation thins the surface between humans &amp; machines. Had the honor of teaching design &amp; frontend basics to B.Des. students at <a href="https://www.shenkar.ac.il/en/">Shenkar College of Engineering, Design and Art</a>.</p>
       </div>
 
-      <div class="cv-entry reveal">
+      <div class="cv-entry">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Awards</span>
         </h2>
