@@ -1,4 +1,4 @@
-import { animate, circOut, easeOut } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm";
+import { animate, circOut, easeOut, stagger } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm";
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const root = document.documentElement;
@@ -249,57 +249,95 @@ function initLamp() {
   updateFalloff();
 }
 
-// Boot slide: fade + slide from below driven by a motion.dev tween. Circular
-// ease-out decelerates along a quarter-arc — mechanical feel, no overshoot,
-// long soft landing. type:"tween" is explicit because motion.dev defaults
-// transform props (y) to a mild-bounce spring and silently ignores `ease`.
-// CSS parks the start pose; motion.dev owns the glide.
+// Boot sequence: lamp lights first (narrative origin), then identity lines
+// glide in from the left, then intro + entries rise from below in a stagger.
+// Motion's timeline (at:) overlaps the regions so the whole thing reads as
+// layered depth rather than a serial list. Shared expo-out curve
+// ([0.16, 1, 0.3, 1]) unifies the feel across regions. type:"tween" is
+// explicit because motion.dev defaults transform props (x/y) to a mild-bounce
+// spring and silently ignores `ease`. CSS parks the start poses.
 if (!reduced && root.getAttribute("data-boot") === "scroll") {
-  const cvBody = document.querySelector(".cv-body");
-  if (cvBody) {
-    let cleaned = false;
+  let cleaned = false;
 
-    const startY = window.innerHeight * 0.22;
+  // Park scroll so when boot ends and scroll-snap re-engages, the intro is
+  // already aligned to the dial — no post-boot smooth-snap correction. Intro
+  // is parked 16px below its rest line; subtract to recover layout top.
+  const firstTarget = document.querySelector(".cv-intro");
+  if (firstTarget) {
+    const padTop = parseFloat(getComputedStyle(root).scrollPaddingTop) || 0;
+    const layoutTop = firstTarget.getBoundingClientRect().top + window.scrollY - 16;
+    const scrollTarget = Math.max(0, layoutTop - padTop);
+    if (scrollTarget !== window.scrollY) window.scrollTo(0, scrollTarget);
+  }
 
-    // Park scroll at the first section's dial-in target before the glide runs.
-    // Otherwise, once boot ends and scroll-snap re-engages, the browser smooth-
-    // scroll-snaps the page by ~48px — reads as a second motion after the glide.
-    const firstTarget = document.querySelector(".cv-intro");
-    if (firstTarget) {
-      const padTop = parseFloat(getComputedStyle(root).scrollPaddingTop) || 0;
-      const layoutTop = firstTarget.getBoundingClientRect().top + window.scrollY - startY;
-      const scrollTarget = Math.max(0, layoutTop - padTop);
-      if (scrollTarget !== window.scrollY) window.scrollTo(0, scrollTarget);
-    }
+  // Sort identity lines by visual y so mobile's flex-order rearrangement
+  // still staggers top-to-bottom rather than DOM order.
+  const idLines = [...document.querySelectorAll(".cv-id__line")]
+    .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
 
-    const bootAnim = animate(
-      cvBody,
-      { opacity: [0, 1], y: [startY, 0] },
-      { type: "tween", duration: 1.1, ease: circOut }
-    );
+  // Pre-roll: the eye needs ~300–400ms after paint to land on the page, so
+  // shift the whole timeline forward. Without this, the animation is already
+  // 80% done by the time the user refocuses — they only catch the tail.
+  const PRE = 0.4;
+  const ease = [0.16, 1, 0.3, 1];
+  const rulerAlpha = parseFloat(
+    getComputedStyle(root).getPropertyValue("--ruler-alpha")
+  ) || 0.08;
 
-    function finishBoot() {
-      if (cleaned) return;
-      cleaned = true;
-      root.removeAttribute("data-boot");
-      bootAnim.stop();
-      cvBody.style.opacity = "";
-      cvBody.style.transform = "";
-      cvBody.style.willChange = "";
-      window.removeEventListener("wheel", finishBoot);
-      window.removeEventListener("touchstart", finishBoot);
-      window.removeEventListener("keydown", finishBoot);
-      initLamp();
-    }
+  const bootAnim = animate([
+    [".theme-toggle__lamp",
+      { opacity: [0, 1] },
+      { type: "tween", duration: 0.18, at: PRE }],
 
-    bootAnim.finished.then(finishBoot).catch(() => {});
-    setTimeout(finishBoot, 2000);
-    window.addEventListener("wheel",      finishBoot, { passive: true });
-    window.addEventListener("touchstart", finishBoot, { passive: true });
-    window.addEventListener("keydown",    finishBoot);
-  } else {
+    [idLines,
+      { opacity: [0, 1], x: [-12, 0] },
+      { type: "tween", duration: 0.5, delay: stagger(0.06), ease, at: "-0.06" }],
+
+    [".cv-intro",
+      { opacity: [0, 1], y: [16, 0], filter: ["blur(4px)", "blur(0px)"] },
+      { type: "tween", duration: 0.7, ease, at: PRE + 0.28 }],
+
+    [".cv-entry",
+      { opacity: [0, 1], y: [16, 0] },
+      { type: "tween", duration: 0.55, delay: stagger(0.05), ease, at: PRE + 0.32 }],
+
+    // Ruler wipe: clip-path reveals top-to-bottom so the ticks read as a
+    // scaffold being laid out in front of the eye, then the track fades back
+    // to its rest opacity (0) — the scroll-fade system handles it from there.
+    [".dial-ruler__track",
+      { clipPath: ["inset(0% 0% 100% 0%)", "inset(0% 0% 0% 0%)"] },
+      { type: "tween", duration: 0.9, ease, at: PRE }],
+
+    [".dial-ruler__track",
+      { opacity: [0, rulerAlpha, rulerAlpha, 0] },
+      { type: "tween", duration: 1.4, times: [0, 0.2, 0.7, 1], ease, at: PRE }],
+  ]);
+
+  function finishBoot() {
+    if (cleaned) return;
+    cleaned = true;
+    root.removeAttribute("data-boot");
+    bootAnim.stop();
+    document.querySelectorAll(
+      ".theme-toggle__lamp, .cv-id__line, .cv-intro, .cv-entry, .dial-ruler__track"
+    ).forEach(n => {
+      n.style.opacity = "";
+      n.style.transform = "";
+      n.style.filter = "";
+      n.style.clipPath = "";
+      n.style.willChange = "";
+    });
+    window.removeEventListener("wheel", finishBoot);
+    window.removeEventListener("touchstart", finishBoot);
+    window.removeEventListener("keydown", finishBoot);
     initLamp();
   }
+
+  bootAnim.finished.then(finishBoot).catch(() => {});
+  setTimeout(finishBoot, 2500);
+  window.addEventListener("wheel",      finishBoot, { passive: true });
+  window.addEventListener("touchstart", finishBoot, { passive: true });
+  window.addEventListener("keydown",    finishBoot);
 } else {
   root.removeAttribute("data-boot");
   initLamp();
@@ -347,6 +385,9 @@ if (!reduced) {
     }
 
     window.addEventListener("scroll", () => {
+      // During boot, the reveal animation owns the track — don't let the
+      // scroll-parking fire fadeIn/fadeOut and race with it.
+      if (root.hasAttribute("data-boot")) return;
       fadeIn();
       clearTimeout(idleTimer);
       idleTimer = setTimeout(fadeOut, IDLE_MS);

@@ -154,6 +154,7 @@ html {
 
 body {
   min-height: 100vh;
+  overflow-x: clip;
   background: linear-gradient(180deg, var(--surface), var(--surface-end));
   background-attachment: fixed;
   color: var(--ink);
@@ -368,33 +369,32 @@ a:focus-visible {
   pointer-events: none;
 }
 
-.reveal {
+/* Boot start poses. CSS parks each region off its rest line so first paint is
+   stable; motion.dev drives the sequenced intro in script.js and clears
+   data-boot when it's done. Short distances (12–16px) keep motion reading as
+   "settling in," not flying across the screen. */
+:root[data-boot="scroll"] .theme-toggle__lamp { opacity: 0; }
+
+:root[data-boot="scroll"] .cv-id__line {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateX(-12px);
   will-change: opacity, transform;
-  animation: reveal 250ms cubic-bezier(0, 0, 0.2, 1) forwards;
-  animation-delay: var(--reveal-delay, 50ms);
 }
 
-@keyframes reveal {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Boot slide start pose. CSS parks cv-body below its resting line and faded
-   out so first paint is stable; motion.dev drives the glide in script.js
-   and clears data-boot when it's done. Distance mirrors startY. */
-:root[data-boot="scroll"] .cv-body {
+:root[data-boot="scroll"] .cv-intro,
+:root[data-boot="scroll"] .cv-entry {
   opacity: 0;
-  transform: translate3d(0, 22vh, 0);
-  will-change: transform, opacity;
+  transform: translateY(16px);
+  will-change: opacity, transform;
+}
+
+:root[data-boot="scroll"] .cv-intro {
+  filter: blur(4px);
+  will-change: opacity, transform, filter;
 }
 
 /* While booting, force instant snap so the browser's initial dial-alignment
-   snap lands at t=0 instead of smooth-scrolling into place *after* the glide
-   (which read as a second motion / jump). Snap targets still work. */
+   lands at t=0 instead of smooth-snapping into place after the sequence. */
 :root[data-boot="scroll"] {
   scroll-behavior: auto;
 }
