@@ -115,6 +115,7 @@ if (!reduced) {
     let raf = 0;
 
     const DIAL_THRESHOLD = 20;
+    const DIAL_VELOCITY_MAX = 0.4;
 
     const BLOOM_PEAK = 0.7;
     const CURSOR_PEAK = 0.22;
@@ -196,7 +197,7 @@ if (!reduced) {
         dists[i] = d;
         if (d < closestDist) { closestDist = d; closestIdx = i; }
       }
-      const dialedIdx = closestDist <= DIAL_THRESHOLD ? closestIdx : -1;
+      const dialedIdx = (closestDist <= DIAL_THRESHOLD && velEMA < DIAL_VELOCITY_MAX) ? closestIdx : -1;
 
       if (dialedIdx !== prevDialedIdx) {
         if (prevDialedIdx !== null && dialedIdx !== -1) detent();
@@ -265,7 +266,6 @@ if (!reduced) {
 
 if (!reduced) {
   const ruler = document.querySelector(".dial-ruler");
-  const body = document.querySelector(".cv-body");
   const FADE_IN_MS = 180;
   const FADE_OUT_MS = 320;
   const IDLE_MS = 220;
@@ -278,15 +278,7 @@ if (!reduced) {
     return isFinite(parsed) ? parsed : 0.08;
   }
 
-  if (ruler && body) {
-    function positionRuler() {
-      const rect = body.getBoundingClientRect();
-      const rulerWidth = ruler.offsetWidth;
-      ruler.style.left = Math.round(rect.left - 36 - rulerWidth) + "px";
-    }
-    positionRuler();
-    window.addEventListener("resize", positionRuler);
-
+  if (ruler) {
     let current = null;
     let idleTimer = 0;
     let shown = false;

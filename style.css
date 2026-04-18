@@ -167,8 +167,8 @@ body {
   max-width: 600px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: max-content 1fr;
-  column-gap: 80px;
+  grid-template-columns: max-content auto 1fr;
+  column-gap: 37px;
   align-items: start;
 }
 
@@ -330,9 +330,9 @@ a:focus-visible {
 }
 
 .dial-ruler {
-  position: fixed;
+  position: sticky;
   top: 0;
-  bottom: 0;
+  height: 100dvh;
   width: 6px;
   overflow: hidden;
   opacity: 0;
@@ -394,7 +394,7 @@ a:focus-visible {
   body { font-size: 16px; }
 
   .cv {
-    column-gap: 24px;
+    column-gap: 9px;
     padding-inline: 0 20px;
   }
 
