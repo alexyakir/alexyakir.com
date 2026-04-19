@@ -138,7 +138,13 @@ html {
 }
 
 :root {
-  --dial-y: 42vh;
+  /* dvh (not vh) so CSS tracks the current visible viewport — matches
+     window.innerHeight in JS. Using vh here broke iOS: CSS resolves vh
+     to the LARGE viewport (URL-bar-collapsed), so while the URL bar was
+     visible, the entry snap position and JS's computed dialY diverged by
+     up to ~40px — past the 20px detent threshold. Intermittent because
+     the gap closed as the URL bar collapsed mid-scroll. */
+  --dial-y: 42dvh;
   --lamp-gap: 25px;
   --tick-y: calc(var(--dial-y) - var(--lamp-gap));
 }
@@ -184,23 +190,40 @@ body {
 
 .cv-id__line {
   background-image: linear-gradient(to bottom, var(--ink-lit), var(--ink-lit-rest));
-  background-size: 100% calc(200px + var(--lamp-intensity) * 300px);
+  background-size: 100% calc(200px + var(--lamp-intensity) * 600px);
   background-repeat: no-repeat;
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
   font-weight: 300;
   line-height: 1.35;
+  /* Halo bloom radiating from the lamp. Two stops: a sharper inner glow + a
+     softer wider one, both modulated by --lamp-intensity (scroll/cursor) and
+     --line-falloff (per-line distance from the lamp). At rest both terms are
+     ~0, so the shadow vanishes; under scroll the upper lines bloom hardest
+     and the bottom lines barely register — light decays with distance. */
+  text-shadow:
+    0 0 calc(var(--lamp-intensity) * var(--line-falloff, 1) * 14px)
+      color-mix(in srgb, var(--blue-soft)
+        calc(var(--lamp-intensity) * var(--line-falloff, 1) * 90%),
+        transparent),
+    0 0 calc(var(--lamp-intensity) * var(--line-falloff, 1) * 38px)
+      color-mix(in srgb, var(--blue-soft)
+        calc(var(--lamp-intensity) * var(--line-falloff, 1) * 50%),
+        transparent);
 }
 
 .cv-id__name           { font-size: inherit;                                    }
 .cv-id > a             { text-decoration: none;                                  }
-.cv-id > a:nth-of-type(1) { background-position: 0 -1lh; }
-.cv-id > a:nth-of-type(2) { background-position: 0 -2lh; }
-.cv-id > a:nth-of-type(3) { background-position: 0 -3lh; }
-.cv-id > a:nth-of-type(4) { background-position: 0 -4lh; }
-.cv-id > a:nth-of-type(5) { background-position: 0 -5lh; }
-.cv-id > a:nth-of-type(6) { background-position: 0 -6lh; }
+/* Per-line halo falloff — line 1 (name) sits right under the lamp at full
+   intensity; each line below receives progressively less direct light. */
+.cv-id__name              { --line-falloff: 1;    }
+.cv-id > a:nth-of-type(1) { background-position: 0 -1lh; --line-falloff: 0.85; }
+.cv-id > a:nth-of-type(2) { background-position: 0 -2lh; --line-falloff: 0.7;  }
+.cv-id > a:nth-of-type(3) { background-position: 0 -3lh; --line-falloff: 0.55; }
+.cv-id > a:nth-of-type(4) { background-position: 0 -4lh; --line-falloff: 0.42; }
+.cv-id > a:nth-of-type(5) { background-position: 0 -5lh; --line-falloff: 0.32; }
+.cv-id > a:nth-of-type(6) { background-position: 0 -6lh; --line-falloff: 0.24; }
 
 .cv-id__short { display: none; }
 
@@ -321,12 +344,16 @@ a:focus-visible {
   transition: background 220ms ease, box-shadow 240ms ease;
 }
 
+/* overflow-y: clip contains the tall track vertically; overflow-x stays
+   visible so the detent's scaleX can reach rightward past the 6px box. */
 .dial-ruler {
   position: sticky;
   top: 0;
   height: 100dvh;
   width: 6px;
   pointer-events: none;
+  overflow-x: visible;
+  overflow-y: clip;
   -webkit-mask-image: linear-gradient(to bottom,
     transparent 0%,
     #000 18%,
@@ -339,9 +366,18 @@ a:focus-visible {
     transparent 100%);
 }
 
+/* Tall fixed-pixel track clipped by the parent's overflow-y. Rendering the
+   gradient into a 10000px box (vs. a viewport-sized one) sidesteps the
+   subpixel rounding that makes repeating-linear-gradient stripes drift
+   unevenly when element height isn't a clean multiple of the 10px pattern.
+   Viewport resize moves the parent, not the gradient — tick spacing stays
+   stable. A tick lands at track-y 5000, which maps to viewport-y --tick-y. */
 .dial-ruler__track {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  top: calc(var(--tick-y) - 5000px);
+  height: 10000px;
   opacity: 0;
   will-change: opacity;
   background-image: repeating-linear-gradient(
@@ -351,7 +387,6 @@ a:focus-visible {
     transparent 1px,
     transparent 10px
   );
-  background-position: 0 var(--tick-y);
   color: var(--ink);
 }
 
@@ -416,12 +451,12 @@ a:focus-visible {
   /* Hover arrow never shows on touch — reclaim its reserved width. */
   .cv-id > a::after { display: none; }
 
-  .cv-id > a:nth-of-type(1) { order: 4; background-position: 0 -4lh; } /* Figma    */
-  .cv-id > a:nth-of-type(2) { order: 5; background-position: 0 -5lh; } /* GitHub   */
-  .cv-id > a:nth-of-type(3) { order: 6; background-position: 0 -6lh; } /* LinkedIn */
-  .cv-id > a:nth-of-type(4) { order: 1; background-position: 0 -1lh; } /* X        */
-  .cv-id > a:nth-of-type(5) { order: 2; background-position: 0 -2lh; } /* CV       */
-  .cv-id > a:nth-of-type(6) { order: 3; background-position: 0 -3lh; } /* Email    */
+  .cv-id > a:nth-of-type(1) { order: 4; background-position: 0 -4lh; --line-falloff: 0.42; } /* Figma    */
+  .cv-id > a:nth-of-type(2) { order: 5; background-position: 0 -5lh; --line-falloff: 0.32; } /* GitHub   */
+  .cv-id > a:nth-of-type(3) { order: 6; background-position: 0 -6lh; --line-falloff: 0.24; } /* LinkedIn */
+  .cv-id > a:nth-of-type(4) { order: 1; background-position: 0 -1lh; --line-falloff: 0.85; } /* X        */
+  .cv-id > a:nth-of-type(5) { order: 2; background-position: 0 -2lh; --line-falloff: 0.7;  } /* CV       */
+  .cv-id > a:nth-of-type(6) { order: 3; background-position: 0 -3lh; --line-falloff: 0.55; } /* Email    */
 }
 
 @media print {

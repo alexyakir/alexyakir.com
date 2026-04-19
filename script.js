@@ -97,6 +97,7 @@ function initLamp() {
   const VEL_SMOOTHING = 0.55;
 
   let prevDialedIdx = null;
+  let ackedIdx = -1;
   let lampIntensity = 0;
   let scrollBloom = 0;
   let cursorBloom = 0;
@@ -116,25 +117,14 @@ function initLamp() {
     if (!detentEl || reduced) return;
     detentAnim?.stop?.();
 
-    // Reach rightward from the ruler to the first entry's left edge — the tick
-    // stretches out to greet the dialed-in section and pulls back. Measured
-    // live so desktop (37px gap) and mobile (9px gap) both land on the edge.
-    const ruler = detentEl.parentElement;
-    const entry = document.querySelector(".cv-entry");
-    let reach = 1;
-    if (ruler && entry) {
-      const r = ruler.getBoundingClientRect();
-      const e = entry.getBoundingClientRect();
-      if (r.width > 0) reach = Math.max(1, (e.left - r.left) / r.width);
-    }
-
+    // Acknowledging ignition: the entry has landed at the dial, so the tick
+    // lights up in place to mark the alignment. No reach — this is a
+    // response, not a gesture. Crisp ignite, slower fade reads as a filament
+    // catching and cooling.
     detentAnim = animate(
       detentEl,
-      {
-        scaleX: [null, reach, 1],
-        opacity: [null, 1, 0],
-      },
-      { duration: 0.5, times: [0, 0.26, 1], ease: [circOut, easeOut] }
+      { opacity: [null, 1, 0] },
+      { duration: 0.6, times: [0, 0.12, 1], ease: [circOut, easeOut] }
     );
   }
 
@@ -198,8 +188,16 @@ function initLamp() {
 
     if (dialedIdx !== prevDialedIdx) {
       if (prevDialedIdx !== null && dialedIdx !== -1) detent();
-      if (dialedIdx !== -1) detentPulse();
       prevDialedIdx = dialedIdx;
+    }
+
+    // Acknowledge ignition fires once per settle. velEMA reaches 0 only at
+    // boot or after the idle timer zeros it (IDLE_MS after the last scroll
+    // event) — by then all motion including snap has finished, so the tick
+    // lights up strictly after the entry has landed.
+    if (dialedIdx !== ackedIdx) {
+      if (dialedIdx === -1) ackedIdx = -1;
+      else if (velEMA === 0) { detentPulse(); ackedIdx = dialedIdx; }
     }
 
     for (let i = 0; i < targets.length; i++) {
@@ -304,7 +302,10 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
     // Ruler wipe: clip-path reveals top-to-bottom so the ticks read as a
     // scaffold being laid out in front of the eye, then the track fades back
     // to its rest opacity (0) — the scroll-fade system handles it from there.
-    [".dial-ruler__track",
+    // Applied to .dial-ruler (100vh) not __track (10000px) so the animation's
+    // percentage space matches the visible window. Detent is opacity:0 during
+    // boot, so clip-path incidentally clipping it horizontally is harmless.
+    [".dial-ruler",
       { clipPath: ["inset(0% 0% 100% 0%)", "inset(0% 0% 0% 0%)"] },
       { type: "tween", duration: 0.9, ease, at: PRE }],
 
@@ -319,7 +320,7 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
     root.removeAttribute("data-boot");
     bootAnim.stop();
     document.querySelectorAll(
-      ".theme-toggle__lamp, .cv-id__line, .cv-intro, .cv-entry, .dial-ruler__track"
+      ".theme-toggle__lamp, .cv-id__line, .cv-intro, .cv-entry, .dial-ruler__track, .dial-ruler"
     ).forEach(n => {
       n.style.opacity = "";
       n.style.transform = "";
