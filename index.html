@@ -24,7 +24,11 @@
   <meta name="description" content="Craft-driven designer and systems thinker. 14 years shaping human-computer interaction. Deep frontend expertise with a focus on signal over noise.">
   <meta name="author" content="Alex Yakir">
   <link rel="canonical" href="https://alexyakir.com/">
+  <link rel="alternate" hreflang="en" href="https://alexyakir.com/">
+  <link rel="alternate" hreflang="x-default" href="https://alexyakir.com/">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cdn.jsdelivr.net; base-uri 'self'; form-action 'self'">
 
   <meta property="og:type" content="profile">
   <meta property="og:site_name" content="Alex Yakir">
@@ -49,6 +53,14 @@
   <meta name="twitter:image:alt" content="Alex Yakir — Design Engineer">
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="author" href="https://alexyakir.com/#person">
+  <link rel="me" href="https://github.com/alexyakir">
+  <link rel="me" href="https://www.linkedin.com/in/alexyakir/">
+  <link rel="me" href="https://x.com/alexyakir">
+  <link rel="me" href="https://www.figma.com/@alexyakir">
+  <link rel="me" href="mailto:hi@alexyakir.com">
 
   <script type="application/ld+json">
   {
@@ -60,6 +72,7 @@
         "url": "https://alexyakir.com/",
         "name": "Alex Yakir",
         "inLanguage": "en",
+        "dateModified": "2026-04-19",
         "publisher": { "@id": "https://alexyakir.com/#person" }
       },
       {
@@ -68,8 +81,17 @@
         "url": "https://alexyakir.com/",
         "name": "Alex Yakir — Design Engineer",
         "inLanguage": "en",
+        "dateModified": "2026-04-19",
+        "primaryImageOfPage": "https://alexyakir.com/og.png",
         "isPartOf": { "@id": "https://alexyakir.com/#website" },
-        "mainEntity": { "@id": "https://alexyakir.com/#person" }
+        "mainEntity": { "@id": "https://alexyakir.com/#person" },
+        "significantLink": [
+          "https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt",
+          "https://functional-ui-kit.com/",
+          "https://apps.shopify.com/easysizes",
+          "https://github.com/alexyakir",
+          "https://www.linkedin.com/in/alexyakir/"
+        ]
       },
       {
         "@type": "Person",
@@ -86,13 +108,113 @@
           "Design Engineering",
           "Frontend Development",
           "Interaction Design",
-          "Human-Computer Interaction"
+          "Human-Computer Interaction",
+          "Typography",
+          "Figma",
+          "TypeScript",
+          "CSS"
+        ],
+        "hasOccupation": {
+          "@type": "Occupation",
+          "name": "Design Engineer",
+          "skills": "Design Systems, Frontend Engineering, TypeScript, Interaction Design, Typography, CSS"
+        },
+        "worksFor": [
+          { "@type": "Organization", "name": "Wix", "url": "https://www.wix.com" },
+          { "@type": "Organization", "name": "Agoda", "url": "https://www.agoda.com" },
+          { "@type": "Organization", "name": "Navina", "url": "https://navina.ai" }
+        ],
+        "alumniOf": {
+          "@type": "CollegeOrUniversity",
+          "name": "Shenkar College of Engineering, Design and Art",
+          "url": "https://www.shenkar.ac.il/en/"
+        },
+        "memberOf": {
+          "@type": "Organization",
+          "name": "Figma Creators Fund"
+        },
+        "award": [
+          "Adobe Design Achievement Award",
+          "Figma Creators Fund"
+        ],
+        "creator": [
+          { "@id": "https://alexyakir.com/#figma-3d-tilt" },
+          { "@id": "https://alexyakir.com/#functional-ui-kit" },
+          { "@id": "https://alexyakir.com/#easysizes" }
         ],
         "sameAs": [
           "https://www.figma.com/@alexyakir",
           "https://github.com/alexyakir",
           "https://www.linkedin.com/in/alexyakir/",
           "https://x.com/alexyakir"
+        ]
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://alexyakir.com/#figma-3d-tilt",
+        "name": "Figma 3D Tilt",
+        "url": "https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt",
+        "description": "Figma plugin that explores layer structure in 3D.",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Web",
+        "author": { "@id": "https://alexyakir.com/#person" }
+      },
+      {
+        "@type": "CreativeWork",
+        "@id": "https://alexyakir.com/#functional-ui-kit",
+        "name": "Functional UI Kit",
+        "url": "https://functional-ui-kit.com/",
+        "description": "Award-winning design system aligning what's possible.",
+        "creator": { "@id": "https://alexyakir.com/#person" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://alexyakir.com/#easysizes",
+        "name": "EasySizes",
+        "url": "https://apps.shopify.com/easysizes",
+        "description": "Shopify app for real-life size comparisons.",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Shopify",
+        "author": { "@id": "https://alexyakir.com/#person" }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://alexyakir.com/#faq",
+        "isPartOf": { "@id": "https://alexyakir.com/#website" },
+        "about": { "@id": "https://alexyakir.com/#person" },
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Who is Alex Yakir?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Alex Yakir is a design engineer with 14 years of experience shaping human-computer interaction. A designer at core who went all in on engineering, he combines deep frontend expertise with design systems, interaction design, and typography craft."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What has Alex Yakir built?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Alex has created Figma 3D Tilt, a Figma plugin that explores layer structure in 3D; Functional UI Kit, an award-winning design system; and EasySizes, a Shopify app for real-life size comparisons live on the Shopify App Store."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Where has Alex Yakir worked?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Alex has shipped at Wix, Agoda, and Navina as a design engineer, working across TypeScript, test-driven development, and design systems. He has also advised and supported teams including NanoClaw, HoneyBook, and Anima on story, brand, code, and product-market fit."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is Alex Yakir recognized for?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Alex is a recipient of the Adobe Design Achievement Award and the Figma Creators Fund. He has taught design and frontend fundamentals to B.Des. students at Shenkar, and a branded HTML/CSS course for designers reached a broad audience."
+            }
+          }
         ]
       }
     ]
@@ -120,19 +242,19 @@
 </head>
 <body>
 
-  <main class="cv">
+  <main class="cv h-card" itemscope itemtype="https://schema.org/Person">
 
     <header class="cv-id">
       <button class="theme-toggle" type="button" aria-label="Toggle theme" aria-pressed="false">
         <span class="theme-toggle__lamp" aria-hidden="true"></span>
       </button>
-      <h1 class="cv-id__line cv-id__name"><span class="cv-id__full">Alex Yakir</span><span class="cv-id__short" aria-hidden="true">AY</span></h1>
-      <a class="cv-id__line" href="https://www.figma.com/@alexyakir">Figma</a>
-      <a class="cv-id__line" href="https://github.com/alexyakir">GitHub</a>
-      <a class="cv-id__line" href="https://www.linkedin.com/in/alexyakir/">LinkedIn</a>
-      <a class="cv-id__line" href="https://x.com/alexyakir" aria-label="X/Twitter"><span class="cv-id__full">X/Twitter</span><span class="cv-id__short" aria-hidden="true">X</span></a>
+      <h1 class="cv-id__line cv-id__name p-name" itemprop="name"><span class="cv-id__full">Alex Yakir</span><span class="cv-id__short" aria-hidden="true">AY</span></h1>
+      <a class="cv-id__line" rel="me" href="https://www.figma.com/@alexyakir">Figma</a>
+      <a class="cv-id__line" rel="me" href="https://github.com/alexyakir">GitHub</a>
+      <a class="cv-id__line" rel="me" href="https://www.linkedin.com/in/alexyakir/">LinkedIn</a>
+      <a class="cv-id__line" rel="me" href="https://x.com/alexyakir" aria-label="X/Twitter"><span class="cv-id__full">X/Twitter</span><span class="cv-id__short" aria-hidden="true">X</span></a>
       <a class="cv-id__line" href="https://www.icloud.com/iclouddrive/081zjiSbW_iJWqPDWRWW3mcMQ#alex-yakir-cv-2026" aria-label="Download CV"><span class="cv-id__full">Download CV</span><span class="cv-id__short" aria-hidden="true">CV</span></a>
-      <a class="cv-id__line" href="mailto:hi@alexyakir.com" aria-label="Email hi@alexyakir.com"><span class="cv-id__full">hi@alexyakir.com</span><span class="cv-id__short" aria-hidden="true">Email</span></a>
+      <a class="cv-id__line u-email" rel="me" href="mailto:hi@alexyakir.com" aria-label="Email hi@alexyakir.com"><span class="cv-id__full">hi@alexyakir.com</span><span class="cv-id__short" aria-hidden="true">Email</span></a>
     </header>
 
     <div class="dial-ruler" aria-hidden="true">
@@ -142,63 +264,63 @@
 
     <div class="cv-body">
 
-      <p class="cv-intro">I'm a craft-driven designer and systems thinker with 14 years of experience shaping human-computer interaction. I combine deep frontend expertise with a strong focus on signal over noise.</p>
+      <p class="cv-intro p-note" id="about">A craft-driven designer and systems thinker with 14 years of experience shaping human-computer interaction. I combine deep frontend expertise with a strong focus on signal over noise.</p>
 
-      <div class="cv-entry">
+      <section class="cv-entry" id="figma-3d-tilt">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Figma 3D Tilt</span>
         </h2>
         <p class="cv-entry__body">Explore your Figma layer structure in 3D with <a href="https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt">this plugin</a>.</p>
-      </div>
+      </section>
 
-      <div class="cv-entry">
+      <section class="cv-entry" id="functional-ui-kit">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Functional UI Kit</span>
         </h2>
         <p class="cv-entry__body">Award-winning <a href="https://functional-ui-kit.com/">design system</a> aligning what's possible.</p>
-      </div>
+      </section>
 
-      <div class="cv-entry">
+      <section class="cv-entry" id="easysizes">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">EasySizes</span>
         </h2>
         <p class="cv-entry__body">Shopify app for real-life size comparisons, <a href="https://apps.shopify.com/easysizes">live on the App Store</a>.</p>
-      </div>
+      </section>
 
-      <div class="cv-entry">
+      <section class="cv-entry" id="design-engineer">
         <h2 class="cv-entry__head">
-          <span class="cv-entry__title">Design Engineer</span>
+          <span class="cv-entry__title p-job-title">Design Engineer</span>
         </h2>
         <p class="cv-entry__body">A designer at core who went all in on engineering. TypeScript, TDD, smart/dumb components, team PRs, code reviews, cicd. Broke production once, never since. Shipped at <a href="https://www.wix.com">Wix</a>, <a href="https://www.agoda.com">Agoda</a>, &amp; <a href="https://navina.ai">Navina</a>.</p>
-      </div>
+      </section>
 
-      <div class="cv-entry">
+      <section class="cv-entry" id="advise-support">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Advise &amp; Support</span>
         </h2>
         <p class="cv-entry__body">Been fortunate to advise &amp; support teams like <a href="https://github.com/qwibitai/nanoclaw">NanoClaw</a>, <a href="https://www.honeybook.com">HoneyBook</a>, &amp; <a href="https://www.animaapp.com">Anima</a>. Story &amp; brand ahead of a funding round. Hands on code support. Advisory on product market fit.</p>
-      </div>
+      </section>
 
-      <div class="cv-entry">
+      <section class="cv-entry" id="design-management">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Design Management</span>
         </h2>
         <p class="cv-entry__body">Helped companies needing stronger interaction design principles &amp; frontend practice. Convinced leadership to back ux patterns, worked with engineers new to frontend.</p>
-      </div>
+      </section>
 
-      <div class="cv-entry">
+      <section class="cv-entry" id="teaching">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Teaching</span>
         </h2>
         <p class="cv-entry__body">Taught design &amp; frontend basics to B.Des. students at <a href="https://www.shenkar.ac.il/en/">Shenkar</a>. A branded <a href="https://www.youtube.com/playlist?list=PLQIQtBQtKNiKEpIRzZS8i087vVqPruPLl">HTML/CSS course</a> for designers caught on too.</p>
-      </div>
+      </section>
 
-      <div class="cv-entry">
+      <section class="cv-entry" id="awards">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Awards</span>
         </h2>
         <p class="cv-entry__body">Adobe Design Achievement Award.<br>Figma Creators Fund.</p>
-      </div>
+      </section>
 
     </div>
 

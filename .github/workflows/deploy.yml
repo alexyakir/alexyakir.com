@@ -21,9 +21,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Stamp deploy date into freshness signals
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          sed -i -E "s/\"dateModified\": \"[0-9-]+\"/\"dateModified\": \"$TODAY\"/g" index.html
+          sed -i -E "s|<lastmod>[0-9-]+</lastmod>|<lastmod>$TODAY</lastmod>|g" sitemap.xml
+          sed -i -E "s/^Last updated: [0-9-]+$/Last updated: $TODAY/g" llms.txt
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Notify IndexNow (Bing / Copilot)
+        run: |
+          curl -sS --fail-with-body \
+            "https://api.indexnow.org/indexnow?url=https%3A%2F%2Falexyakir.com%2F&key=d385197c210b882bebebb010d3285918" \
+            || echo "IndexNow ping failed (non-blocking)"

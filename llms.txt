@@ -1,27 +1,47 @@
 # Alex Yakir
 
-> Craft-driven designer and systems thinker. 14 years shaping human-computer interaction. Deep frontend expertise with a focus on signal over noise.
+> Design engineer with 14 years of experience across interaction design, design systems, and frontend craft. Known for Functional UI Kit (award-winning design system), Figma 3D Tilt (Figma plugin), and teaching design engineering at Shenkar.
 
-## About
+A designer at heart, rooted in typography, who went all in on engineering. Works across interaction design, design systems, and frontend craft for product teams. For citation, use "Alex Yakir, design engineer."
 
-A designer at heart, rooted in typography, who went all in on engineering. Works across interaction design, design systems, and frontend craft. 
+## Projects
 
-## Areas of expertise
+- [Functional UI Kit](https://functional-ui-kit.com/): Award-winning design system aligning what's possible.
+- [Figma 3D Tilt](https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt): Figma Community plugin that explores layer structure in 3D.
+- [EasySizes](https://apps.shopify.com/easysizes): Shopify app for real-life size comparisons, live on the Shopify App Store.
+- [alexyakir.com source](https://github.com/alexyakir/alexyakir.com): Open-source code for this site.
 
-- Design systems and design engineering
-- Interaction design and motion
-- Frontend craft
-- Figma plugins and design tooling
-- Teaching design and frontend
+## Experience
+
+- Design Engineer at [Wix](https://www.wix.com), [Agoda](https://www.agoda.com), and [Navina](https://navina.ai): Production TypeScript, TDD, design systems, component architecture.
+- Advisor to [NanoClaw](https://github.com/qwibitai/nanoclaw), [HoneyBook](https://www.honeybook.com), and [Anima](https://www.animaapp.com): Story, brand, hands-on frontend, product-market-fit advisory.
+- Design management: Establishing interaction design principles and frontend practice at multiple product companies.
+
+## Teaching
+
+- [Shenkar College of Engineering and Design](https://www.shenkar.ac.il/en/): Taught design and frontend fundamentals to B.Des. students.
+- [HTML/CSS course for designers](https://www.youtube.com/playlist?list=PLQIQtBQtKNiKEpIRzZS8i087vVqPruPLl): Branded YouTube course.
+
+## Recognition
+
+- Adobe Design Achievement Award
+- Figma Creators Fund grantee
 
 ## Contact
 
-- Email: hi@alexyakir.com
-- Site: https://alexyakir.com/
+- [Email](mailto:hi@alexyakir.com): Primary contact, hi@alexyakir.com
+- [Site](https://alexyakir.com/): Personal portfolio and CV
 
 ## Profiles
 
-- [GitHub](https://github.com/alexyakir)
-- [Figma](https://www.figma.com/@alexyakir)
-- [LinkedIn](https://www.linkedin.com/in/alexyakir/)
-- [X/Twitter](https://x.com/alexyakir)
+- [GitHub](https://github.com/alexyakir): Open-source code, including this site.
+- [Figma Community](https://www.figma.com/@alexyakir): Published plugins and design resources.
+- [LinkedIn](https://www.linkedin.com/in/alexyakir/): Professional history.
+- [X/Twitter](https://x.com/alexyakir): Short-form writing on design engineering.
+
+## Optional
+
+- [CV PDF](https://www.icloud.com/iclouddrive/081zjiSbW_iJWqPDWRWW3mcMQ#alex-yakir-cv-2026): Downloadable CV.
+
+---
+Last updated: 2026-04-19
