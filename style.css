@@ -445,6 +445,12 @@ a:focus-visible {
     padding-inline: 0 20px;
   }
 
+  /* Everything rides body's 24px grid (1.5); title stays tight at 1.35 and
+     the flex gap pays back the 2.4px so body lines land on grid. */
+  .cv-id__line,
+  .cv-intro { line-height: 1.5; }
+  .cv-entry { gap: 3px; }
+
   .cv-id__full  { display: none; }
   .cv-id__short { display: inline; }
 
