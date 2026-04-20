@@ -205,7 +205,10 @@ function initLamp() {
       const t = Math.min(1, dists[i] / maxDist);
       const eased = circOut(t);
       el.style.opacity = (1 - eased * (1 - MIN_OPACITY)).toFixed(3);
-      el.classList.toggle("is-dialed-in", i === dialedIdx);
+      // is-acked = the entry has settled at the dial and the detent tick has
+      // fired. Drives text lit state + divider sweep in lockstep with the
+      // tick so all three light up as one "lock" gesture.
+      el.classList.toggle("is-acked", i === ackedIdx);
     }
 
     const lampTarget = Math.max(scrollBloom, cursorBloom);

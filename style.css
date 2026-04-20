@@ -150,11 +150,9 @@ html {
 }
 
 :root, :root[data-theme="light"] {
-  --tick-alpha: 0.18;
   --ruler-alpha: 0.08;
 }
 :root[data-theme="dark"] {
-  --tick-alpha: 0.26;
   --ruler-alpha: 0.14;
 }
 
@@ -249,11 +247,56 @@ body {
 
 .cv-intro,
 .cv-entry {
+  position: relative;
   scroll-snap-align: start;
-  border-top: 1px solid color-mix(in srgb, currentColor calc(var(--tick-alpha) * 100%), transparent);
-  /* lamp-gap minus 1px border, so the title's top edge lands at --dial-y
-     (matching the identity column) rather than 1px below it. */
-  padding-top: calc(var(--lamp-gap) - 1px);
+  /* Full lamp-gap as padding so the title's top edge lands at --dial-y
+     (matching the identity column). The divider below paints via ::before at
+     top: 0, landing at --tick-y only when this entry is dialed in. */
+  padding-top: var(--lamp-gap);
+}
+
+/* Divider for the dialed entry — a thin gradient seeded at the left,
+   fading off before the midline, as if the lamp's luminance were spilling
+   onto the top edge from the source. Hidden at rest; .is-acked (set the
+   moment the detent tick acknowledges the settle) sweeps it in left-to-
+   right and locks it at full width. */
+.cv-intro::before,
+.cv-entry::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--lamp-fill) 48%, transparent),
+    color-mix(in srgb, var(--lamp-fill) 20%, transparent) 32%,
+    color-mix(in srgb, var(--lamp-fill) 6%, transparent) 58%,
+    transparent 82%
+  );
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+  /* Exit: light "turns off" — short opacity fade with a matching scale
+     retract so the gradient doesn't snap. */
+  transition:
+    opacity   160ms ease-out,
+    transform 200ms ease-out;
+}
+
+.cv-intro.is-acked::before,
+.cv-entry.is-acked::before {
+  opacity: 1;
+  transform: scaleX(1);
+  /* Fires the same frame as the detent tick and the text lit state —
+     three signals, one gesture. Opacity catches up fast so the line
+     reads as fully lit while the tick is still flaring; scaleX keeps
+     painting rightward as the tick cools. */
+  transition:
+    opacity   180ms cubic-bezier(0.32, 0.72, 0, 1),
+    transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .cv-entry { display: flex; flex-direction: column; }
@@ -271,9 +314,9 @@ body {
   font-weight: 300;
 }
 
-.cv-intro.is-dialed-in,
-.cv-entry.is-dialed-in .cv-entry__title,
-.cv-entry.is-dialed-in .cv-entry__body {
+.cv-intro.is-acked,
+.cv-entry.is-acked .cv-entry__title,
+.cv-entry.is-acked .cv-entry__body {
   background-image: linear-gradient(to bottom right, var(--ink-lit), var(--ink-lit-fade) 70%);
   -webkit-background-clip: text;
           background-clip: text;
@@ -480,16 +523,38 @@ a:focus-visible {
   }
   body { background: #fff; }
   .cv-intro,
-  .cv-intro.is-dialed-in,
+  .cv-intro.is-acked,
   .cv-entry__body,
-  .cv-entry.is-dialed-in .cv-entry__title,
-  .cv-entry.is-dialed-in .cv-entry__body {
+  .cv-entry.is-acked .cv-entry__title,
+  .cv-entry.is-acked .cv-entry__body {
     background: none;
     -webkit-background-clip: border-box;
             background-clip: border-box;
     color: var(--ink);
     -webkit-text-fill-color: currentColor;
   }
+  /* Print has no JS → .is-acked never applies. Force the divider on as a
+     flat neutral rule so the printed page keeps entry separation. */
+  .cv-intro::before,
+  .cv-entry::before {
+    opacity: 1;
+    transform: none;
+    background: rgba(0, 0, 0, 0.18);
+  }
   .cv { padding: 48px; }
   @page { margin: 0.5in; size: letter; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Skip the left-to-right sweep; the divider still signals dialed-in state
+     via a brief opacity fade, no transform motion. */
+  .cv-intro::before,
+  .cv-entry::before {
+    transform: none;
+    transition: opacity 120ms linear;
+  }
+  .cv-intro.is-acked::before,
+  .cv-entry.is-acked::before {
+    transition: opacity 120ms linear;
+  }
 }
