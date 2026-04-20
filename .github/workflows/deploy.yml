@@ -25,9 +25,10 @@ jobs:
       - name: Stamp deploy date into freshness signals
         run: |
           TODAY=$(date -u +%Y-%m-%d)
-          sed -i -E "s/\"dateModified\": \"[0-9-]+\"/\"dateModified\": \"$TODAY\"/g" index.html
-          sed -i -E "s|<lastmod>[0-9-]+</lastmod>|<lastmod>$TODAY</lastmod>|g" sitemap.xml
-          sed -i -E "s/^Last updated: [0-9-]+$/Last updated: $TODAY/g" llms.txt
+          NOW=$(date -u +%Y-%m-%dT%H:%M:%S+00:00)
+          sed -i -E "s/\"dateModified\": \"[^\"]+\"/\"dateModified\": \"$NOW\"/g" index.html
+          sed -i -E "s|<lastmod>[^<]+</lastmod>|<lastmod>$TODAY</lastmod>|g" sitemap.xml
+          sed -i -E "s/^Last updated: [0-9T:+\-]+$/Last updated: $TODAY/g" llms.txt
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
