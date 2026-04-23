@@ -255,37 +255,6 @@ body {
   padding-top: var(--lamp-gap);
 }
 
-/* Divider for the dialed entry — a thin gradient seeded at the left,
-   fading off before the midline, as if the lamp's luminance were spilling
-   onto the top edge from the source. Hidden at rest; .is-acked (set the
-   moment the detent tick acknowledges the settle) sweeps it in left-to-
-   right and locks it at full width. */
-.cv-intro::before,
-.cv-entry::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    color-mix(in srgb, var(--lamp-fill) 48%, transparent),
-    color-mix(in srgb, var(--lamp-fill) 20%, transparent) 32%,
-    color-mix(in srgb, var(--lamp-fill) 6%, transparent) 58%,
-    transparent 82%
-  );
-  opacity: 0;
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  pointer-events: none;
-  /* Exit: light "turns off" — short opacity fade with a matching scale
-     retract so the gradient doesn't snap. */
-  transition:
-    opacity   160ms ease-out,
-    transform 200ms ease-out;
-}
-
 .cv-intro.is-acked::before,
 .cv-entry.is-acked::before {
   opacity: 1;
