@@ -79,8 +79,6 @@ window.addEventListener("keydown", (e) => {
 });
 
 function initLamp() {
-  const MIN_OPACITY = 0.3;
-  const MAX_DIST_RATIO = 0.35;
   let raf = 0;
 
   const DIAL_THRESHOLD = 20;
@@ -173,7 +171,6 @@ function initLamp() {
   function updateFalloff() {
     raf = 0;
     const dial = dialY();
-    const maxDist = window.innerHeight * MAX_DIST_RATIO;
     const targets = getTargets();
 
     const dists = new Array(targets.length);
@@ -200,15 +197,29 @@ function initLamp() {
       else if (velEMA === 0) { detentPulse(); ackedIdx = dialedIdx; }
     }
 
+    // Lamp sits at tick-y on screen; the identity column is on the left so
+    // the light's horizontal origin is always at x=0. Per-entry --lit-angle
+    // is a smooth function of the entry's signed vertical distance from the
+    // lamp — below → 135° (top-left origin), level → 90° (left), above →
+    // 45° (bottom-left). Saturated over ~350px so most of the visible stack
+    // covers the full range.
+    const lampY = dial - 25;
     for (let i = 0; i < targets.length; i++) {
       const el = targets[i];
-      const t = Math.min(1, dists[i] / maxDist);
-      const eased = circOut(t);
-      el.style.opacity = (1 - eased * (1 - MIN_OPACITY)).toFixed(3);
       // is-acked = the entry has settled at the dial and the detent tick has
       // fired. Drives text lit state + divider sweep in lockstep with the
-      // tick so all three light up as one "lock" gesture.
-      el.classList.toggle("is-acked", i === ackedIdx);
+      // tick so all three light up as one "lock" gesture. Once is-acked
+      // takes over, any leftover is-lit-hold from a click-to-dial is stale
+      // — clear it here so the bridge class never lingers.
+      const wasAcked = el.classList.contains("is-acked");
+      const isAcked = i === ackedIdx;
+      if (wasAcked !== isAcked) el.classList.toggle("is-acked", isAcked);
+      if (isAcked) el.classList.remove("is-lit-hold");
+
+      const r = el.getBoundingClientRect();
+      const centreY = r.top + r.height / 2;
+      const lampRel = Math.max(-1, Math.min(1, (centreY - lampY) / 350));
+      el.style.setProperty("--lit-angle", `${(90 + lampRel * 45).toFixed(1)}deg`);
     }
 
     const lampTarget = Math.max(scrollBloom, cursorBloom);
@@ -271,6 +282,17 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
     if (scrollTarget !== window.scrollY) window.scrollTo(0, scrollTarget);
   }
 
+  // Mark the intro as dialed BEFORE the boot animation runs. Two reasons:
+  //   1. CSS target for is-acked = opacity 1, matching what the boot
+  //      animates the intro to. When inline clears at finishBoot, the
+  //      computed value doesn't change → no snap.
+  //   2. The other entries animate to opacity 0.22 (their CSS target,
+  //      since they aren't acked). Same story — inline ends at 0.22, CSS
+  //      says 0.22, no snap.
+  // initLamp's first updateFalloff confirms or corrects this once boot is
+  // done; any correction rides the normal 720ms transition smoothly.
+  firstTarget?.classList.add("is-acked");
+
   // Sort identity lines by visual y so mobile's flex-order rearrangement
   // still staggers top-to-bottom rather than DOM order.
   const idLines = [...document.querySelectorAll(".cv-id__line")]
@@ -298,8 +320,11 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
       { opacity: [0, 1], y: [16, 0], filter: ["blur(4px)", "blur(0px)"] },
       { type: "tween", duration: 0.7, ease, at: PRE + 0.28 }],
 
+    // Lands at 0.22 — the dim CSS target for non-acked entries. Boot's
+    // final inline matches the post-boot CSS, so finishBoot's clear is a
+    // no-op visually (no second "snap" to a different dim value).
     [".cv-entry",
-      { opacity: [0, 1], y: [16, 0] },
+      { opacity: [0, 0.22], y: [16, 0] },
       { type: "tween", duration: 0.55, delay: stagger(0.05), ease, at: PRE + 0.32 }],
 
     // Ruler wipe: clip-path reveals top-to-bottom so the ticks read as a
@@ -345,6 +370,39 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
 } else {
   root.removeAttribute("data-boot");
   initLamp();
+}
+
+// Click-to-dial. A click on a non-dialed entry commits to bringing it to
+// the dial position. We add .is-lit-hold immediately so the entry stays
+// fully bright and infused through the smooth scroll — this is the bridge
+// between :hover ending (cursor leaves the entry as it moves) and
+// .is-acked taking over (after the entry settles at the dial). Without
+// the bridge, the user would see the entry retract and re-light, the
+// "double infusion" we're trying to avoid.
+//
+// .is-lit-hold is cleared when .is-acked fires for the same entry (in
+// updateFalloff), or after a 1500ms safety timeout if the user
+// interrupts the scroll and is-acked never settles.
+{
+  const entries = getTargets();
+  const HOLD_TIMEOUT_MS = 1500;
+  let holdTimer = 0;
+
+  entries.forEach((el, i) => {
+    el.addEventListener("click", (e) => {
+      if (e.target.closest("a")) return;
+      if (el.classList.contains("is-acked")) return;
+
+      clearTimeout(holdTimer);
+      entries.forEach(x => x.classList.remove("is-lit-hold"));
+      el.classList.add("is-lit-hold");
+      scrollToIndex(entries, i);
+      holdTimer = setTimeout(
+        () => el.classList.remove("is-lit-hold"),
+        HOLD_TIMEOUT_MS
+      );
+    });
+  });
 }
 
 if (!reduced) {

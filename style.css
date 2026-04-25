@@ -4,6 +4,20 @@
   initial-value: 0;
 }
 
+/* Single brightness variable driving the entire dim→lit transition. 0 is
+   fully dimmed (opacity 0.22, sweep gradient parked off the text); 1 is
+   fully lit (opacity 1, sweep covering the text). Both opacity and the
+   sweep gradient are derived from --bright via calc() — one variable,
+   one transition, one set of trigger selectors. inherits: true so the
+   text-clipped gradient on .cv-entry__title and __body picks up the
+   parent .cv-entry's animated value automatically; no separate transition
+   on the children. */
+@property --bright {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 :root,
 :root[data-theme="light"] {
   --ink:         #0a0a0a;
@@ -18,6 +32,10 @@
   --ink-fade:    color-mix(in srgb, var(--ink-soft) 70%, var(--surface));
   --ink-lit-fade: var(--ink);
   --ink-lit-rest: var(--ink);
+  /* Entry text infusion is calmer than the identity-column blue: a
+     desaturated dark slate, only slightly lighter than --ink-lit-fade so
+     the gradient reads as "lit edge → settled ink", not "blue → black". */
+  --text-lit: #2c3653;
 
   --lamp-fill: #1d4ed8;
   --lamp-glow:
@@ -77,8 +95,19 @@
   --surface-end: #0a0a0a;
 
   --ink-lit:      #ffffff;
-  --ink-lit-fade: color-mix(in srgb, var(--ink-lit) 60%, var(--surface));
+  /* Trailing color of the lit sweep. Pulled brighter than rest --ink-soft
+     (#a3a3a3) so the band's leading edge has something to read against —
+     the directional sweep needs a luminance step at the band edge to
+     register as "moving across the text" rather than a uniform fade.
+     Mirrors light mode's near-black trailing (which contrasts hard with
+     light mode's gray rest); here we go toward white instead, since the
+     surface is dark and "lit" means brighter, not darker. */
+  --ink-lit-fade: color-mix(in srgb, var(--ink-lit) 80%, var(--surface));
   --ink-lit-rest: color-mix(in srgb, var(--ink-lit) 35%, var(--surface));
+  /* Dark mode keeps the lit edge as bright white — same role as light
+     mode's --text-lit but at maximum luminance, since the surface here
+     is dark and the text needs to read as "lit". */
+  --text-lit: var(--ink-lit);
 
   --lamp-fill: #ffffff;
   --lamp-glow:
@@ -130,6 +159,14 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Headings inherit weight + size from body so the only weight bump in the
+   system happens at .cv-entry__title — h1/h2 browser defaults (bold,
+   larger) would otherwise leak a third weight into the layout. */
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
 html {
   background: var(--surface);
   scroll-snap-type: y proximity;
@@ -138,6 +175,16 @@ html {
 }
 
 :root {
+  /* Type system. --base-fs and --base-lh are the single source of truth
+     for the body's font-size and line-height; --lamp-gap is derived from
+     them so the lamp's vertical offset is exactly one line-height. That's
+     what makes baselines align across the identity column and the entry
+     body column: every text row sits on a 1lh grid, and the lamp-gap
+     between dialed-entry-title and the lamp line is one full grid step. */
+  --base-fs: 18px;
+  --base-lh: 1.5;
+  --lamp-gap: calc(var(--base-fs) * var(--base-lh));
+
   /* dvh (not vh) so CSS tracks the current visible viewport — matches
      window.innerHeight in JS. Using vh here broke iOS: CSS resolves vh
      to the LARGE viewport (URL-bar-collapsed), so while the URL bar was
@@ -145,7 +192,6 @@ html {
      up to ~40px — past the 20px detent threshold. Intermittent because
      the gap closed as the URL bar collapsed mid-scroll. */
   --dial-y: 42dvh;
-  --lamp-gap: 25px;
   --tick-y: calc(var(--dial-y) - var(--lamp-gap));
 }
 
@@ -162,7 +208,13 @@ body {
   background: linear-gradient(180deg, var(--surface), var(--surface-end));
   background-attachment: fixed;
   color: var(--ink);
-  font: 18px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Inter, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Inter, sans-serif;
+  font-size: var(--base-fs);
+  line-height: var(--base-lh);
+  /* Two-weight system: body sets the default light weight (used by every
+     line of identity column, entry body, intro). Entry titles bump to 600
+     locally — that's the only override. No third weight anywhere. */
+  font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -193,8 +245,6 @@ body {
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
-  font-weight: 300;
-  line-height: 1.35;
   /* Halo bloom radiating from the lamp. Two stops: a sharper inner glow + a
      softer wider one, both modulated by --lamp-intensity (scroll/cursor) and
      --line-falloff (per-line distance from the lamp). At rest both terms are
@@ -241,9 +291,19 @@ body {
   transform: translateX(0);
 }
 
-.cv-body { display: flex; flex-direction: column; gap: calc(48px - var(--lamp-gap)); }
+.cv-body { display: flex; flex-direction: column; }
 .cv-body::before { content: ""; display: block; block-size: var(--dial-y); }
 .cv-body::after  { content: ""; display: block; block-size: calc(100dvh - var(--dial-y) - 2lh); }
+
+/* Inter-entry rhythm. Each entry already pads its title down by --lamp-gap
+   (= 1lh), placing the title at the dial. Adding 1lh of margin above each
+   non-first entry brings the structural overhead between entries to
+   exactly 2 line-heights — every baseline lands on the same grid as the
+   identity column. No flex gap, no calc gymnastics. */
+.cv-intro + .cv-entry,
+.cv-entry + .cv-entry {
+  margin-top: 1lh;
+}
 
 .cv-intro,
 .cv-entry {
@@ -269,28 +329,82 @@ body {
 }
 
 .cv-entry { display: flex; flex-direction: column; }
-.cv-entry__head { font-size: inherit; font-weight: 400; line-height: 1.35; }
-.cv-entry__title { font-weight: 600; color: var(--ink-soft); }
-.cv-entry--muted .cv-entry__title { color: var(--ink-soft); font-weight: 400; }
+/* h2 default is bold + larger; pull both back to body so the only weight
+   bump in the system happens on .cv-entry__title — nowhere else. */
+.cv-entry__head { font-size: inherit; font-weight: inherit; }
+.cv-entry__title { font-weight: 600; }
 
-.cv-intro { color: var(--ink-soft); line-height: 1.35; }
+/* The entry — owns --bright and the single transition. Opacity is a calc
+   off --bright (0.22 dimmed → 1 lit). Children inherit --bright and use
+   it inside their gradient stops, so a single transition on the parent
+   drives both the opacity fade and the directional color sweep. No
+   parallel mechanism, no second curve to keep in sync.
 
+   Curve + duration audited against motion-principles + layout-animations:
+   "light arrives" is an entry metaphor → ease-out. 360ms keeps the
+   directional sweep perceptible without sliding into decorative-slow. */
+.cv-intro,
+.cv-entry {
+  opacity: calc(0.22 + var(--bright) * 0.78);
+  transition: --bright 360ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Light infusion. Two stacked gradients clipped to the text:
+     1. The sweep — --text-lit through --ink-lit-fade to transparent at
+        the leading edge. Stop positions are calc()ed from --bright so
+        the band slides as the parent's --bright animates.
+     2. The resting fade — soft → fade-to-surface, what the text reads as
+        when no light is on it.
+
+   --bright maps linearly into the old --sweep range of -25% → 120%
+   (span 145%): trailing transparent stop = bright * 145% - 3%, with
+   ink-lit-fade trailing 40% behind. At bright=0 both stops are off-text
+   on the origin side (CSS clamps them to 0%) so the lit layer is fully
+   transparent. At bright=1 the lit gradient covers the full text.
+
+   --lit-angle is set per-entry by JS as the entry's signed position
+   relative to the lamp: 135° below the lamp (origin top-left), 90° at
+   lamp height (origin left), 45° above (origin bottom-left). */
+.cv-intro,
+.cv-entry__title,
 .cv-entry__body {
-  background-image: linear-gradient(to right, var(--ink-soft), var(--ink-fade));
+  background-image:
+    linear-gradient(var(--lit-angle, 135deg),
+      var(--text-lit) 0%,
+      var(--ink-lit-fade) calc(var(--bright) * 145% - 43%),
+      transparent calc(var(--bright) * 145% - 3%),
+      transparent 100%),
+    linear-gradient(to right, var(--ink-soft), var(--ink-fade));
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
-  font-weight: 300;
+  -webkit-text-fill-color: transparent;
 }
 
+/* The bright trigger. Three reasons an entry can be lit — dialed at the
+   detent, click-committed mid-scroll, or hovered with a real pointer —
+   all converge on the same single line: --bright: 1. The transition
+   above carries every flip from one to the other (and back) on a single
+   shared envelope. No duplicate selectors per property. */
 .cv-intro.is-acked,
-.cv-entry.is-acked .cv-entry__title,
-.cv-entry.is-acked .cv-entry__body {
-  background-image: linear-gradient(to bottom right, var(--ink-lit), var(--ink-lit-fade) 70%);
-  -webkit-background-clip: text;
-          background-clip: text;
-  color: var(--ink-strong);
-  -webkit-text-fill-color: transparent;
+.cv-entry.is-acked,
+.cv-intro.is-lit-hold,
+.cv-entry.is-lit-hold {
+  --bright: 1;
+}
+
+@media (hover: hover) {
+  .cv-intro:hover,
+  .cv-entry:hover {
+    --bright: 1;
+  }
+
+  /* Pointer affordance only on entries that aren't already at the dial —
+     clicking a dialed entry is a no-op and shouldn't pretend otherwise. */
+  .cv-intro:not(.is-acked),
+  .cv-entry:not(.is-acked) {
+    cursor: pointer;
+  }
 }
 
 a {
@@ -448,20 +562,16 @@ a:focus-visible {
 
 /* Mobile: trim identity labels, reorder by width, tighten gap, right-only padding.
    Visual order: AY, X, CV, Email, Figma, GitHub, LinkedIn.
-   Gradient lamp offsets (-Nlh) remap to match the new visual order. */
+   Gradient lamp offsets (-Nlh) remap to match the new visual order.
+   Font drops to 16px via --base-fs; --lamp-gap and 1lh-driven margins
+   auto-scale with it so the baseline grid stays consistent (24px here). */
 @media (max-width: 600px) {
-  body { font-size: 16px; }
+  :root { --base-fs: 16px; }
 
   .cv {
     column-gap: 9px;
     padding-inline: 0 20px;
   }
-
-  /* Everything rides body's 24px grid (1.5); title stays tight at 1.35 and
-     the flex gap pays back the 2.4px so body lines land on grid. */
-  .cv-id__line,
-  .cv-intro { line-height: 1.5; }
-  .cv-entry { gap: 3px; }
 
   .cv-id__full  { display: none; }
   .cv-id__short { display: inline; }
@@ -492,15 +602,14 @@ a:focus-visible {
   }
   body { background: #fff; }
   .cv-intro,
-  .cv-intro.is-acked,
-  .cv-entry__body,
-  .cv-entry.is-acked .cv-entry__title,
-  .cv-entry.is-acked .cv-entry__body {
+  .cv-entry__title,
+  .cv-entry__body {
     background: none;
     -webkit-background-clip: border-box;
             background-clip: border-box;
     color: var(--ink);
     -webkit-text-fill-color: currentColor;
+    opacity: 1;
   }
   /* Print has no JS → .is-acked never applies. Force the divider on as a
      flat neutral rule so the printed page keeps entry separation. */
@@ -525,5 +634,10 @@ a:focus-visible {
   .cv-intro.is-acked::before,
   .cv-entry.is-acked::before {
     transition: opacity 120ms linear;
+  }
+  /* Snap dim/lit changes — the infusion sweep is decorative motion. */
+  .cv-intro,
+  .cv-entry {
+    transition: --bright 0s;
   }
 }
