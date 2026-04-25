@@ -1,4 +1,4 @@
-import { animate, circOut, easeOut, stagger } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm";
+import { animate, circOut, easeOut, stagger } from "https://cdn.jsdelivr.net/npm/motion@12/+esm";
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const root = document.documentElement;
@@ -407,8 +407,11 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
 
 if (!reduced) {
   const track = document.querySelector(".dial-ruler__track");
-  const FADE_IN_MS = 180;
-  const FADE_OUT_MS = 320;
+  // Enter slightly slower than exit would invert the principle "exits ~20%
+  // faster than entrances". Ruler is a scaffold acknowledging scroll — it
+  // should appear with the gesture and recede a touch quicker.
+  const FADE_IN_MS = 220;
+  const FADE_OUT_MS = 180;
   const IDLE_MS = 220;
 
   function rulerTargetAlpha() {
