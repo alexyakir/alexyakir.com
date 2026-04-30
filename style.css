@@ -18,6 +18,8 @@
   initial-value: 0;
 }
 
+
+
 :root,
 :root[data-theme="light"] {
   --ink:         #0a0a0a;
@@ -27,6 +29,9 @@
   --blue-soft:   rgba(37, 99, 235, 0.45);
   --surface:     #ffffff;
   --surface-end: #ffffff;
+
+  /* Pill — outline only, no fill. Faint contrast against the page. */
+  --pill-stroke: rgba(0, 0, 0, 0.05);
 
   --ink-lit:     #1e40af;
   --ink-fade:    color-mix(in srgb, var(--ink-soft) 70%, var(--surface));
@@ -93,6 +98,8 @@
   --blue-soft:   rgba(122, 162, 255, 0.4);
   --surface:     #0a0a0a;
   --surface-end: #0a0a0a;
+
+  --pill-stroke: rgba(255, 255, 255, 0.06);
 
   --ink-lit:      #ffffff;
   /* Trailing color of the lit sweep. Pulled brighter than rest --ink-soft
@@ -169,8 +176,7 @@ h1, h2, h3, h4, h5, h6 {
 
 html {
   background: var(--surface);
-  scroll-snap-type: y proximity;
-  scroll-padding-top: calc(var(--dial-y) - var(--lamp-gap));
+  scroll-padding-top: var(--dial-y);
   scroll-behavior: smooth;
 }
 
@@ -192,7 +198,13 @@ html {
      up to ~40px — past the 20px detent threshold. Intermittent because
      the gap closed as the URL bar collapsed mid-scroll. */
   --dial-y: 42dvh;
-  --tick-y: calc(var(--dial-y) - var(--lamp-gap));
+  /* Lamp visual sits one line-height above the dial, minus 10px so it
+     lands one tick closer to the dialed entry's title. tick-y drives the
+     lamp position, the detent stripe, the cv-id column's padding-top, and
+     the ruler track's tick alignment — all four shift together with this
+     offset, so the structural relationship between lamp + ticks + detent
+     is preserved. The dial itself (where entries land) is unaffected. */
+  --tick-y: calc(var(--dial-y) - var(--lamp-gap) + 10px);
 }
 
 :root, :root[data-theme="light"] {
@@ -291,28 +303,24 @@ body {
   transform: translateX(0);
 }
 
-.cv-body { display: flex; flex-direction: column; }
+.cv-body { display: flex; flex-direction: column; max-width: 450px; }
+.cv-entry__video { display: block; width: 100%; margin-block-start: 1lh; border-radius: 18px; }
 .cv-body::before { content: ""; display: block; block-size: var(--dial-y); }
 .cv-body::after  { content: ""; display: block; block-size: calc(100dvh - var(--dial-y) - 2lh); }
 
-/* Inter-entry rhythm. Each entry already pads its title down by --lamp-gap
-   (= 1lh), placing the title at the dial. Adding 1lh of margin above each
-   non-first entry brings the structural overhead between entries to
-   exactly 2 line-heights — every baseline lands on the same grid as the
-   identity column. No flex gap, no calc gymnastics. */
+/* Inter-entry rhythm. The empty band above each title (where the lamp's
+   halo reads) lives as MARGIN between entries, not padding inside them.
+   That keeps each cv-entry's bounding rect honest — its box is exactly
+   title-through-video, so the hover pill can envelope the entry without
+   inheriting a phantom band of padding above the title. The first entry
+   has its breathing room from cv-body::before (= --dial-y); subsequent
+   entries get 2 line-heights of margin = 1lh halo room + 1lh structural. */
 .cv-intro + .cv-entry,
-.cv-entry + .cv-entry {
-  margin-top: 1lh;
-}
+.cv-entry + .cv-entry { margin-top: calc(2 * var(--lamp-gap)); }
 
 .cv-intro,
 .cv-entry {
   position: relative;
-  scroll-snap-align: start;
-  /* Full lamp-gap as padding so the title's top edge lands at --dial-y,
-     matching the identity column's first line. The empty band above the
-     title leaves room for the lamp's halo to read against the entry. */
-  padding-top: var(--lamp-gap);
 }
 
 .cv-entry { display: flex; flex-direction: column; }
@@ -336,7 +344,6 @@ body {
 .cv-intro,
 .cv-entry {
   opacity: calc(0.22 + var(--bright) * 0.78);
-  transition: --bright 360ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* Light infusion. Two stacked gradients clipped to the text:
@@ -372,23 +379,14 @@ body {
 }
 
 /* The bright trigger. Three reasons an entry can be lit — dialed at the
-   detent, click-committed mid-scroll, or hovered with a real pointer —
-   all converge on the same single line: --bright: 1. The transition
-   above carries every flip from one to the other (and back) on a single
-   shared envelope. No duplicate selectors per property. */
-.cv-intro.is-acked,
-.cv-entry.is-acked,
-.cv-intro.is-lit-hold,
-.cv-entry.is-lit-hold {
-  --bright: 1;
-}
+   detent, click-committed mid-scroll, or hovered with a real pointer.
+   --bright is driven by JS (script.js: setBright) rather than a CSS
+   transition because @property transitions on cv-entry sections were
+   silently dropped by the browser, leaving non-intro entries stuck dim.
+   The motion-driven animation guarantees the same envelope on every
+   transition, regardless of which trigger fires it. */
 
 @media (hover: hover) {
-  .cv-intro:hover,
-  .cv-entry:hover {
-    --bright: 1;
-  }
-
   /* Pointer affordance only on entries that aren't already at the dial —
      clicking a dialed entry is a no-op and shouldn't pretend otherwise. */
   .cv-intro:not(.is-acked),
@@ -542,6 +540,32 @@ a:focus-visible {
   color: var(--ink);
 }
 
+/* Hover frame — two horizontal lines that grow out of the ruler at the
+   hovered entry's top and bottom edges, extending right to cover the
+   entry's content width. Vertical position (top) and width are set inline
+   per hover; opacity follows the same channel. The ruler's overflow-x is
+   visible (set on .dial-ruler), so these lines extend past the 6px ruler
+   into the column gap and across the content. */
+.dial-ruler__hover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  /* Width is set inline per-hover. The grow/retract animation rides on
+     transform: scaleX, not width — Chrome's width/opacity transitions
+     consistently freeze at currentTime=0 on this element (same class of
+     bug we hit on --bright). transforms animate cleanly via WAAPI, so JS
+     uses motion.dev to drive scaleX 0↔1, fully interruptible. */
+  width: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: var(--pill-stroke);
+  pointer-events: none;
+  /* Top y also slides between hovered entries — separate transition since
+     transform handles only the width side. */
+  transition: top 280ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 .dial-ruler__detent {
   position: absolute;
   left: 0;
@@ -613,6 +637,8 @@ a:focus-visible {
   .cv-id > a:nth-of-type(4) { order: 1; background-position: 0 -1lh; --line-falloff: 0.85; } /* X        */
   .cv-id > a:nth-of-type(5) { order: 2; background-position: 0 -2lh; --line-falloff: 0.7;  } /* CV       */
   .cv-id > a:nth-of-type(6) { order: 3; background-position: 0 -3lh; --line-falloff: 0.55; } /* Email    */
+
+  .dial-ruler__hover { display: none; }
 }
 
 @media print {
@@ -639,14 +665,8 @@ a:focus-visible {
     -webkit-text-fill-color: currentColor;
     opacity: 1;
   }
+  .dial-ruler__hover { display: none; }
   .cv { padding: 48px; }
   @page { margin: 0.5in; size: letter; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  /* Snap dim/lit changes — the infusion sweep is decorative motion. */
-  .cv-intro,
-  .cv-entry {
-    transition: --bright 0s;
-  }
-}

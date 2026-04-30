@@ -29,6 +29,12 @@ function getTargets() {
   return [...document.querySelectorAll(".cv-intro, .cv-entry")];
 }
 
+// Module-level hover state. The ruler-hover module owns updates; the lamp's
+// updateFalloff reads it to add a tiny --bright floor on the hovered entry
+// (a hint of warmth on hover, never enough to compete with the dialed entry).
+const hovered = new WeakSet();
+const HOVER_BRIGHT_FLOOR = 0.18;
+
 // Targets carry padding-top: var(--lamp-gap) so the divider sits above
 // the title. Dial math aligns on the title y, so we offset rect.top
 // by the element's padding-top (25 on desktop, 0 on mobile).
@@ -56,11 +62,18 @@ function currentIndex(targets) {
   return best;
 }
 
+// Programmatic-scroll flag. Set true before any scrollTo we initiate
+// (arrow-key, click-to-dial, idle-snap) so the idle-snap watcher doesn't
+// re-trigger on the scrollend that fires when our own smooth-scroll
+// finishes. Cleared on the next scrollend after we set it.
+let programmaticScroll = false;
+
 function scrollToIndex(targets, i) {
   const clamped = Math.max(0, Math.min(targets.length - 1, i));
   const el = targets[clamped];
   if (!el) return;
   const top = window.scrollY + titleTop(el) - dialY();
+  programmaticScroll = true;
   window.scrollTo({ top, behavior: "smooth" });
 }
 
@@ -96,6 +109,25 @@ function initLamp() {
 
   let prevDialedIdx = null;
   let ackedIdx = -1;
+
+  // Proximity-driven --bright. Each frame, every entry's brightness is a
+  // continuous function of how close its title is to the dial line. The
+  // dial reads as a magnetic detent: entries fade in approaching it and
+  // fade out leaving it, so scroll itself drives the dim→lit transition
+  // (interruptible, reactive, no animation to fight). BRIGHT_RANGE_LH sets
+  // how wide the lit zone is around the dial; the ^2 falloff keeps the
+  // edges soft while pinning full bright across the dial center.
+  // Click-to-dial (is-lit-hold) overrides to 1 as an explicit commit.
+  // Hover does NOT light the text — the cv-pill behind the entry is the
+  // hover affordance, so a hovered entry doesn't compete with the dialed
+  // one for "lit" attention.
+  const BRIGHT_RANGE_LH = 3;
+
+  function brightFromDistance(d, range) {
+    if (d >= range) return 0;
+    const t = 1 - d / range;
+    return t * t;
+  }
   let lampIntensity = 0;
   let scrollBloom = 0;
   let cursorBloom = 0;
@@ -204,17 +236,30 @@ function initLamp() {
     // 45° (bottom-left). Saturated over ~350px so most of the visible stack
     // covers the full range.
     const lampY = dial - 25;
+    const lhEl = targets[0];
+    const lhPx = lhEl ? (parseFloat(getComputedStyle(lhEl).lineHeight) || 24) : 24;
+    const brightRange = lhPx * BRIGHT_RANGE_LH;
     for (let i = 0; i < targets.length; i++) {
       const el = targets[i];
       // is-acked = the entry has settled at the dial and the detent tick has
-      // fired. Drives text lit state + divider sweep in lockstep with the
-      // tick so all three light up as one "lock" gesture. Once is-acked
-      // takes over, any leftover is-lit-hold from a click-to-dial is stale
-      // — clear it here so the bridge class never lingers.
+      // fired. Drives the detent-pulse one-shot only; --bright is no longer
+      // class-driven, so the class is purely a state marker for the
+      // ackedIdx logic and any external CSS that might key off it.
       const wasAcked = el.classList.contains("is-acked");
       const isAcked = i === ackedIdx;
       if (wasAcked !== isAcked) el.classList.toggle("is-acked", isAcked);
       if (isAcked) el.classList.remove("is-lit-hold");
+
+      // --bright = continuous proximity-to-dial value, overridden to 1 by
+      // explicit commits (hover, click-to-dial). Smooth ^2 falloff over
+      // BRIGHT_RANGE_LH gives a soft edge with full bright across the dial
+      // center — the entry feels like it docks into a magnetic detent
+      // rather than snapping a class on/off.
+      const proximity = brightFromDistance(dists[i], brightRange);
+      const pinned = el.classList.contains("is-lit-hold");
+      const hoverFloor = hovered.has(el) ? HOVER_BRIGHT_FLOOR : 0;
+      const bright = pinned ? 1 : Math.max(proximity, hoverFloor);
+      el.style.setProperty("--bright", bright.toFixed(3));
 
       const r = el.getBoundingClientRect();
       const centreY = r.top + r.height / 2;
@@ -241,9 +286,46 @@ function initLamp() {
     raf = requestAnimationFrame(updateFalloff);
   }
 
+  // Idle-snap. Replaces CSS scroll-snap (was: scroll-snap-type: y proximity).
+  // Free scroll during gesture; on scrollend, ALWAYS pull the closest entry's
+  // title onto the dial. Guarantees an entry is dialed at every rest position
+  // — there is no "limbo" state between entries. The dead-zone (< 1px) skips
+  // a no-op scroll when we're already aligned.
+  const SCROLLEND_FALLBACK_MS = 160;
+  let scrollEndTimer = 0;
+
+  function snapToNearest() {
+    if (programmaticScroll) { programmaticScroll = false; return; }
+    const targets = getTargets();
+    if (!targets.length) return;
+    const dial = dialY();
+    let bestIdx = -1, bestDist = Infinity, bestSigned = 0;
+    for (let i = 0; i < targets.length; i++) {
+      const signed = titleTop(targets[i]) - dial;
+      const d = Math.abs(signed);
+      if (d < bestDist) { bestDist = d; bestIdx = i; bestSigned = signed; }
+    }
+    if (bestIdx === -1) return;
+    if (bestDist < 1) return;
+    programmaticScroll = true;
+    window.scrollTo({ top: window.scrollY + bestSigned, behavior: "smooth" });
+  }
+
+  // Native scrollend (Safari 18+/Chromium) is preferred — fires once when the
+  // scroll genuinely settles, including after momentum. Idle-timer fallback
+  // only registers when the native event is missing, so we never double-fire.
+  const hasScrollEnd = "onscrollend" in window;
+  if (hasScrollEnd) {
+    window.addEventListener("scrollend", snapToNearest, { passive: true });
+  }
+
   window.addEventListener("scroll", () => {
     sampleScrollVelocity();
     schedule();
+    if (!hasScrollEnd) {
+      clearTimeout(scrollEndTimer);
+      scrollEndTimer = setTimeout(snapToNearest, SCROLLEND_FALLBACK_MS);
+    }
   }, { passive: true });
   window.addEventListener("resize", () => {
     measureLamp();
@@ -258,6 +340,10 @@ function initLamp() {
     cursorBloom = 0;
     schedule();
   });
+  // Hover floor on --bright — the ruler-hover module flips the hovered
+  // WeakSet, then dispatches this event so the falloff loop re-evaluates.
+  window.addEventListener("cv:hoverchange", schedule);
+
   updateFalloff();
 }
 
@@ -371,6 +457,148 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
   root.removeAttribute("data-boot");
   initLamp();
 }
+
+// Hover frame — two horizontal lines that grow from the ruler's left edge
+// across the entry's content width, marking the hovered entry's vertical
+// span (top + bottom). Hidden when hovered === dialed (the detent already
+// locks the dialed entry). Lines live inside .dial-ruler so its sticky
+// coordinate frame matches viewport y; ruler's overflow-x is visible so
+// the lines extend rightward through the column gap and across the
+// content. Width clings to the widest piece of CONTENT (text or video) in
+// the entry, not its full column — measured per-hover via Range API +
+// media bbox union.
+function initRulerHover() {
+  const ruler = document.querySelector(".dial-ruler");
+  const hoverTop = document.querySelector(".dial-ruler__hover--top");
+  const hoverBottom = document.querySelector(".dial-ruler__hover--bottom");
+  if (!ruler || !hoverTop || !hoverBottom) return;
+  const entries = [...document.querySelectorAll(".cv-intro, .cv-entry")];
+  if (!entries.length) return;
+
+  let hoveredIdx = -1;
+  let dialedIdx = entries.findIndex(el => el.classList.contains("is-acked"));
+
+  const HOVER_EASE = [0.32, 0.72, 0, 1];
+  const HOVER_DURATION = 0.28;
+  // motion.dev animations are interruptible: a new animate() call on the
+  // same element cancels the previous and starts from the current value,
+  // which is what motion-principles asks for here — switching hover
+  // between entries doesn't snap, and a quick pull-out reverses smoothly.
+  // We animate transform: scaleX (well-supported by WAAPI) instead of
+  // width (Chrome freezes width transitions on these elements).
+  const animScale = (el, sx) =>
+    animate(el, { transform: `scaleX(${sx})` }, { duration: HOVER_DURATION, ease: HOVER_EASE });
+
+  // Walk text nodes (line-rendered rects, ignoring the block container's
+  // full-column rect) and union with media bboxes — same content-bound
+  // measurement we used for the pill, just kept for the line's right edge.
+  function measureContentBounds(el) {
+    let minL = Infinity, maxR = -Infinity, minT = Infinity, maxB = -Infinity;
+
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const range = document.createRange();
+    let node;
+    while ((node = walker.nextNode())) {
+      if (!node.nodeValue || !node.nodeValue.trim()) continue;
+      range.selectNodeContents(node);
+      for (const r of range.getClientRects()) {
+        if (r.width === 0 || r.height === 0) continue;
+        if (r.left   < minL) minL = r.left;
+        if (r.right  > maxR) maxR = r.right;
+        if (r.top    < minT) minT = r.top;
+        if (r.bottom > maxB) maxB = r.bottom;
+      }
+    }
+    for (const m of el.querySelectorAll("video, img")) {
+      const r = m.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) continue;
+      if (r.left   < minL) minL = r.left;
+      if (r.right  > maxR) maxR = r.right;
+      if (r.top    < minT) minT = r.top;
+      if (r.bottom > maxB) maxB = r.bottom;
+    }
+    if (!isFinite(minL)) return null;
+    return { left: minL, right: maxR, top: minT, bottom: maxB };
+  }
+
+  function hide() {
+    animScale(hoverTop, 0);
+    animScale(hoverBottom, 0);
+  }
+
+  function update() {
+    if (hoveredIdx === -1 || hoveredIdx === dialedIdx) {
+      hide();
+      return;
+    }
+    const el = entries[hoveredIdx];
+    const bounds = measureContentBounds(el);
+    if (!bounds) { hide(); return; }
+    const rulerRect = ruler.getBoundingClientRect();
+    // Ruler is sticky at top:0, so its inner coords map 1:1 to viewport y.
+    // Width spans from ruler's left edge to the rightmost content edge.
+    const lineWidth = bounds.right - rulerRect.left;
+    // Set width inline immediately (no animation here — width transitions
+    // are broken on these elements; scaleX handles the grow). Top y is
+    // CSS-transitioned so switching hover between entries slides smoothly.
+    hoverTop.style.width    = `${lineWidth}px`;
+    hoverBottom.style.width = `${lineWidth}px`;
+    hoverTop.style.top    = `${bounds.top}px`;
+    hoverBottom.style.top = `${bounds.bottom}px`;
+    animScale(hoverTop, 1);
+    animScale(hoverBottom, 1);
+  }
+
+  function setHovered(idx) {
+    if (idx === hoveredIdx) return;
+    if (hoveredIdx !== -1) hovered.delete(entries[hoveredIdx]);
+    hoveredIdx = idx;
+    if (idx !== -1) hovered.add(entries[idx]);
+    update();
+    // Notify the lamp so its updateFalloff re-evaluates --bright with the
+    // hover floor. Custom event keeps the scope clean.
+    window.dispatchEvent(new CustomEvent("cv:hoverchange"));
+  }
+
+  // pointerenter on each entry rather than delegating: pointerover bubbles
+  // and refires on every child crossing, which is noisier than we need.
+  for (const el of entries) {
+    el.addEventListener("pointerenter", (e) => {
+      if (e.pointerType !== "mouse") return;
+      setHovered(entries.indexOf(el));
+    });
+    el.addEventListener("pointerleave", (e) => {
+      if (e.pointerType !== "mouse") return;
+      // Only clear if leaving entirely — relatedTarget inside another
+      // entry is handled by that entry's pointerenter.
+      if (e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".cv-intro, .cv-entry")) return;
+      setHovered(-1);
+    });
+  }
+
+  // Scroll can slide an entry out from under a stationary cursor; clear
+  // hover so the lines don't follow a phantom target.
+  window.addEventListener("scroll", () => {
+    if (hoveredIdx !== -1) setHovered(-1);
+  }, { passive: true });
+
+  // If the dialed entry changes (snap settled on a new one), re-evaluate —
+  // a hovered entry that just became dialed should hide the hover frame.
+  const obs = new MutationObserver(() => {
+    const i = entries.findIndex(el => el.classList.contains("is-acked"));
+    if (i !== dialedIdx) {
+      dialedIdx = i;
+      update();
+    }
+  });
+  entries.forEach(el =>
+    obs.observe(el, { attributes: true, attributeFilter: ["class"] })
+  );
+
+  window.addEventListener("resize", update);
+}
+
+initRulerHover();
 
 // Click-to-dial. A click on a non-dialed entry commits to bringing it to
 // the dial position. We add .is-lit-hold immediately so the entry stays
