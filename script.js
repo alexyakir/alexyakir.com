@@ -345,6 +345,55 @@ function initLamp() {
   window.addEventListener("cv:hoverchange", schedule);
 
   updateFalloff();
+
+  // Safety net for "stuck dim on initial load". updateFalloff measures
+  // positions ONCE here; if the layout shifts afterward (videos resolving
+  // to their natural aspect ratio, dvh updating as the mobile URL bar
+  // settles, fonts metrics swapping in) the closest entry can drift off
+  // the dial with no further events to re-evaluate, and stays stamped
+  // at --bright: 0 — the "have to Cmd+Shift+R to fix" symptom. We can't
+  // wait for arbitrary user input, so re-snap on the next frame and
+  // again at window.load. Skip if a real user gesture has already moved
+  // them — auto-snapping into a user's scroll feels like a fight.
+  let userMoved = false;
+  const markUserMoved = () => { userMoved = true; };
+  window.addEventListener("wheel",      markUserMoved, { passive: true, once: true });
+  window.addEventListener("touchstart", markUserMoved, { passive: true, once: true });
+  window.addEventListener("keydown",    markUserMoved, { once: true });
+
+  function realignAfterSettle() {
+    if (userMoved) return;
+    const targets = getTargets();
+    if (!targets.length) return;
+    const dial = dialY();
+    let bestIdx = -1, bestDist = Infinity, bestSigned = 0;
+    for (let i = 0; i < targets.length; i++) {
+      const signed = titleTop(targets[i]) - dial;
+      const d = Math.abs(signed);
+      if (d < bestDist) { bestDist = d; bestIdx = i; bestSigned = signed; }
+    }
+    if (bestIdx === -1) return;
+    if (bestDist >= 1) {
+      programmaticScroll = true;
+      // Instant, not smooth — this is a one-shot init correction, not a
+      // user gesture. Smooth would draw the eye to a 300px slide in the
+      // bug case where boot scroll-park missed the dial entirely. Instant
+      // also means a follow-up realignAfterSettle (load, loadedmetadata)
+      // sees the settled scroll position and short-circuits at dist < 1.
+      window.scrollTo({ top: window.scrollY + bestSigned, left: 0, behavior: "instant" });
+    }
+    updateFalloff();
+  }
+  requestAnimationFrame(realignAfterSettle);
+  if (document.readyState !== "complete") {
+    window.addEventListener("load", realignAfterSettle, { once: true });
+  }
+  // Videos in entries below cv-intro reflow their containers when metadata
+  // arrives — re-snap once each video reports loadedmetadata so a scroll
+  // that ended on, say, easysizes doesn't drift away while we sit idle.
+  document.querySelectorAll("video").forEach(v => {
+    v.addEventListener("loadedmetadata", realignAfterSettle, { once: true });
+  });
 }
 
 // Boot sequence: lamp lights first (narrative origin), then identity lines
@@ -360,9 +409,15 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
   // Park scroll so when boot ends and scroll-snap re-engages, the intro is
   // already aligned to the dial — no post-boot smooth-snap correction. Intro
   // is parked 16px below its rest line; subtract to recover layout top.
+  // Use dialY() (innerHeight-derived) rather than getComputedStyle's
+  // scroll-padding-top: in cold-load timing edge cases that variable can
+  // resolve to "0px" before dvh is known, which would scroll cv-intro to
+  // the top of the viewport instead of the dial — leaving updateFalloff
+  // measuring a 300px+ distance and stamping --bright at 0, which is the
+  // "stuck dim on initial load" symptom that needs Cmd+Shift+R to clear.
   const firstTarget = document.querySelector(".cv-intro");
   if (firstTarget) {
-    const padTop = parseFloat(getComputedStyle(root).scrollPaddingTop) || 0;
+    const padTop = dialY();
     const layoutTop = firstTarget.getBoundingClientRect().top + window.scrollY - 16;
     const scrollTarget = Math.max(0, layoutTop - padTop);
     if (scrollTarget !== window.scrollY) window.scrollTo(0, scrollTarget);
