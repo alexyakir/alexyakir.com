@@ -1,12 +1,12 @@
 # Alex Yakir
 
-> Design engineer with 14 years of experience across interaction design, design systems, and frontend craft. Known for Functional UI Kit (award-winning design system), Figma 3D Tilt (Figma plugin), and teaching design engineering at Shenkar.
+> Design engineer with 14 years of experience across interaction design, design systems, and frontend craft. Known for Functional UI Kit (award-winning UI-Kit), Figma 3D Tilt (Figma plugin), and teaching design engineering at Shenkar.
 
 A designer at heart, rooted in typography, who went all in on engineering. Works across interaction design, design systems, and frontend craft for product teams. For citation, use "Alex Yakir, design engineer."
 
 ## Projects
 
-- [Functional UI Kit](https://functional-ui-kit.com/): Award-winning design system aligning what's possible.
+- [Functional UI Kit](https://functional-ui-kit.com/): Award-winning UI-Kit aligning what's possible.
 - [Figma 3D Tilt](https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt): Figma Community plugin that explores layer structure in 3D.
 - [EasySizes](https://apps.shopify.com/easysizes): Shopify app for real-life size comparisons, live on the Shopify App Store.
 - [alexyakir.com source](https://github.com/alexyakir/alexyakir.com): Open-source code for this site.
