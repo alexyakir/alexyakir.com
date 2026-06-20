@@ -304,7 +304,15 @@ body {
 }
 
 .cv-body { display: flex; flex-direction: column; max-width: 450px; }
-.cv-entry__video { display: block; width: 100%; margin-block-start: 1lh; border-radius: 18px; }
+.cv-entry__video,
+.cv-entry__shot { display: block; width: 100%; margin-block-start: 1lh; border-radius: 18px; }
+.cv-entry__shot { height: auto; }
+/* Theme-matched screenshot. Dark is the site default, so the dark shot ships
+   visible and the light one swaps in only under [data-theme="light"] — the
+   non-active variant is display:none, so it stays out of the hover-frame
+   content bounds (measured as a 0x0 rect) and out of the a11y tree. */
+:root[data-theme="dark"]  .cv-entry__shot--light { display: none; }
+:root[data-theme="light"] .cv-entry__shot--dark  { display: none; }
 .cv-body::before { content: ""; display: block; block-size: var(--dial-y); }
 .cv-body::after  { content: ""; display: block; block-size: calc(100dvh - var(--dial-y) - 2lh); }
 
