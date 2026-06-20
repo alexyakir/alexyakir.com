@@ -21,6 +21,14 @@ if (toggle) {
   });
 }
 
+// Years of experience — counted inclusively from the first year of practice
+// (2013 → 14 in 2026), so the intro never goes stale. The number in the markup
+// is the no-JS fallback; this overwrites it from the visitor's clock at runtime.
+const yearsSince = (start) => new Date().getFullYear() - start + 1;
+for (const el of document.querySelectorAll("[data-years-since]")) {
+  el.textContent = String(yearsSince(Number(el.dataset.yearsSince)));
+}
+
 function dialY() {
   return window.innerHeight * 0.42;
 }
