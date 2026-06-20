@@ -305,7 +305,9 @@ body {
 
 .cv-body { display: flex; flex-direction: column; max-width: 450px; }
 .cv-entry__video,
-.cv-entry__shot { display: block; width: 100%; margin-block-start: 1lh; border-radius: 18px; }
+.cv-entry__shot { display: block; width: 100%; margin-block-start: 1lh; }
+.cv-entry__video { border-radius: 18px; }
+/* Screenshots are full rectangular compositions — no corner rounding. */
 .cv-entry__shot { height: auto; }
 /* Theme-matched screenshot. Dark is the site default, so the dark shot ships
    visible and the light one swaps in only under [data-theme="light"] — the
