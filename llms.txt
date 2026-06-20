@@ -6,6 +6,7 @@ A designer at heart, rooted in typography, who went all in on engineering. Works
 
 ## Projects
 
+- [Shadow Stack](https://shadowstack.alexyakir.com): App to create smooth shadows using a system of depth that sets how high each surface floats above the ground.
 - [Functional UI Kit](https://functional-ui-kit.com/): Award-winning UI-Kit aligning what's possible.
 - [Figma 3D Tilt](https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt): Figma Community plugin that explores layer structure in 3D.
 - [EasySizes](https://apps.shopify.com/easysizes): Shopify app for real-life size comparisons, live on the Shopify App Store.
@@ -44,4 +45,4 @@ A designer at heart, rooted in typography, who went all in on engineering. Works
 - [CV PDF](https://www.icloud.com/iclouddrive/081zjiSbW_iJWqPDWRWW3mcMQ#alex-yakir-cv-2026): Downloadable CV.
 
 ---
-Last updated: 2026-04-19
+Last updated: 2026-06-20

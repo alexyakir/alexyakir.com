@@ -75,7 +75,7 @@
         "url": "https://alexyakir.com/",
         "name": "Alex Yakir",
         "inLanguage": "en",
-        "dateModified": "2026-04-20T00:00:00+00:00",
+        "dateModified": "2026-06-20T00:00:00+00:00",
         "publisher": { "@id": "https://alexyakir.com/#person" }
       },
       {
@@ -84,11 +84,12 @@
         "url": "https://alexyakir.com/",
         "name": "Alex Yakir — Design Engineer",
         "inLanguage": "en",
-        "dateModified": "2026-04-20T00:00:00+00:00",
+        "dateModified": "2026-06-20T00:00:00+00:00",
         "primaryImageOfPage": "https://alexyakir.com/og.png",
         "isPartOf": { "@id": "https://alexyakir.com/#website" },
         "mainEntity": { "@id": "https://alexyakir.com/#person" },
         "significantLink": [
+          "https://shadowstack.alexyakir.com",
           "https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt",
           "https://functional-ui-kit.com/",
           "https://apps.shopify.com/easysizes",
@@ -141,6 +142,7 @@
           "Figma Creators Fund"
         ],
         "creator": [
+          { "@id": "https://alexyakir.com/#shadow-stack" },
           { "@id": "https://alexyakir.com/#figma-3d-tilt" },
           { "@id": "https://alexyakir.com/#functional-ui-kit" },
           { "@id": "https://alexyakir.com/#easysizes" }
@@ -151,6 +153,16 @@
           "https://www.linkedin.com/in/alexyakir/",
           "https://x.com/alexyakir"
         ]
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://alexyakir.com/#shadow-stack",
+        "name": "Shadow Stack",
+        "url": "https://shadowstack.alexyakir.com",
+        "description": "App to create smooth shadows using a system of depth that sets how high each surface floats above the ground.",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Web",
+        "author": { "@id": "https://alexyakir.com/#person" }
       },
       {
         "@type": "SoftwareApplication",
@@ -199,7 +211,7 @@
             "name": "What has Alex Yakir built?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Alex has created Figma 3D Tilt, a Figma plugin that explores layer structure in 3D; Functional UI Kit, an award-winning design system; and EasySizes, a Shopify app for real-life size comparisons live on the Shopify App Store."
+              "text": "Alex has created Shadow Stack, an app for crafting smooth shadows from a system of depth; Figma 3D Tilt, a Figma plugin that explores layer structure in 3D; Functional UI Kit, an award-winning design system; and EasySizes, a Shopify app for real-life size comparisons live on the Shopify App Store."
             }
           },
           {
@@ -271,6 +283,14 @@
 
       <p class="cv-intro p-note" id="about">A craft-driven designer and systems thinker with 14 years of experience shaping human-computer interaction. I combine deep frontend expertise with a strong focus on signal over noise.</p>
 
+      <section class="cv-entry" id="shadow-stack">
+        <h2 class="cv-entry__head">
+          <span class="cv-entry__title">Shadow Stack</span>
+        </h2>
+        <p class="cv-entry__body">An <a href="https://shadowstack.alexyakir.com">app</a> for smooth shadows, built on a system of depth that lets you decide how high each surface floats above the ground.</p>
+        <video class="cv-entry__video" src="videos/shadow-stack.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      </section>
+
       <section class="cv-entry" id="figma-3d-tilt">
         <h2 class="cv-entry__head">
           <span class="cv-entry__title">Figma 3D Tilt</span>
@@ -333,6 +353,6 @@
 
   </main>
 
-  <script type="module" src="script.js?v=24"></script>
+  <script type="module" src="script.js?v=25"></script>
 </body>
 </html>
