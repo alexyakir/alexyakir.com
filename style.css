@@ -406,7 +406,13 @@ body {
 a {
   color: inherit;
   text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--surface), var(--ink) 20%);
+  /* Underline takes the text's own colour — soft ink at rest, brightening to
+     the lit tone with --bright as the entry dials in — so it reads as part of
+     the text instead of a faint grey rule. Kept a native underline (not a
+     gradient via background/border) so skip-ink still lets descenders punch
+     through. text-decoration-color is single-colour only, so a literal
+     left-to-right gradient isn't possible without breaking that. */
+  text-decoration-color: color-mix(in srgb, var(--ink-soft), var(--text-lit) calc(var(--bright, 0) * 100%));
   text-decoration-thickness: 1.5px;
   text-underline-offset: 1.5px;
 }
@@ -421,6 +427,7 @@ a:focus-visible {
 .cv-intro a:hover {
   color: var(--ink-strong);
   -webkit-text-fill-color: var(--ink-strong);
+  text-decoration-color: var(--ink-strong);
 }
 
 .theme-toggle {
