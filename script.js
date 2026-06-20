@@ -388,12 +388,46 @@ function initLamp() {
   if (document.readyState !== "complete") {
     window.addEventListener("load", realignAfterSettle, { once: true });
   }
-  // Videos in entries below cv-intro reflow their containers when metadata
-  // arrives — re-snap once each video reports loadedmetadata so a scroll
-  // that ended on, say, easysizes doesn't drift away while we sit idle.
-  document.querySelectorAll("video").forEach(v => {
-    v.addEventListener("loadedmetadata", realignAfterSettle, { once: true });
-  });
+  // Any layout shift that isn't a scroll — videos resolving their aspect
+  // ratio as metadata arrives, web-font metrics swapping in, the mobile URL
+  // bar collapsing (dvh) — moves entries relative to the dial with no scroll
+  // event to react to. Left alone, the dialed entry drifts off the dial while
+  // --bright stays stamped at its old value (the "stuck dim", or stuck-lit,
+  // symptom) and nothing re-docks. The init realignAfterSettle net only covers
+  // boot and bails for good once userMoved. A ResizeObserver closes the gap for
+  // the whole session: every reflow refreshes --bright, and when we're at rest
+  // it re-docks the nearest entry so one always lands lit.
+  let reflowTimer = 0;
+  function onReflow() {
+    schedule(); // refresh --bright against the new geometry right away
+    clearTimeout(reflowTimer);
+    reflowTimer = setTimeout(() => {
+      // Idle only. Mid-gesture, scroll events keep --bright fresh and
+      // scrollend snaps — re-docking here would fight the user's scroll.
+      if (velEMA !== 0 || programmaticScroll) return;
+      const targets = getTargets();
+      if (!targets.length) return;
+      const dial = dialY();
+      let bestSigned = 0, bestDist = Infinity;
+      for (let i = 0; i < targets.length; i++) {
+        const signed = titleTop(targets[i]) - dial;
+        const d = Math.abs(signed);
+        if (d < bestDist) { bestDist = d; bestSigned = signed; }
+      }
+      // Instant, like the init correction — the content just jumped under us;
+      // a smooth slide would chase it. < 1px means already docked, nothing to do.
+      if (bestDist >= 1) {
+        programmaticScroll = true;
+        window.scrollTo({ top: window.scrollY + bestSigned, left: 0, behavior: "instant" });
+      }
+      updateFalloff();
+    }, 120);
+  }
+  if ("ResizeObserver" in window) {
+    // observe() fires once on registration — harmless: at rest the dialed
+    // entry is already within 1px, so the re-dock short-circuits.
+    new ResizeObserver(onReflow).observe(document.body);
+  }
 }
 
 // Boot sequence: lamp lights first (narrative origin), then identity lines
