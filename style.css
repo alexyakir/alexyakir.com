@@ -334,9 +334,9 @@ body {
    bump in the system happens on .cv-entry__title — nowhere else. */
 .cv-entry__head { font-size: inherit; font-weight: inherit; }
 .cv-entry__title { font-weight: 600; text-wrap: balance; }
-/* Prevents lonely-word last lines on body copy and the intro paragraph. */
+/* Even line lengths across body copy and the intro paragraph. */
 .cv-entry__body,
-.cv-intro { text-wrap: pretty; }
+.cv-intro { text-wrap-style: balance; }
 
 /* The entry — owns --bright and the single transition. Opacity is a calc
    off --bright (0.22 dimmed → 1 lit). Children inherit --bright and use

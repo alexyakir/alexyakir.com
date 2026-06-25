@@ -29,18 +29,18 @@ for (const el of document.querySelectorAll("[data-years-since]")) {
   el.textContent = String(yearsSince(Number(el.dataset.yearsSince)));
 }
 
-// CSS owns the dial position (--dial-y) and surfaces it as scroll-padding-top;
-// we read it back in pixels so the dial is never defined in two places.
-let dialYPx = 0;
-function measureDialY() {
-  const px = parseFloat(getComputedStyle(root).scrollPaddingTop);
-  dialYPx = Number.isFinite(px) && px > 0 ? px : window.innerHeight * 0.42;
-}
-measureDialY();
-window.addEventListener("resize", measureDialY);
-
+// CSS owns the dial position (--dial-y, a min() over dvh-relative values) and
+// surfaces it as scroll-padding-top. We read it back live on every use — never
+// cache — because this is the *same* line the lamp, ruler, and cv-body spacer
+// are painted against, and CSS re-resolves it every frame as iOS's dynamic
+// viewport (dvh) shifts the URL bar. A cached copy drifts the instant the dial
+// moves without a matching window `resize`, and a drifted dial is exactly how
+// an entry ends up "dialed but dim": JS lights whoever is nearest the stale
+// line while the painted lamp sits on a different entry. One live read keeps
+// --bright and the lamp on the same entry, with no desync window to patch.
 function dialY() {
-  return dialYPx;
+  const px = parseFloat(getComputedStyle(root).scrollPaddingTop);
+  return Number.isFinite(px) && px > 0 ? px : window.innerHeight * 0.42;
 }
 
 function getTargets() {
@@ -353,6 +353,14 @@ function initLamp() {
     }
   }, { passive: true });
   window.addEventListener("resize", () => {
+    measureLamp();
+    schedule();
+  });
+  // iOS collapses/expands the URL bar without reliably firing window `resize`,
+  // yet it shifts dvh — which moves the dial. visualViewport.resize is the
+  // dependable signal; recompute --bright against the now-live dial so the lit
+  // entry tracks the lamp instead of lagging a viewport behind it.
+  window.visualViewport?.addEventListener("resize", () => {
     measureLamp();
     schedule();
   });
