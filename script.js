@@ -29,8 +29,18 @@ for (const el of document.querySelectorAll("[data-years-since]")) {
   el.textContent = String(yearsSince(Number(el.dataset.yearsSince)));
 }
 
+// CSS owns the dial position (--dial-y) and surfaces it as scroll-padding-top;
+// we read it back in pixels so the dial is never defined in two places.
+let dialYPx = 0;
+function measureDialY() {
+  const px = parseFloat(getComputedStyle(root).scrollPaddingTop);
+  dialYPx = Number.isFinite(px) && px > 0 ? px : window.innerHeight * 0.42;
+}
+measureDialY();
+window.addEventListener("resize", measureDialY);
+
 function dialY() {
-  return window.innerHeight * 0.42;
+  return dialYPx;
 }
 
 function getTargets() {
@@ -117,6 +127,10 @@ function initLamp() {
 
   let prevDialedIdx = null;
   let ackedIdx = -1;
+
+  // Set by a real scroll gesture (wheel / touch-drag / scrollbar), never by a
+  // bare tap — so holding a phone during load can't cancel the realign below.
+  let userEngaged = false;
 
   // Proximity-driven --bright. Each frame, every entry's brightness is a
   // continuous function of how close its title is to the dial line. The
@@ -328,6 +342,9 @@ function initLamp() {
   }
 
   window.addEventListener("scroll", () => {
+    // A scroll we didn't initiate is the user driving — stand the load-time
+    // realign down so it never yanks them back to the top.
+    if (!programmaticScroll) userEngaged = true;
     sampleScrollVelocity();
     schedule();
     if (!hasScrollEnd) {
@@ -354,86 +371,62 @@ function initLamp() {
 
   updateFalloff();
 
-  // Safety net for "stuck dim on initial load". updateFalloff measures
-  // positions ONCE here; if the layout shifts afterward (videos resolving
-  // to their natural aspect ratio, dvh updating as the mobile URL bar
-  // settles, fonts metrics swapping in) the closest entry can drift off
-  // the dial with no further events to re-evaluate, and stays stamped
-  // at --bright: 0 — the "have to Cmd+Shift+R to fix" symptom. We can't
-  // wait for arbitrary user input, so re-snap on the next frame and
-  // again at window.load. Skip if a real user gesture has already moved
-  // them — auto-snapping into a user's scroll feels like a fight.
-  let userMoved = false;
-  const markUserMoved = () => { userMoved = true; };
-  window.addEventListener("wheel",      markUserMoved, { passive: true, once: true });
-  window.addEventListener("touchstart", markUserMoved, { passive: true, once: true });
-  window.addEventListener("keydown",    markUserMoved, { once: true });
+  // ── Guarantee an entry is lit on load ───────────────────────────────────
+  // Late layout shifts (videos sizing, mobile URL bar, fonts) can leave the
+  // nearest entry just off the dial and stamped dim with no event to fix it —
+  // the "all dim until I hard-reload" bug. So we re-dock it onto the dial,
+  // which lights it, until the visitor takes over with a real scroll.
 
-  function realignAfterSettle() {
-    if (userMoved) return;
+  // Scroll without animation, then unmark next frame so the scroll event it
+  // fires isn't mistaken for the user engaging.
+  function dockNearest() {
     const targets = getTargets();
     if (!targets.length) return;
     const dial = dialY();
-    let bestIdx = -1, bestDist = Infinity, bestSigned = 0;
+    let bestSigned = 0, bestDist = Infinity;
     for (let i = 0; i < targets.length; i++) {
       const signed = titleTop(targets[i]) - dial;
       const d = Math.abs(signed);
-      if (d < bestDist) { bestDist = d; bestIdx = i; bestSigned = signed; }
+      if (d < bestDist) { bestDist = d; bestSigned = signed; }
     }
-    if (bestIdx === -1) return;
     if (bestDist >= 1) {
       programmaticScroll = true;
-      // Instant, not smooth — this is a one-shot init correction, not a
-      // user gesture. Smooth would draw the eye to a 300px slide in the
-      // bug case where boot scroll-park missed the dial entirely. Instant
-      // also means a follow-up realignAfterSettle (load, loadedmetadata)
-      // sees the settled scroll position and short-circuits at dist < 1.
       window.scrollTo({ top: window.scrollY + bestSigned, left: 0, behavior: "instant" });
+      requestAnimationFrame(() => { programmaticScroll = false; });
     }
     updateFalloff();
   }
-  requestAnimationFrame(realignAfterSettle);
-  if (document.readyState !== "complete") {
-    window.addEventListener("load", realignAfterSettle, { once: true });
+
+  function ensureDialed() {
+    if (userEngaged) return;
+    dockNearest();
   }
-  // Any layout shift that isn't a scroll — videos resolving their aspect
-  // ratio as metadata arrives, web-font metrics swapping in, the mobile URL
-  // bar collapsing (dvh) — moves entries relative to the dial with no scroll
-  // event to react to. Left alone, the dialed entry drifts off the dial while
-  // --bright stays stamped at its old value (the "stuck dim", or stuck-lit,
-  // symptom) and nothing re-docks. The init realignAfterSettle net only covers
-  // boot and bails for good once userMoved. A ResizeObserver closes the gap for
-  // the whole session: every reflow refreshes --bright, and when we're at rest
-  // it re-docks the nearest entry so one always lands lit.
+
+  // Layout settles at unknown times, so retry across all of them; each pass
+  // no-ops once the nearest entry is already on the dial.
+  requestAnimationFrame(ensureDialed);
+  if (document.readyState !== "complete") {
+    window.addEventListener("load", ensureDialed, { once: true });
+  }
+  for (const m of document.querySelectorAll(".cv-entry video, .cv-entry img")) {
+    if (m.tagName === "VIDEO") m.addEventListener("loadedmetadata", ensureDialed, { once: true });
+    else if (!m.complete)     m.addEventListener("load",           ensureDialed, { once: true });
+  }
+  setTimeout(ensureDialed, 600);
+
+  // After the user has scrolled, ensureDialed steps aside — but a reflow can
+  // still drift the resting entry off the dial. This re-docks whoever they're
+  // resting on (never back to the top) for the rest of the session.
   let reflowTimer = 0;
   function onReflow() {
-    schedule(); // refresh --bright against the new geometry right away
+    schedule();
     clearTimeout(reflowTimer);
     reflowTimer = setTimeout(() => {
-      // Idle only. Mid-gesture, scroll events keep --bright fresh and
-      // scrollend snaps — re-docking here would fight the user's scroll.
-      if (velEMA !== 0 || programmaticScroll) return;
-      const targets = getTargets();
-      if (!targets.length) return;
-      const dial = dialY();
-      let bestSigned = 0, bestDist = Infinity;
-      for (let i = 0; i < targets.length; i++) {
-        const signed = titleTop(targets[i]) - dial;
-        const d = Math.abs(signed);
-        if (d < bestDist) { bestDist = d; bestSigned = signed; }
-      }
-      // Instant, like the init correction — the content just jumped under us;
-      // a smooth slide would chase it. < 1px means already docked, nothing to do.
-      if (bestDist >= 1) {
-        programmaticScroll = true;
-        window.scrollTo({ top: window.scrollY + bestSigned, left: 0, behavior: "instant" });
-      }
-      updateFalloff();
+      if (velEMA !== 0 || programmaticScroll) return; // not mid-scroll
+      dockNearest();
     }, 120);
   }
   if ("ResizeObserver" in window) {
-    // observe() fires once on registration — harmless: at rest the dialed
-    // entry is already within 1px, so the re-dock short-circuits.
     new ResizeObserver(onReflow).observe(document.body);
   }
 }
@@ -448,15 +441,9 @@ function initLamp() {
 if (!reduced && root.getAttribute("data-boot") === "scroll") {
   let cleaned = false;
 
-  // Park scroll so when boot ends and scroll-snap re-engages, the intro is
-  // already aligned to the dial — no post-boot smooth-snap correction. Intro
-  // is parked 16px below its rest line; subtract to recover layout top.
-  // Use dialY() (innerHeight-derived) rather than getComputedStyle's
-  // scroll-padding-top: in cold-load timing edge cases that variable can
-  // resolve to "0px" before dvh is known, which would scroll cv-intro to
-  // the top of the viewport instead of the dial — leaving updateFalloff
-  // measuring a 300px+ distance and stamping --bright at 0, which is the
-  // "stuck dim on initial load" symptom that needs Cmd+Shift+R to clear.
+  // Park the intro on the dial before boot, so nothing snaps when boot ends.
+  // It's parked 16px below its rest line (subtract to recover layout top), and
+  // padTop = dialY() reads the same dial the layout uses, so they can't disagree.
   const firstTarget = document.querySelector(".cv-intro");
   if (firstTarget) {
     const padTop = dialY();

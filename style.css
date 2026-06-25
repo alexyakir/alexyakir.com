@@ -191,19 +191,15 @@ html {
   --base-lh: 1.5;
   --lamp-gap: calc(var(--base-fs) * var(--base-lh));
 
-  /* dvh (not vh) so CSS tracks the current visible viewport — matches
-     window.innerHeight in JS. Using vh here broke iOS: CSS resolves vh
-     to the LARGE viewport (URL-bar-collapsed), so while the URL bar was
-     visible, the entry snap position and JS's computed dialY diverged by
-     up to ~40px — past the 20px detent threshold. Intermittent because
-     the gap closed as the URL bar collapsed mid-scroll. */
-  --dial-y: 42dvh;
-  /* Lamp visual sits one line-height above the dial, minus 10px so it
-     lands one tick closer to the dialed entry's title. tick-y drives the
-     lamp position, the detent stripe, the cv-id column's padding-top, and
-     the ruler track's tick alignment — all four shift together with this
-     offset, so the structural relationship between lamp + ticks + detent
-     is preserved. The dial itself (where entries land) is unaffected. */
+  --room-below-for-media: 640px;
+  --dial-rest:      42dvh;
+  --dial-fit-media: calc(100dvh - var(--room-below-for-media));
+
+  /* dvh never vh (vh follows iOS's collapsed URL bar). The script reads this
+     back from scroll-padding-top, so the dial is defined in exactly one place. */
+  --dial-y: min(var(--dial-rest), var(--dial-fit-media));
+
+  /* Lamp line: one lamp-gap above the dial, nudged 10px nearer the title. */
   --tick-y: calc(var(--dial-y) - var(--lamp-gap) + 10px);
 }
 
@@ -635,7 +631,8 @@ a:focus-visible {
    Font drops to 16px via --base-fs; --lamp-gap and 1lh-driven margins
    auto-scale with it so the baseline grid stays consistent (24px here). */
 @media (max-width: 600px) {
-  :root { --base-fs: 16px; }
+  /* Phone media is narrower, so it needs less room below. */
+  :root { --base-fs: 16px; --room-below-for-media: 320px; }
 
   .cv {
     column-gap: 9px;
