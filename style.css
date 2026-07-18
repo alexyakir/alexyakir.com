@@ -43,51 +43,37 @@
   --text-lit: #2c3653;
 
   --lamp-fill: #1d4ed8;
+  /* Light mode can't paint light: box-shadow only darkens a white surface,
+     so a long beam renders as a grey smear — a dirty screen, not a glow.
+     The lamp here is an LED seen in daylight: the source visibly burns
+     (saturated blue, hot at the filament) but the throw dies within
+     ~70px. Long-throw layers are dark mode's alone. All three states
+     keep the same 7-layer shape so box-shadow transitions interpolate
+     layer-for-layer; the last layer idles at alpha 0 as headroom. */
   --lamp-glow:
-    0 0px      1px  rgba( 29,  78, 216, 1.00),
-    0 1px      2px  rgba( 29,  78, 216, 0.92),
-    0 3px      5px  rgba( 37,  99, 235, 0.78),
-    0 7px     11px  rgba( 59, 130, 246, 0.62),
-    0 14px    22px  rgba( 90, 150, 250, 0.45),
-    0 24px    40px  rgba(120, 170, 255, 0.30),
-    0 42px    70px  rgba(150, 190, 255, 0.21),
-    0 70px   115px  rgba(170, 205, 255, 0.15),
-    0 110px  180px  rgba(185, 215, 255, 0.125),
-    0 170px  270px  rgba(195, 222, 255, 0.082),
-    0 260px  400px  rgba(205, 228, 255, 0.052),
-    0 380px  560px  rgba(212, 232, 255, 0.030),
-    0 550px  780px  rgba(218, 236, 255, 0.018),
-    0 780px 1080px  rgba(222, 240, 255, 0.010);
+    0 0px    1px  rgba( 29,  78, 216, 1.00),
+    0 1px    2px  rgba( 29,  78, 216, 0.92),
+    0 3px    5px  rgba( 37,  99, 235, 0.78),
+    0 7px   11px  rgba( 59, 130, 246, 0.50),
+    0 14px  22px  rgba( 90, 150, 250, 0.25),
+    0 24px  40px  rgba(120, 170, 255, 0.10),
+    0 42px  70px  rgba(150, 190, 255, 0.00);
   --lamp-glow-hover:
-    0 0px      1px  rgba( 29,  78, 216, 1.00),
-    0 1px      2px  rgba( 29,  78, 216, 1.00),
-    0 3px      5px  rgba( 37,  99, 235, 0.95),
-    0 7px     11px  rgba( 59, 130, 246, 0.80),
-    0 14px    22px  rgba( 90, 150, 250, 0.60),
-    0 24px    40px  rgba(120, 170, 255, 0.44),
-    0 42px    70px  rgba(150, 190, 255, 0.31),
-    0 70px   115px  rgba(170, 205, 255, 0.22),
-    0 110px  180px  rgba(185, 215, 255, 0.185),
-    0 170px  270px  rgba(195, 222, 255, 0.12),
-    0 260px  400px  rgba(205, 228, 255, 0.078),
-    0 380px  560px  rgba(212, 232, 255, 0.048),
-    0 550px  780px  rgba(218, 236, 255, 0.027),
-    0 780px 1080px  rgba(222, 240, 255, 0.015);
+    0 0px    1px  rgba( 29,  78, 216, 1.00),
+    0 1px    2px  rgba( 29,  78, 216, 1.00),
+    0 3px    5px  rgba( 37,  99, 235, 0.90),
+    0 7px   11px  rgba( 59, 130, 246, 0.62),
+    0 14px  22px  rgba( 90, 150, 250, 0.35),
+    0 24px  40px  rgba(120, 170, 255, 0.16),
+    0 42px  70px  rgba(150, 190, 255, 0.06);
   --lamp-glow-peak:
-    0 0px      1px  rgba( 29,  78, 216, 1.00),
-    0 1px      2px  rgba( 29,  78, 216, 1.00),
-    0 3px      5px  rgba( 37,  99, 235, 1.00),
-    0 7px     11px  rgba( 59, 130, 246, 0.95),
-    0 14px    22px  rgba( 90, 150, 250, 0.82),
-    0 24px    40px  rgba(120, 170, 255, 0.66),
-    0 42px    70px  rgba(150, 190, 255, 0.48),
-    0 70px   115px  rgba(170, 205, 255, 0.34),
-    0 110px  180px  rgba(185, 215, 255, 0.26),
-    0 170px  270px  rgba(195, 222, 255, 0.17),
-    0 260px  400px  rgba(205, 228, 255, 0.10),
-    0 380px  560px  rgba(212, 232, 255, 0.062),
-    0 550px  780px  rgba(218, 236, 255, 0.034),
-    0 780px 1080px  rgba(222, 240, 255, 0.018);
+    0 0px    1px  rgba( 29,  78, 216, 1.00),
+    0 1px    2px  rgba( 29,  78, 216, 1.00),
+    0 3px    5px  rgba( 37,  99, 235, 1.00),
+    0 7px   11px  rgba( 59, 130, 246, 0.80),
+    0 14px  22px  rgba( 90, 150, 250, 0.48),
+    0 24px  40px  rgba(120, 170, 255, 0.24),
+    0 42px  70px  rgba(150, 190, 255, 0.10);
 }
 
 :root[data-theme="dark"] {
@@ -183,10 +169,10 @@ html {
 :root {
   /* Type system. --base-fs and --base-lh are the single source of truth
      for the body's font-size and line-height; --lamp-gap is derived from
-     them so the lamp's vertical offset is exactly one line-height. That's
-     what makes baselines align across the identity column and the entry
-     body column: every text row sits on a 1lh grid, and the lamp-gap
-     between dialed-entry-title and the lamp line is one full grid step. */
+     them so vertical rhythm runs on a 1lh grid. Both columns anchor their
+     first text line at --dial-y (identity via tick-y + toggle height,
+     body via the ::before spacer + scroll-padding), so rows align across
+     the gap; the lamp sits one lamp-gap minus --lamp-nudge above them. */
   --base-fs: 18px;
   --base-lh: 1.5;
   --lamp-gap: calc(var(--base-fs) * var(--base-lh));
@@ -199,8 +185,17 @@ html {
      back from scroll-padding-top, so the dial is defined in exactly one place. */
   --dial-y: min(var(--dial-rest), var(--dial-fit-media));
 
-  /* Lamp line: one lamp-gap above the dial, nudged 10px nearer the title. */
-  --tick-y: calc(var(--dial-y) - var(--lamp-gap) + 10px);
+  /* Optical correction pulling the lamp nearer the text than a full
+     lamp-gap — a text row's leading makes the raw gap read too airy.
+     Applied twice, once per column: --tick-y lifts the lamp toward the
+     dialed title, and .theme-toggle sheds the same amount so the identity
+     lines start at exactly --dial-y too. Both columns share one 1lh grid
+     anchored at the dial; the nudge lives only between the lamp and the
+     first line of text. */
+  --lamp-nudge: 10px;
+
+  /* Lamp line: one lamp-gap above the dial, nudged nearer the title. */
+  --tick-y: calc(var(--dial-y) - var(--lamp-gap) + var(--lamp-nudge));
 }
 
 :root, :root[data-theme="light"] {
@@ -432,7 +427,11 @@ a:focus-visible {
   position: relative;
   display: flex;
   width: 100%;
-  height: var(--lamp-gap);
+  /* One lamp-gap minus the same nudge --tick-y added: the toggle starts at
+     tick-y (= dial-y − lamp-gap + nudge), so shedding the nudge here lands
+     the first identity line at exactly dial-y — level with the intro's
+     first line and every dialed entry title across the gap. */
+  height: calc(var(--lamp-gap) - var(--lamp-nudge));
   padding: 0;
   background: transparent;
   border: none;
@@ -441,8 +440,8 @@ a:focus-visible {
 }
 
 /* Invisible hit-area extender. The lamp itself is 2px tall and the
-   button box is var(--lamp-gap) (~27px desktop / 24px mobile) — both
-   below the 40×40 touch minimum. Pseudo centres a 44px target on the
+   button box is lamp-gap minus the nudge (~17px desktop / 14px mobile) —
+   both below the 40×40 touch minimum. Pseudo centres a 44px target on the
    lamp's optical position (top: 1px = lamp half-height) so the click
    feel matches what the eye is aiming at, while the layout box stays
    put. The empty sticky column above the lamp absorbs the upward
