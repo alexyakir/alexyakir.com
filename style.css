@@ -295,11 +295,12 @@ body {
 }
 
 .cv-body { display: flex; flex-direction: column; max-width: 450px; }
+/* height:auto guards the aspect ratio: a width/height attribute on the media
+   sets a presentational height that survives the width override otherwise. */
 .cv-entry__video,
-.cv-entry__shot { display: block; width: 100%; margin-block-start: 1lh; }
-.cv-entry__video { border-radius: 18px; }
+.cv-entry__shot { display: block; width: 100%; height: auto; margin-block-start: 1lh; }
 /* Screenshots are full rectangular compositions — no corner rounding. */
-.cv-entry__shot { height: auto; }
+.cv-entry__video { border-radius: 18px; }
 /* Theme-matched screenshot. Dark is the site default, so the dark shot ships
    visible and the light one swaps in only under [data-theme="light"] — the
    non-active variant is display:none, so it stays out of the hover-frame
