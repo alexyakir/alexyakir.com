@@ -301,12 +301,16 @@ body {
 .cv-entry__shot { display: block; width: 100%; height: auto; margin-block-start: 1lh; }
 /* Screenshots are full rectangular compositions — no corner rounding. */
 .cv-entry__video { border-radius: 18px; }
-/* Theme-matched screenshot. Dark is the site default, so the dark shot ships
-   visible and the light one swaps in only under [data-theme="light"] — the
-   non-active variant is display:none, so it stays out of the hover-frame
-   content bounds (measured as a 0x0 rect) and out of the a11y tree. */
-:root[data-theme="dark"]  .cv-entry__shot--light { display: none; }
-:root[data-theme="light"] .cv-entry__shot--dark  { display: none; }
+/* Theme-matched media. Both the screenshots and the Shadow Stack loop are
+   baked against a backdrop, so each ships a per-theme cut. Dark is the site
+   default, so the dark cut ships visible and the light one swaps in only
+   under [data-theme="light"] — the non-active variant is display:none, so it
+   stays out of the hover-frame content bounds (measured as a 0x0 rect) and
+   out of the a11y tree. */
+:root[data-theme="dark"]  .cv-entry__shot--light,
+:root[data-theme="dark"]  .cv-entry__video--light { display: none; }
+:root[data-theme="light"] .cv-entry__shot--dark,
+:root[data-theme="light"] .cv-entry__video--dark  { display: none; }
 .cv-body::before { content: ""; display: block; block-size: var(--dial-y); }
 .cv-body::after  { content: ""; display: block; block-size: calc(100dvh - var(--dial-y) - 2lh); }
 
