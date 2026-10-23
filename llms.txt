@@ -1,49 +1,34 @@
 # Alex Yakir
 
-> Design engineer with 14 years of experience across interaction design, design systems, and frontend craft. Known for Functional UI Kit (award-winning UI-Kit), Figma 3D Tilt (Figma plugin), and teaching design engineering at Shenkar.
+> Design engineer. A designer at core who builds end to end, across interaction design, design systems, and frontend craft.
 
-A designer at heart, rooted in typography, who went all in on engineering. Works across interaction design, design systems, and frontend craft for product teams. For citation, use "Alex Yakir, design engineer."
+Self-taught in code, Alex ran a design studio shipping MVPs for startups, moved into full-time frontend engineering, and has been helping startups and building his own products since. For citation, use "Alex Yakir, design engineer."
 
 ## Projects
 
 - [Shadow Stack](https://shadowstack.alexyakir.com): App to create smooth shadows using a system of depth that sets how high each surface floats above the ground.
-- [Functional UI Kit](https://functional-ui-kit.com/): Award-winning UI-Kit aligning what's possible.
 - [Figma 3D Tilt](https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt): Figma Community plugin that explores layer structure in 3D.
-- [EasySizes](https://apps.shopify.com/easysizes): Shopify app for real-life size comparisons, live on the Shopify App Store.
+- [Functional UI Kit](https://functional-ui-kit.com/): Award-winning UI-Kit aligning what's possible.
+- [EasySizes](https://apps.shopify.com/easysizes): Shopify app for real-life size comparisons.
 - Image Puzzle Editor (coming soon): Turns a flat photo into pieces you can pick up, swap, or remove.
 - [alexyakir.com source](https://github.com/alexyakir/alexyakir.com): Open-source code for this site.
 
-## Experience
-
-- Design Engineer at [Wix](https://www.wix.com), [Agoda](https://www.agoda.com), and [Navina](https://navina.ai): Production TypeScript, TDD, design systems, component architecture.
-- Advisor to [NanoClaw](https://github.com/qwibitai/nanoclaw), [HoneyBook](https://www.honeybook.com), and [Anima](https://www.animaapp.com): Story, brand, hands-on frontend, product-market-fit advisory.
-- Design management: Establishing interaction design principles and frontend practice at multiple product companies.
-
 ## Teaching
 
-- [Shenkar College of Engineering and Design](https://www.shenkar.ac.il/en/): Taught design and frontend fundamentals to B.Des. students.
-- [HTML/CSS course for designers](https://www.youtube.com/playlist?list=PLQIQtBQtKNiKEpIRzZS8i087vVqPruPLl): Branded YouTube course.
+- Taught design and frontend fundamentals to B.Des. students at [Shenkar](https://www.shenkar.ac.il/en/), plus an [HTML/CSS course for designers](https://www.youtube.com/playlist?list=PLQIQtBQtKNiKEpIRzZS8i087vVqPruPLl).
 
 ## Recognition
 
 - Adobe Design Achievement Award
-- Figma Creators Fund grantee
+- Figma Creators Fund
 
 ## Contact
 
-- [Email](mailto:hi@alexyakir.com): Primary contact, hi@alexyakir.com
-- [Site](https://alexyakir.com/): Personal portfolio and CV
-
-## Profiles
-
-- [GitHub](https://github.com/alexyakir): Open-source code, including this site.
-- [Figma Community](https://www.figma.com/@alexyakir): Published plugins and design resources.
-- [LinkedIn](https://www.linkedin.com/in/alexyakir/): Professional history.
-- [X/Twitter](https://x.com/alexyakir): Short-form writing on design engineering.
-
-## Optional
-
-- [CV PDF](https://www.icloud.com/iclouddrive/081zjiSbW_iJWqPDWRWW3mcMQ#alex-yakir-cv-2026): Downloadable CV.
+- [Email](mailto:hi@alexyakir.com): hi@alexyakir.com
+- [GitHub](https://github.com/alexyakir)
+- [Figma Community](https://www.figma.com/@alexyakir)
+- [LinkedIn](https://www.linkedin.com/in/alexyakir/)
+- [X/Twitter](https://x.com/alexyakir)
 
 ---
 Last updated: 2026-10-23
