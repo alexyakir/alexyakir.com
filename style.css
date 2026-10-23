@@ -306,6 +306,7 @@ html {
    both video decoders mounted in WebKit/Firefox so switching themes never drops
    the frame buffer or stalls autoplay. */
 .cv-entry__stage {
+  container-type: inline-size;
   display: grid;
   margin-block-start: 1lh;
   opacity: calc(0.88 + var(--bright) * 0.12);
@@ -324,6 +325,18 @@ html {
 .cv-entry__video {
   border-radius: 18px;
   pointer-events: none;
+}
+/* Portrait media would run past the viewport bottom when its entry is
+   dialed. Cap its height to the room below the dial minus the title, two
+   body lines, the stage margin and a line of air, and let width follow the
+   aspect ratio from the width/height attributes. */
+.cv-entry__video--portrait {
+  justify-self: start;
+  width: auto;
+  height: min(
+    calc(100cqi * 1080 / 858),
+    calc(100svh - var(--dial-y) - 5 * var(--lamp-gap))
+  );
 }
 :root[data-theme="dark"]  .cv-entry__shot--light,
 :root[data-theme="dark"]  .cv-entry__video--light,
