@@ -39,54 +39,36 @@ for (const el of document.querySelectorAll("[data-years-since]")) {
 }
 
 // ── Unified Zero-Thrash Geometry Cache ────────────────────────────────────
-// All DOM geometry (dialY, line-height, lamp coords, ruler left, and each
-// entry's document-relative top, height, and intrinsic caliper span) is
-// measured ONLY inside measureLayout() on ResizeObserver / fonts.ready / load.
-// The 120Hz scroll rAF loop and hover calipers perform zero DOM layout reads.
+// All DOM geometry (dialY, line-height, lamp coords, and each entry's
+// document-relative top and height) is measured ONLY inside measureLayout()
+// on ResizeObserver / fonts.ready / load. The 120Hz scroll rAF loop performs
+// zero DOM layout reads.
 const targets = [...document.querySelectorAll(".cv-intro, .cv-entry")];
 const lampEl = document.querySelector(".theme-toggle__lamp");
-const rulerEl = document.querySelector(".dial-ruler");
 const detentEl = document.querySelector(".dial-ruler__detent");
-const sharedRange = document.createRange();
 
 let cachedDialY = 200;
 let cachedTickY = 180;
 let cachedLhPx = 27;
-let cachedRulerLeft = 0;
 let cachedRulerAlpha = 0.08;
 let lampCx = 0;
 let lampCy = 0;
 
 const entryCache = targets.map((el) => ({
   el,
-  headEl: el.querySelector(".cv-entry__head") || el,
-  bodyEl: el.querySelector(".cv-entry__body"),
-  clientsEl: el.querySelector(".cv-clients"),
-  stageEl: el.querySelector(".cv-entry__stage"),
   docTop: 0,
   titleDocTop: 0,
   height: 0,
-  caliperWidth: 0,
   prevSigned: null,
   prevBright: -1,
   prevAngle: -999,
 }));
 
-function measureIntrinsicRight(node, fallbackRight) {
-  if (!node) return fallbackRight;
-  sharedRange.selectNodeContents(node);
-  let maxR = -Infinity;
-  for (const r of sharedRange.getClientRects()) {
-    if (r.width > 0 && r.height > 0 && r.right > maxR) maxR = r.right;
-  }
-  return Number.isFinite(maxR) ? maxR : fallbackRight;
-}
-
 function measureLayout() {
   const scrollY = window.scrollY;
   const rootStyle = getComputedStyle(root);
-  const padPx = parseFloat(rootStyle.scrollPaddingTop);
-  cachedDialY = Number.isFinite(padPx) && padPx > 0 ? padPx : window.innerHeight * 0.42;
+  const dialPx = targets[0] ? parseFloat(getComputedStyle(targets[0]).scrollMarginTop) : NaN;
+  cachedDialY = Number.isFinite(dialPx) && dialPx > 0 ? dialPx : window.innerHeight * 0.42;
   const alphaPx = parseFloat(rootStyle.getPropertyValue("--ruler-alpha"));
   cachedRulerAlpha = Number.isFinite(alphaPx) ? alphaPx : 0.08;
 
@@ -103,10 +85,6 @@ function measureLayout() {
     cachedTickY = cachedDialY - cachedLhPx + 10;
   }
 
-  if (rulerEl) {
-    cachedRulerLeft = rulerEl.getBoundingClientRect().left;
-  }
-
   const isBooting = root.getAttribute("data-boot") === "scroll";
   const bootOffset = isBooting ? 16 : 0;
 
@@ -116,21 +94,6 @@ function measureLayout() {
     item.docTop = r.top + scrollY - bootOffset;
     item.titleDocTop = item.docTop;
     item.height = r.height;
-
-    let maxRight = measureIntrinsicRight(item.headEl, r.left);
-    if (item.bodyEl) {
-      const bodyRight = measureIntrinsicRight(item.bodyEl, r.left);
-      if (bodyRight > maxRight) maxRight = bodyRight;
-    }
-    if (item.clientsEl) {
-      const cr = item.clientsEl.getBoundingClientRect();
-      if (cr.width > 0 && cr.right > maxRight) maxRight = cr.right;
-    }
-    if (item.stageEl) {
-      const sr = item.stageEl.getBoundingClientRect();
-      if (sr.width > 0 && sr.right > maxRight) maxRight = sr.right;
-    }
-    item.caliperWidth = Math.max(0, maxRight - cachedRulerLeft);
   }
 }
 
@@ -333,17 +296,13 @@ function initLamp() {
       typeof CSS !== "undefined" &&
       CSS.supports("animation-timeline: view()");
 
-    let ackedChanged = false;
     for (let i = 0; i < entryCache.length; i++) {
       const item = entryCache[i];
       const el = item.el;
       const d = Math.abs((item.titleDocTop - scrollY) - dial);
 
       const isAcked = i === ackedIdx;
-      if (el.classList.contains("is-acked") !== isAcked) {
-        el.classList.toggle("is-acked", isAcked);
-        ackedChanged = true;
-      }
+      el.classList.toggle("is-acked", isAcked);
       if (isAcked) el.classList.remove("is-lit-hold");
 
       if (cssOpticalDriver) {
@@ -377,9 +336,6 @@ function initLamp() {
         el.style.setProperty("--lit-angle", `${angle.toFixed(1)}deg`);
       }
     }
-    if (ackedChanged) {
-      window.dispatchEvent(new CustomEvent("cv:ackedchange", { detail: { ackedIdx } }));
-    }
 
     const lampTarget = Math.max(scrollBloom, cursorBloom);
     const diff = lampTarget - lampIntensity;
@@ -399,43 +355,86 @@ function initLamp() {
     raf = requestAnimationFrame(updateFalloff);
   }
 
+  // Idle-snap: every rest position has an entry on the dial. A stepped mouse
+  // wheel fires scrollend after each notch, so snapping straight to the
+  // nearest entry dragged the reader back to the one they were leaving and the
+  // page could not be wheeled past the intro. Instead, wait for the input to go
+  // quiet, and when the nearest entry is still the one the gesture started on
+  // but the reader moved past SNAP_INTENT_PX, step to its neighbour in the
+  // direction they scrolled.
   const SCROLLEND_FALLBACK_MS = 160;
+  const SNAP_IDLE_MS = 140;
+  const SNAP_INTENT_PX = 12;
   let scrollEndTimer = 0;
+  let snapTimer = 0;
+  let restIdx = currentIndex();
+  let restScrollY = window.scrollY;
+
+  function markRest() {
+    restIdx = currentIndex();
+    restScrollY = window.scrollY;
+  }
 
   function snapToNearest() {
-    if (programmaticScroll) { programmaticScroll = false; return; }
+    snapTimer = 0;
     if (!entryCache.length) return;
     const scrollY = window.scrollY;
-    const dial = cachedDialY;
-    let bestIdx = -1;
-    let bestDist = Infinity;
-    let bestSigned = 0;
-    for (let i = 0; i < entryCache.length; i++) {
-      const signed = (entryCache[i].titleDocTop - scrollY) - dial;
-      const d = Math.abs(signed);
-      if (d < bestDist) {
-        bestDist = d;
-        bestIdx = i;
-        bestSigned = signed;
-      }
+    const moved = scrollY - restScrollY;
+    let idx = currentIndex();
+    if (idx === restIdx && Math.abs(moved) >= SNAP_INTENT_PX) {
+      idx = Math.max(0, Math.min(entryCache.length - 1, restIdx + Math.sign(moved)));
     }
-    if (bestIdx === -1 || bestDist < 1) return;
+    const top = Math.max(0, entryCache[idx].titleDocTop - cachedDialY);
+    restIdx = idx;
+    restScrollY = top;
+    if (Math.abs(top - scrollY) < 1) return;
     programmaticScroll = true;
-    window.scrollTo({ top: Math.max(0, scrollY + bestSigned), behavior: "smooth" });
+    window.scrollTo({ top, behavior: "smooth" });
   }
+
+  function armSnap(delay) {
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(snapToNearest, delay);
+  }
+
+  function onScrollEnd() {
+    if (programmaticScroll) {
+      programmaticScroll = false;
+      markRest();
+      return;
+    }
+    armSnap(SNAP_IDLE_MS);
+  }
+
+  // Wheel or touch is the reader taking over an in-flight smooth scroll.
+  // Wheel also re-arms the snap with a longer delay: at the end of the page
+  // the wheel no longer scrolls, so no scrollend would ever arrive to settle
+  // an overshoot. While a finger is down nothing snaps.
+  window.addEventListener("wheel", () => {
+    programmaticScroll = false;
+    armSnap(SNAP_IDLE_MS + 120);
+  }, { passive: true });
+  window.addEventListener("touchstart", () => {
+    programmaticScroll = false;
+    clearTimeout(snapTimer);
+  }, { passive: true });
+  window.addEventListener("touchend", () => armSnap(SNAP_IDLE_MS + 120), { passive: true });
 
   const hasScrollEnd = "onscrollend" in window;
   if (hasScrollEnd) {
-    window.addEventListener("scrollend", snapToNearest, { passive: true });
+    window.addEventListener("scrollend", onScrollEnd, { passive: true });
   }
 
   window.addEventListener("scroll", () => {
-    if (!programmaticScroll) userEngaged = true;
+    if (!programmaticScroll) {
+      userEngaged = true;
+      clearTimeout(snapTimer);
+    }
     sampleScrollVelocity();
     schedule();
     if (!hasScrollEnd) {
       clearTimeout(scrollEndTimer);
-      scrollEndTimer = setTimeout(snapToNearest, SCROLLEND_FALLBACK_MS);
+      scrollEndTimer = setTimeout(onScrollEnd, SCROLLEND_FALLBACK_MS);
     }
   }, { passive: true });
 
@@ -486,6 +485,7 @@ function initLamp() {
       window.scrollTo({ top: Math.max(0, scrollY + bestSigned), left: 0, behavior: "instant" });
       requestAnimationFrame(() => { programmaticScroll = false; });
     }
+    markRest();
     updateFalloff();
   }
 
@@ -601,74 +601,17 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
   initLamp();
 }
 
-// Hover Framing Calipers — strictly gated to fine pointers (`(hover: hover) and (pointer: fine)`).
-// Uses cached `caliperWidth`, `docTop`, and `height` from `entryCache` with zero
-// TreeWalker or live DOM layout reads on hover.
-function initRulerHover() {
+// Hover warmth — a mouse resting on an undialed entry lifts it to
+// HOVER_BRIGHT_FLOOR. No outline or frame: the text itself warms.
+function initHoverWarmth() {
   if (!canHoverFine) return;
-  const hoverTop = document.querySelector(".dial-ruler__hover--top");
-  const hoverBottom = document.querySelector(".dial-ruler__hover--bottom");
-  if (!rulerEl || !hoverTop || !hoverBottom || !entryCache.length) return;
-
   let hoveredIdx = -1;
-  let dialedIdx = entryCache.findIndex((item) => item.el.classList.contains("is-acked"));
-  let calipersVisible = false;
-
-  const HOVER_EASE = [0.32, 0.72, 0, 1];
-  const HOVER_DURATION = 0.28;
-  const animScale = (el, sx) =>
-    animate(el, { transform: `scaleX(${sx})` }, { duration: HOVER_DURATION, ease: HOVER_EASE });
-
-  function hide() {
-    calipersVisible = false;
-    animScale(hoverTop, 0);
-    animScale(hoverBottom, 0);
-  }
-
-  function update() {
-    if (hoveredIdx === -1 || hoveredIdx === dialedIdx) {
-      hide();
-      return;
-    }
-    const item = entryCache[hoveredIdx];
-    if (!item || item.caliperWidth <= 0) {
-      hide();
-      return;
-    }
-    const scrollY = window.scrollY;
-    const topY = item.docTop - scrollY;
-    const bottomY = topY + item.height;
-
-    hoverTop.style.width = `${item.caliperWidth}px`;
-    hoverBottom.style.width = `${item.caliperWidth}px`;
-
-    // When emerging from hidden (scaleX(0)), snap `top` immediately so the
-    // calipers don't fly diagonally from 0px or a stale entry position.
-    if (!calipersVisible) {
-      hoverTop.style.transition = "none";
-      hoverBottom.style.transition = "none";
-      hoverTop.style.top = `${topY}px`;
-      hoverBottom.style.top = `${bottomY}px`;
-      requestAnimationFrame(() => {
-        hoverTop.style.transition = "";
-        hoverBottom.style.transition = "";
-      });
-    } else {
-      hoverTop.style.top = `${topY}px`;
-      hoverBottom.style.top = `${bottomY}px`;
-    }
-
-    calipersVisible = true;
-    animScale(hoverTop, 1);
-    animScale(hoverBottom, 1);
-  }
 
   function setHovered(idx) {
     if (idx === hoveredIdx) return;
     if (hoveredIdx !== -1) hovered.delete(entryCache[hoveredIdx].el);
     hoveredIdx = idx;
     if (idx !== -1) hovered.add(entryCache[idx].el);
-    update();
     window.dispatchEvent(new CustomEvent("cv:hoverchange"));
   }
 
@@ -687,19 +630,9 @@ function initRulerHover() {
   window.addEventListener("scroll", () => {
     if (hoveredIdx !== -1) setHovered(-1);
   }, { passive: true });
-
-  window.addEventListener("cv:ackedchange", (e) => {
-    const nextAcked = e.detail?.ackedIdx ?? -1;
-    if (nextAcked !== dialedIdx) {
-      dialedIdx = nextAcked;
-      update();
-    }
-  });
-
-  window.addEventListener("cv:layout", update);
 }
 
-initRulerHover();
+initHoverWarmth();
 
 // Click-to-dial
 {

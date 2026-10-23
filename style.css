@@ -36,8 +36,6 @@
   --surface:     #ffffff;
   --surface-end: #ffffff;
 
-  /* Pill — outline only, no fill. Faint contrast against the page. */
-  --pill-stroke: rgba(0, 0, 0, 0.05);
   --ruler-alpha: 0.08;
 
   --ink-lit:     #1e40af;
@@ -92,7 +90,6 @@
   --surface:     #0a0a0a;
   --surface-end: #0a0a0a;
 
-  --pill-stroke: rgba(255, 255, 255, 0.06);
   --ruler-alpha: 0.14;
 
   --ink-lit:      #ffffff;
@@ -170,7 +167,6 @@ h1, h2, h3, h4, h5, h6 {
 
 html {
   background: var(--surface);
-  scroll-padding-top: var(--dial-y);
   scroll-behavior: smooth;
 }
 
@@ -183,7 +179,7 @@ html {
      for the body's font-size and line-height; --lamp-gap is derived from
      them so vertical rhythm runs on a 1lh grid. Both columns anchor their
      first text line at --dial-y (identity via tick-y + toggle height,
-     body via the ::before spacer + scroll-padding), so rows align across
+     body via the ::before spacer + scroll-margin), so rows align across
      the gap; the lamp sits one lamp-gap minus --lamp-nudge above them. */
   --base-fs: 18px;
   --base-lh: 1.5;
@@ -350,9 +346,14 @@ html {
 .cv-intro + .cv-entry,
 .cv-entry + .cv-entry { margin-top: calc(2 * var(--lamp-gap)); }
 
+/* Anchor jumps (#shadow-stack) land the title on the dial. This is a
+   per-entry scroll-margin, not scroll-padding on html: scroll-padding also
+   applies to focus scrolling, and the sticky lamp and identity links sit
+   inside that top band, so focusing them scrolled the page to the top. */
 .cv-intro,
 .cv-entry {
   position: relative;
+  scroll-margin-top: var(--dial-y);
 }
 
 .cv-entry { display: flex; flex-direction: column; }
@@ -376,46 +377,50 @@ html {
   opacity: calc(0.22 + var(--bright) * 0.78);
 }
 
-/* Client / Team Logo Grid — 3-column architectural matrix resting between the
-   section heading and the consolidated engineering summary. */
+/* Team logo grid — three equal columns on fixed rows, each mark left-aligned
+   and vertically centred in its cell. Plain marks, not links: the grid credits
+   teams without sending visitors away. Rows are 5/3 lamp-gaps so the three of
+   them span exactly 5 lines of the baseline grid.
+
+   Heights are tuned per mark for equal optical weight, not equal height: dense
+   or wide marks (HoneyBook caps, Wix) sit smaller, light or compact ones
+   (Agoda, Shenkar) larger. --logo-scale shrinks the whole set on phones. */
 .cv-clients {
+  --logo-scale: 1;
   list-style: none;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: center;
-  column-gap: clamp(16px, 4vw, 36px);
-  row-gap: calc(var(--lamp-gap) * 0.85);
-  margin-block: calc(var(--lamp-gap) * 0.75);
+  grid-auto-rows: calc(var(--lamp-gap) * 5 / 3);
+  margin-block-start: calc(var(--lamp-gap) / 3);
   width: 100%;
   color: color-mix(in srgb, var(--ink-soft), var(--text-lit) calc(var(--bright, 0) * 100%));
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .cv-clients__item {
   display: flex;
   align-items: center;
-  width: fit-content;
-  text-decoration: none;
-  color: inherit;
-  transition: color 180ms cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .cv-clients__item:hover { color: var(--ink-strong); }
+  min-width: 0;
 }
 
 .cv-clients__logo {
   display: block;
   width: auto;
   max-width: 100%;
-  height: 18px;
+  height: calc(var(--logo-h) * var(--logo-scale));
 }
 
-.cv-clients__logo--wix       { height: 15px; }
-.cv-clients__logo--agoda     { height: 23px; }
-.cv-clients__logo--navina    { height: 18px; }
-.cv-clients__logo--honeybook { height: 12px; }
-.cv-clients__logo--anima     { height: 19px; }
-.cv-clients__logo--nanoclaw  { height: 14px; }
+.cv-clients__logo--wix       { --logo-h: 18px; }
+.cv-clients__logo--agoda     { --logo-h: 26px; }
+.cv-clients__logo--navina    { --logo-h: 19px; }
+.cv-clients__logo--nanoco    { --logo-h: 13.5px; }
+.cv-clients__logo--honeybook { --logo-h: 11.5px; }
+.cv-clients__logo--anima     { --logo-h: 20.5px; }
+.cv-clients__logo--figma     { --logo-h: 19.5px; }
+.cv-clients__logo--shopify   { --logo-h: 19.5px; }
+.cv-clients__logo--shenkar   { --logo-h: 19px; }
 
 /* Light infusion. Two stacked gradients clipped to the text:
      1. The sweep — --text-lit through --ink-lit-fade to transparent at
@@ -576,8 +581,7 @@ a:focus-visible {
     box-shadow 240ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* overflow-y: clip contains the tall track vertically; overflow-x stays
-   visible so the hover calipers can project rightward past the 6px box. */
+/* overflow-y: clip contains the tall track vertically. */
 .dial-ruler {
   grid-column: spine-start / spine-end;
   position: sticky;
@@ -596,8 +600,9 @@ a:focus-visible {
    Viewport resize moves the parent, not the gradient — tick spacing stays
    stable. A tick lands at track-y 5000, which maps to viewport-y --tick-y.
 
-   The edge fade masks only the track, positioned back into viewport space.
-   Masking the whole ruler would clip the calipers to its 6px border box. */
+   The edge fade masks only the track, positioned back into viewport space, so
+   the detent at --tick-y stays at full strength even on short viewports where
+   the lamp line falls inside the faded top band. */
 .dial-ruler__track {
   position: absolute;
   left: 0;
@@ -621,30 +626,6 @@ a:focus-visible {
     transparent 100%);
   -webkit-mask: var(--ruler-fade) 0 calc(5000px - var(--tick-y)) / 100% 100lvh no-repeat;
           mask: var(--ruler-fade) 0 calc(5000px - var(--tick-y)) / 100% 100lvh no-repeat;
-}
-
-/* Hover framing calipers — two horizontal beams that project out of the ruler
-   at the hovered entry's top and bottom edges, extending right to embrace the
-   entry's exact content span. Gated strictly behind (hover: hover) and (pointer: fine)
-   so touch devices never trigger sticky emulated hover beams. */
-.dial-ruler__hover {
-  display: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .dial-ruler__hover {
-    display: block;
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 1px;
-    width: 0;
-    transform: scaleX(0);
-    transform-origin: left center;
-    background: var(--pill-stroke);
-    pointer-events: none;
-    transition: top 280ms cubic-bezier(0.32, 0.72, 0, 1);
-  }
 }
 
 .dial-ruler__detent {
@@ -716,18 +697,7 @@ a:focus-visible {
     --line-falloff: var(--mobile-falloff, 0.5);
   }
 
-  .cv-clients {
-    column-gap: 14px;
-  }
-
-  .cv-clients__logo--wix       { height: 13px; }
-  .cv-clients__logo--agoda     { height: 20px; }
-  .cv-clients__logo--navina    { height: 15px; }
-  .cv-clients__logo--honeybook { height: 10px; }
-  .cv-clients__logo--anima     { height: 16px; }
-  .cv-clients__logo--nanoclaw  { height: 12px; }
-
-  .dial-ruler__hover { display: none; }
+  .cv-clients { --logo-scale: 0.74; }
 }
 
 /* Optional Pure-CSS Scroll-Driven Timeline Driver (`data-optical-driver="css"`,
@@ -788,7 +758,6 @@ a:focus-visible {
     -webkit-text-fill-color: currentColor;
     opacity: 1;
   }
-  .dial-ruler__hover { display: none; }
   .cv { padding: 48px; }
   @page { margin: 0.5in; size: letter; }
 }
