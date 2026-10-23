@@ -371,16 +371,57 @@ body,
 .cv-entry__body,
 .cv-intro { width: fit-content; max-width: 54ch; text-wrap-style: balance; }
 
-/* Reflective Ink — printed typography on the workbench has no light of its
-   own; it relies on proximity to the Focal Horizon (--bright). Recedes into
-   ambient shadow (0.22) out of focus and reaches 1.0 in focus, while
-   .cv-entry__stage (emissive glass) remains isolated from this deep dim so
-   WebKit/Blink never suspend hardware video decoding. */
+/* Reflective Ink — printed typography and etched vector marks on the workbench
+   have no light of their own; they rely on proximity to the Focal Horizon
+   (--bright). Recedes into ambient shadow (0.22) out of focus and reaches 1.0
+   in focus, while .cv-entry__stage (emissive glass) remains isolated from this
+   deep dim so WebKit/Blink never suspend hardware video decoding. */
 .cv-intro,
 .cv-entry__head,
-.cv-entry__body {
+.cv-entry__body,
+.cv-clients {
   opacity: calc(0.22 + var(--bright) * 0.78);
 }
+
+/* Client / Team Logo Grid — 3-column architectural matrix resting between the
+   section heading and the consolidated engineering summary. */
+.cv-clients {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  column-gap: clamp(16px, 4vw, 36px);
+  row-gap: calc(var(--lamp-gap) * 0.85);
+  margin-block: calc(var(--lamp-gap) * 0.75);
+  width: 100%;
+  color: color-mix(in srgb, var(--ink-soft), var(--text-lit) calc(var(--bright, 0) * 100%));
+}
+
+.cv-clients__item {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  text-decoration: none;
+  color: inherit;
+  transition: color 180ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.cv-clients__item:hover {
+  color: var(--ink-strong);
+}
+
+.cv-clients__logo {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 18px;
+}
+
+.cv-clients__logo--wix       { height: 15px; }
+.cv-clients__logo--agoda     { height: 23px; }
+.cv-clients__logo--navina    { height: 18px; }
+.cv-clients__logo--honeybook { height: 12px; }
+.cv-clients__logo--anima     { height: 19px; }
+.cv-clients__logo--nanoclaw  { height: 14px; }
 
 /* Light infusion. Two stacked gradients clipped to the text:
      1. The sweep — --text-lit through --ink-lit-fade to transparent at
@@ -680,6 +721,17 @@ a:focus-visible {
     order: var(--mobile-order, 0);
     --line-falloff: var(--mobile-falloff, 0.5);
   }
+
+  .cv-clients {
+    column-gap: 14px;
+  }
+
+  .cv-clients__logo--wix       { height: 13px; }
+  .cv-clients__logo--agoda     { height: 20px; }
+  .cv-clients__logo--navina    { height: 15px; }
+  .cv-clients__logo--honeybook { height: 10px; }
+  .cv-clients__logo--anima     { height: 16px; }
+  .cv-clients__logo--nanoclaw  { height: 12px; }
 
   .dial-ruler__hover { display: none; }
 }

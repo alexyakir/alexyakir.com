@@ -59,6 +59,7 @@ const entryCache = targets.map((el) => ({
   el,
   headEl: el.querySelector(".cv-entry__head") || el,
   bodyEl: el.querySelector(".cv-entry__body"),
+  clientsEl: el.querySelector(".cv-clients"),
   stageEl: el.querySelector(".cv-entry__stage"),
   docTop: 0,
   titleDocTop: 0,
@@ -118,6 +119,10 @@ function measureLayout() {
     if (item.bodyEl) {
       const bodyRight = measureIntrinsicRight(item.bodyEl, r.left);
       if (bodyRight > maxRight) maxRight = bodyRight;
+    }
+    if (item.clientsEl) {
+      const cr = item.clientsEl.getBoundingClientRect();
+      if (cr.width > 0 && cr.right > maxRight) maxRight = cr.right;
     }
     if (item.stageEl) {
       const sr = item.stageEl.getBoundingClientRect();
