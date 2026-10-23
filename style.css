@@ -167,6 +167,10 @@ html {
 }
 
 :root {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
   /* Type system. --base-fs and --base-lh are the single source of truth
      for the body's font-size and line-height; --lamp-gap is derived from
      them so vertical rhythm runs on a 1lh grid. Both columns anchor their
@@ -178,12 +182,12 @@ html {
   --lamp-gap: calc(var(--base-fs) * var(--base-lh));
 
   --room-below-for-media: 640px;
-  --dial-rest:      42dvh;
-  --dial-fit-media: calc(100dvh - var(--room-below-for-media));
+  --dial-rest:      42svh;
+  --dial-fit-media: calc(100svh - var(--room-below-for-media));
 
-  /* dvh never vh (vh follows iOS's collapsed URL bar). The script reads this
-     back from scroll-padding-top, so the dial is defined in exactly one place. */
-  --dial-y: min(var(--dial-rest), var(--dial-fit-media));
+  /* Static svh with a rem floor: never shifts mid-scroll when mobile URL bars
+     retract, and never collapses to <=0px on short viewports. */
+  --dial-y: clamp(5.5rem, min(var(--dial-rest), var(--dial-fit-media)), 42svh);
 
   /* Optical correction pulling the lamp nearer the text than a full
      lamp-gap — a text row's leading makes the raw gap read too airy.
@@ -205,8 +209,9 @@ html {
   --ruler-alpha: 0.14;
 }
 
-body {
-  min-height: 100vh;
+body,
+.workbench {
+  min-height: 100lvh;
   overflow-x: clip;
   background: linear-gradient(180deg, var(--surface), var(--surface-end));
   background-attachment: fixed;
@@ -218,36 +223,42 @@ body {
      line of identity column, entry body, intro). Entry titles bump to 600
      locally — that's the only override. No third weight anywhere. */
   font-weight: 300;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
 .cv {
   max-width: 775px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: max-content auto 1fr;
-  column-gap: 37px;
+  grid-template-columns:
+    [id-start] max-content
+    [id-end spine-start] 6px
+    [spine-end content-start] minmax(0, 1fr)
+    [content-end];
+  column-gap: clamp(9px, 4.5vw, 37px);
   align-items: start;
 }
 
 .cv-id {
+  grid-column: id-start / id-end;
   display: flex;
   flex-direction: column;
   position: sticky;
   top: 0;
-  height: 100dvh;
+  height: 100svh;
   padding-top: var(--tick-y);
 }
 
 .cv-id__line {
-  background-image: linear-gradient(to bottom, var(--ink-lit), var(--ink-lit-rest));
-  background-size: 100% calc(200px + var(--lamp-intensity) * 600px);
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-          background-clip: text;
-  color: transparent;
+  --line-falloff: var(--desktop-falloff, 1);
+  /* Solid glyph fill modulated by inverse-square falloff (--line-falloff) and
+     kinetic dynamo surge (--lamp-intensity). Never combine background-clip: text
+     (color: transparent) with text-shadow on the same element — Safari/Firefox
+     paint text-shadow on top of transparent glyph interiors, muddying the text. */
+  color: color-mix(
+    in srgb,
+    var(--ink-lit) calc(clamp(0, var(--line-falloff, 1) * 0.72 + var(--lamp-intensity) * var(--line-falloff, 1) * 0.65, 1) * 100%),
+    var(--ink-lit-rest)
+  );
   /* Halo bloom radiating from the lamp. Two stops: a sharper inner glow + a
      softer wider one, both modulated by --lamp-intensity (scroll/cursor) and
      --line-falloff (per-line distance from the lamp). At rest both terms are
@@ -264,37 +275,35 @@ body {
         transparent);
 }
 
-.cv-id__name           { font-size: inherit;                                    }
-.cv-id > a             { text-decoration: none;                                  }
-/* Per-line halo falloff — line 1 (name) sits right under the lamp at full
-   intensity; each line below receives progressively less direct light. */
-.cv-id__name              { --line-falloff: 1;    }
-.cv-id > a:nth-of-type(1) { background-position: 0 -1lh; --line-falloff: 0.85; }
-.cv-id > a:nth-of-type(2) { background-position: 0 -2lh; --line-falloff: 0.7;  }
-.cv-id > a:nth-of-type(3) { background-position: 0 -3lh; --line-falloff: 0.55; }
-.cv-id > a:nth-of-type(4) { background-position: 0 -4lh; --line-falloff: 0.42; }
-.cv-id > a:nth-of-type(5) { background-position: 0 -5lh; --line-falloff: 0.32; }
-.cv-id > a:nth-of-type(6) { background-position: 0 -6lh; --line-falloff: 0.24; }
+.cv-id__name { font-size: inherit; }
+.cv-id__link { text-decoration: none; }
 
 .cv-id__short { display: none; }
 
-.cv-id > a::after {
-  content: "→";
-  display: inline-block;
-  margin-left: 6px;
-  color: var(--ink-lit);
-  opacity: 0;
-  transform: translateX(-8px);
-  transition:
-    opacity   180ms cubic-bezier(0.32, 0.72, 0, 1),
-    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.cv-id > a:hover::after {
-  opacity: 1;
-  transform: translateX(0);
+@media (hover: hover) and (pointer: fine) {
+  .cv-id__link::after {
+    content: "→";
+    display: inline-block;
+    margin-left: 6px;
+    color: var(--ink-lit);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition:
+      opacity   180ms cubic-bezier(0.32, 0.72, 0, 1),
+      transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .cv-id__link:hover::after {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.cv-body { display: flex; flex-direction: column; max-width: 450px; }
+.cv-body {
+  grid-column: content-start / content-end;
+  display: flex;
+  flex-direction: column;
+  max-width: min(450px, 54ch);
+}
 /* Emissive Glass Stage — backlit digital showcases resting on the workbench.
    Emits its own photons, so it stays at 88%–100% opacity even when surrounding
    reflective ink recedes into ambient shadow (0.22). Stacking --dark and --light
@@ -330,7 +339,7 @@ body {
   pointer-events: none;
 }
 .cv-body::before { content: ""; display: block; block-size: var(--dial-y); }
-.cv-body::after  { content: ""; display: block; block-size: calc(100dvh - var(--dial-y) - 2lh); }
+.cv-body::after  { content: ""; display: block; block-size: calc(100lvh - var(--dial-y) - 2lh); }
 
 /* Inter-entry rhythm. The empty band above each title (where the lamp's
    halo reads) lives as MARGIN between entries, not padding inside them.
@@ -350,11 +359,11 @@ body {
 .cv-entry { display: flex; flex-direction: column; }
 /* h2 default is bold + larger; pull both back to body so the only weight
    bump in the system happens on .cv-entry__title — nowhere else. */
-.cv-entry__head { font-size: inherit; font-weight: inherit; }
+.cv-entry__head { font-size: inherit; font-weight: inherit; width: fit-content; }
 .cv-entry__title { font-weight: 600; text-wrap: balance; }
 /* Even line lengths across body copy and the intro paragraph. */
 .cv-entry__body,
-.cv-intro { text-wrap-style: balance; }
+.cv-intro { width: fit-content; max-width: 54ch; text-wrap-style: balance; }
 
 /* Reflective Ink — printed typography on the workbench has no light of its
    own; it relies on proximity to the Focal Horizon (--bright). Recedes into
@@ -407,7 +416,7 @@ body {
    The motion-driven animation guarantees the same envelope on every
    transition, regardless of which trigger fires it. */
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   /* Pointer affordance only on entries that aren't already at the dial —
      clicking a dialed entry is a no-op and shouldn't pretend otherwise. */
   .cv-intro:not(.is-acked),
@@ -529,9 +538,10 @@ a:focus-visible {
 /* overflow-y: clip contains the tall track vertically; overflow-x stays
    visible so the detent's scaleX can reach rightward past the 6px box. */
 .dial-ruler {
+  grid-column: spine-start / spine-end;
   position: sticky;
   top: 0;
-  height: 100dvh;
+  height: 100lvh;
   width: 6px;
   pointer-events: none;
   overflow-x: visible;
@@ -572,30 +582,28 @@ a:focus-visible {
   color: var(--ink);
 }
 
-/* Hover frame — two horizontal lines that grow out of the ruler at the
-   hovered entry's top and bottom edges, extending right to cover the
-   entry's content width. Vertical position (top) and width are set inline
-   per hover; opacity follows the same channel. The ruler's overflow-x is
-   visible (set on .dial-ruler), so these lines extend past the 6px ruler
-   into the column gap and across the content. */
+/* Hover framing calipers — two horizontal beams that project out of the ruler
+   at the hovered entry's top and bottom edges, extending right to embrace the
+   entry's exact content span. Gated strictly behind (hover: hover) and (pointer: fine)
+   so touch devices never trigger sticky emulated hover beams. */
 .dial-ruler__hover {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 1px;
-  /* Width is set inline per-hover. The grow/retract animation rides on
-     transform: scaleX, not width — Chrome's width/opacity transitions
-     consistently freeze at currentTime=0 on this element (same class of
-     bug we hit on --bright). transforms animate cleanly via WAAPI, so JS
-     uses motion.dev to drive scaleX 0↔1, fully interruptible. */
-  width: 0;
-  transform: scaleX(0);
-  transform-origin: left center;
-  background: var(--pill-stroke);
-  pointer-events: none;
-  /* Top y also slides between hovered entries — separate transition since
-     transform handles only the width side. */
-  transition: top 280ms cubic-bezier(0.32, 0.72, 0, 1);
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dial-ruler__hover {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 1px;
+    width: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+    background: var(--pill-stroke);
+    pointer-events: none;
+    transition: top 280ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
 }
 
 .dial-ruler__detent {
@@ -646,7 +654,8 @@ a:focus-visible {
 
 /* Mobile: trim identity labels, reorder by width, tighten gap, right-only padding.
    Visual order: AY, X, CV, Email, Figma, GitHub, LinkedIn.
-   Gradient lamp offsets (-Nlh) remap to match the new visual order.
+   Scoped --mobile-order and --mobile-falloff tokens remap falloff without
+   fragile nth-of-type selectors.
    Font drops to 16px via --base-fs; --lamp-gap and 1lh-driven margins
    auto-scale with it so the baseline grid stays consistent (24px here). */
 @media (max-width: 600px) {
@@ -661,15 +670,10 @@ a:focus-visible {
   .cv-id__full  { display: none; }
   .cv-id__short { display: inline; }
 
-  /* Hover arrow never shows on touch — reclaim its reserved width. */
-  .cv-id > a::after { display: none; }
-
-  .cv-id > a:nth-of-type(1) { order: 4; background-position: 0 -4lh; --line-falloff: 0.42; } /* Figma    */
-  .cv-id > a:nth-of-type(2) { order: 5; background-position: 0 -5lh; --line-falloff: 0.32; } /* GitHub   */
-  .cv-id > a:nth-of-type(3) { order: 6; background-position: 0 -6lh; --line-falloff: 0.24; } /* LinkedIn */
-  .cv-id > a:nth-of-type(4) { order: 1; background-position: 0 -1lh; --line-falloff: 0.85; } /* X        */
-  .cv-id > a:nth-of-type(5) { order: 2; background-position: 0 -2lh; --line-falloff: 0.7;  } /* CV       */
-  .cv-id > a:nth-of-type(6) { order: 3; background-position: 0 -3lh; --line-falloff: 0.55; } /* Email    */
+  .cv-id__link {
+    order: var(--mobile-order, 0);
+    --line-falloff: var(--mobile-falloff, 0.5);
+  }
 
   .dial-ruler__hover { display: none; }
 }
