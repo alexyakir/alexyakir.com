@@ -18,6 +18,12 @@
   initial-value: 0;
 }
 
+@property --lit-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 135deg;
+}
+
 
 
 :root,
@@ -676,6 +682,42 @@ a:focus-visible {
   }
 
   .dial-ruler__hover { display: none; }
+}
+
+/* Optional Pure-CSS Scroll-Driven Timeline Driver (`data-optical-driver="css"`).
+   Drives `--bright` (0 → 1 → 0) and `--lit-angle` (135deg → 90deg → 45deg)
+   directly on the compositor thread via `animation-timeline: view()`, allowing
+   real-time 120Hz A/B comparison against the Resize-Cached JS optical curve. */
+@supports (animation-timeline: view()) {
+  @keyframes optical-pass {
+    0% {
+      --bright: 0;
+      --lit-angle: 135deg;
+    }
+    40% {
+      --bright: 0;
+      --lit-angle: 120deg;
+    }
+    58% {
+      --bright: 1;
+      --lit-angle: 90deg;
+    }
+    76% {
+      --bright: 0;
+      --lit-angle: 60deg;
+    }
+    100% {
+      --bright: 0;
+      --lit-angle: 45deg;
+    }
+  }
+
+  :root[data-optical-driver="css"] .cv-intro,
+  :root[data-optical-driver="css"] .cv-entry {
+    animation: optical-pass linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
+  }
 }
 
 @media print {

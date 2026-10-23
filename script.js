@@ -326,6 +326,11 @@ function initLamp() {
       }
     }
 
+    const cssOpticalDriver =
+      root.dataset.opticalDriver === "css" &&
+      typeof CSS !== "undefined" &&
+      CSS.supports("animation-timeline: view()");
+
     for (let i = 0; i < entryCache.length; i++) {
       const item = entryCache[i];
       const el = item.el;
@@ -338,6 +343,16 @@ function initLamp() {
         window.dispatchEvent(new CustomEvent("cv:ackedchange", { detail: { ackedIdx } }));
       }
       if (isAcked) el.classList.remove("is-lit-hold");
+
+      if (cssOpticalDriver) {
+        if (item.prevBright !== -1) {
+          item.prevBright = -1;
+          item.prevAngle = -999;
+          el.style.removeProperty("--bright");
+          el.style.removeProperty("--lit-angle");
+        }
+        continue;
+      }
 
       const proximity = brightFromDistance(d, brightRange);
       const pinned = el.classList.contains("is-lit-hold");
@@ -470,7 +485,10 @@ function initLamp() {
   }
 
   function ensureDialed() {
-    if (userEngaged) return;
+    if (userEngaged || window.scrollY > 2) {
+      userEngaged = true;
+      return;
+    }
     dockNearest();
   }
 
