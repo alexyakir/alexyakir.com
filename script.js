@@ -18,6 +18,10 @@ if (toggle) {
     root.dataset.theme = next;
     try { localStorage.setItem("theme", next); } catch (e) {}
     syncPressed();
+    const inactiveMod = next === "dark" ? "light" : "dark";
+    for (const v of document.querySelectorAll(`.cv-entry__video:not(.cv-entry__video--${inactiveMod})`)) {
+      v.play().catch(() => {});
+    }
   });
 }
 
@@ -498,11 +502,11 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
       { opacity: [0, 1], y: [16, 0], filter: ["blur(4px)", "blur(0px)"] },
       { type: "tween", duration: 0.7, ease, at: PRE + 0.28 }],
 
-    // Lands at 0.22 — the dim CSS target for non-acked entries. Boot's
-    // final inline matches the post-boot CSS, so finishBoot's clear is a
-    // no-op visually (no second "snap" to a different dim value).
+    // Lands at 1 — reflective ink (.cv-entry__head, .cv-entry__body) and
+    // emissive stage (.cv-entry__stage) compute their own rest opacities
+    // (0.22 and 0.88) from --bright, so finishBoot's inline clear is seamless.
     [".cv-entry",
-      { opacity: [0, 0.22], y: [16, 0] },
+      { opacity: [0, 1], y: [16, 0] },
       { type: "tween", duration: 0.55, delay: stagger(0.05), ease, at: PRE + 0.32 }],
 
     // Ruler wipe: clip-path reveals top-to-bottom so the ticks read as a

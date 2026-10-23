@@ -253,9 +253,9 @@
       try { window.scrollTo(0, 0); } catch (e) {}
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
-<body>
+<body class="workbench">
 
   <main class="cv h-card" itemscope itemtype="https://schema.org/Person">
 
@@ -288,8 +288,10 @@
           <span class="cv-entry__title">Shadow Stack</span>
         </h2>
         <p class="cv-entry__body"><a href="https://shadowstack.alexyakir.com">Create  smooth shadows</a> using a system of depth. Decide how high each surface floats above the ground.</p>
-        <video class="cv-entry__video cv-entry__video--dark" src="videos/shadow-stack-dark.mp4" autoplay muted loop playsinline preload="metadata"></video>
-        <video class="cv-entry__video cv-entry__video--light" src="videos/shadow-stack-light.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <div class="cv-entry__stage">
+          <video class="cv-entry__video cv-entry__video--dark" src="videos/shadow-stack-dark.mp4" autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback></video>
+          <video class="cv-entry__video cv-entry__video--light" src="videos/shadow-stack-light.mp4" autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback></video>
+        </div>
       </section>
 
       <section class="cv-entry" id="figma-3d-tilt">
@@ -297,7 +299,9 @@
           <span class="cv-entry__title">Figma 3D Tilt</span>
         </h2>
         <p class="cv-entry__body">Explore your Figma layer structure in 3D with <a href="https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt">this plugin</a>.</p>
-        <video class="cv-entry__video" src="videos/figma-3d-tilt.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <div class="cv-entry__stage">
+          <video class="cv-entry__video" src="videos/figma-3d-tilt.mp4" autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback></video>
+        </div>
       </section>
 
       <section class="cv-entry" id="functional-ui-kit">
@@ -305,8 +309,10 @@
           <span class="cv-entry__title">Functional UI Kit</span>
         </h2>
         <p class="cv-entry__body">Award-winning <a href="https://functional-ui-kit.com/">design system</a> aligning what's possible.</p>
-        <img class="cv-entry__shot cv-entry__shot--dark" src="images/functional-ui-kit-dark.webp?v=2" width="900" height="907" alt="Functional UI Kit example screen" loading="lazy" decoding="async">
-        <img class="cv-entry__shot cv-entry__shot--light" src="images/functional-ui-kit-light.webp?v=2" width="900" height="907" alt="Functional UI Kit example screen" loading="lazy" decoding="async">
+        <div class="cv-entry__stage">
+          <img class="cv-entry__shot cv-entry__shot--dark" src="images/functional-ui-kit-dark.webp?v=2" width="900" height="907" alt="Functional UI Kit example screen" loading="lazy" decoding="async">
+          <img class="cv-entry__shot cv-entry__shot--light" src="images/functional-ui-kit-light.webp?v=2" width="900" height="907" alt="Functional UI Kit example screen" loading="lazy" decoding="async">
+        </div>
       </section>
 
       <section class="cv-entry" id="easysizes">
@@ -314,7 +320,9 @@
           <span class="cv-entry__title">EasySizes</span>
         </h2>
         <p class="cv-entry__body">Shopify <a href="https://apps.shopify.com/easysizes">app</a> for real-life size comparisons.</p>
-        <video class="cv-entry__video" src="videos/easysizes.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <div class="cv-entry__stage">
+          <video class="cv-entry__video" src="videos/easysizes.mp4" autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback></video>
+        </div>
       </section>
 
       <section class="cv-entry" id="design-engineer">
@@ -356,6 +364,6 @@
 
   </main>
 
-  <script type="module" src="script.js?v=28"></script>
+  <script type="module" src="script.js?v=29"></script>
 </body>
 </html>

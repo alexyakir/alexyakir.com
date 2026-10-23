@@ -295,22 +295,40 @@ body {
 }
 
 .cv-body { display: flex; flex-direction: column; max-width: 450px; }
+/* Emissive Glass Stage — backlit digital showcases resting on the workbench.
+   Emits its own photons, so it stays at 88%–100% opacity even when surrounding
+   reflective ink recedes into ambient shadow (0.22). Stacking --dark and --light
+   cuts in a 1x1 CSS Grid cell (grid-area: 1 / 1) via opacity + visibility keeps
+   both video decoders mounted in WebKit/Firefox so switching themes never drops
+   the frame buffer or stalls autoplay. */
+.cv-entry__stage {
+  display: grid;
+  margin-block-start: 1lh;
+  opacity: calc(0.88 + var(--bright) * 0.12);
+}
 /* height:auto guards the aspect ratio: a width/height attribute on the media
    sets a presentational height that survives the width override otherwise. */
 .cv-entry__video,
-.cv-entry__shot { display: block; width: 100%; height: auto; margin-block-start: 1lh; }
-/* Screenshots are full rectangular compositions — no corner rounding. */
-.cv-entry__video { border-radius: 18px; }
-/* Theme-matched media. Both the screenshots and the Shadow Stack loop are
-   baked against a backdrop, so each ships a per-theme cut. Dark is the site
-   default, so the dark cut ships visible and the light one swaps in only
-   under [data-theme="light"] — the non-active variant is display:none, so it
-   stays out of the hover-frame content bounds (measured as a 0x0 rect) and
-   out of the a11y tree. */
+.cv-entry__shot {
+  grid-area: 1 / 1;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* Screenshots are full rectangular compositions — no corner rounding.
+   Decorative videos ignore pointer events so hover/click pass cleanly to the entry. */
+.cv-entry__video {
+  border-radius: 18px;
+  pointer-events: none;
+}
 :root[data-theme="dark"]  .cv-entry__shot--light,
-:root[data-theme="dark"]  .cv-entry__video--light { display: none; }
+:root[data-theme="dark"]  .cv-entry__video--light,
 :root[data-theme="light"] .cv-entry__shot--dark,
-:root[data-theme="light"] .cv-entry__video--dark  { display: none; }
+:root[data-theme="light"] .cv-entry__video--dark {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 .cv-body::before { content: ""; display: block; block-size: var(--dial-y); }
 .cv-body::after  { content: ""; display: block; block-size: calc(100dvh - var(--dial-y) - 2lh); }
 
@@ -338,17 +356,14 @@ body {
 .cv-entry__body,
 .cv-intro { text-wrap-style: balance; }
 
-/* The entry — owns --bright and the single transition. Opacity is a calc
-   off --bright (0.22 dimmed → 1 lit). Children inherit --bright and use
-   it inside their gradient stops, so a single transition on the parent
-   drives both the opacity fade and the directional color sweep. No
-   parallel mechanism, no second curve to keep in sync.
-
-   Curve + duration audited against motion-principles + layout-animations:
-   "light arrives" is an entry metaphor → ease-out. 360ms keeps the
-   directional sweep perceptible without sliding into decorative-slow. */
+/* Reflective Ink — printed typography on the workbench has no light of its
+   own; it relies on proximity to the Focal Horizon (--bright). Recedes into
+   ambient shadow (0.22) out of focus and reaches 1.0 in focus, while
+   .cv-entry__stage (emissive glass) remains isolated from this deep dim so
+   WebKit/Blink never suspend hardware video decoding. */
 .cv-intro,
-.cv-entry {
+.cv-entry__head,
+.cv-entry__body {
   opacity: calc(0.22 + var(--bright) * 0.78);
 }
 
