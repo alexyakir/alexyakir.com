@@ -38,6 +38,7 @@
 
   /* Pill — outline only, no fill. Faint contrast against the page. */
   --pill-stroke: rgba(0, 0, 0, 0.05);
+  --ruler-alpha: 0.08;
 
   --ink-lit:     #1e40af;
   --ink-fade:    color-mix(in srgb, var(--ink-soft) 70%, var(--surface));
@@ -92,6 +93,7 @@
   --surface-end: #0a0a0a;
 
   --pill-stroke: rgba(255, 255, 255, 0.06);
+  --ruler-alpha: 0.14;
 
   --ink-lit:      #ffffff;
   /* Trailing color of the lit sweep. Pulled brighter than rest --ink-soft
@@ -208,14 +210,6 @@ html {
   --tick-y: calc(var(--dial-y) - var(--lamp-gap) + var(--lamp-nudge));
 }
 
-:root, :root[data-theme="light"] {
-  --ruler-alpha: 0.08;
-}
-:root[data-theme="dark"] {
-  --ruler-alpha: 0.14;
-}
-
-body,
 .workbench {
   min-height: 100lvh;
   overflow-x: clip;
@@ -281,7 +275,6 @@ body,
         transparent);
 }
 
-.cv-id__name { font-size: inherit; }
 .cv-id__link { text-decoration: none; }
 
 .cv-id__short { display: none; }
@@ -386,6 +379,7 @@ body,
 /* Client / Team Logo Grid — 3-column architectural matrix resting between the
    section heading and the consolidated engineering summary. */
 .cv-clients {
+  list-style: none;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
@@ -397,7 +391,7 @@ body,
 }
 
 .cv-clients__item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   width: fit-content;
   text-decoration: none;
@@ -405,8 +399,8 @@ body,
   transition: color 180ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.cv-clients__item:hover {
-  color: var(--ink-strong);
+@media (hover: hover) and (pointer: fine) {
+  .cv-clients__item:hover { color: var(--ink-strong); }
 }
 
 .cv-clients__logo {
@@ -583,7 +577,7 @@ a:focus-visible {
 }
 
 /* overflow-y: clip contains the tall track vertically; overflow-x stays
-   visible so the detent's scaleX can reach rightward past the 6px box. */
+   visible so the hover calipers can project rightward past the 6px box. */
 .dial-ruler {
   grid-column: spine-start / spine-end;
   position: sticky;
@@ -593,16 +587,6 @@ a:focus-visible {
   pointer-events: none;
   overflow-x: visible;
   overflow-y: clip;
-  -webkit-mask-image: linear-gradient(to bottom,
-    transparent 0%,
-    #000 18%,
-    #000 82%,
-    transparent 100%);
-          mask-image: linear-gradient(to bottom,
-    transparent 0%,
-    #000 18%,
-    #000 82%,
-    transparent 100%);
 }
 
 /* Tall fixed-pixel track clipped by the parent's overflow-y. Rendering the
@@ -610,7 +594,10 @@ a:focus-visible {
    subpixel rounding that makes repeating-linear-gradient stripes drift
    unevenly when element height isn't a clean multiple of the 10px pattern.
    Viewport resize moves the parent, not the gradient — tick spacing stays
-   stable. A tick lands at track-y 5000, which maps to viewport-y --tick-y. */
+   stable. A tick lands at track-y 5000, which maps to viewport-y --tick-y.
+
+   The edge fade masks only the track, positioned back into viewport space.
+   Masking the whole ruler would clip the calipers to its 6px border box. */
 .dial-ruler__track {
   position: absolute;
   left: 0;
@@ -627,6 +614,13 @@ a:focus-visible {
     transparent 10px
   );
   color: var(--ink);
+  --ruler-fade: linear-gradient(to bottom,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%);
+  -webkit-mask: var(--ruler-fade) 0 calc(5000px - var(--tick-y)) / 100% 100lvh no-repeat;
+          mask: var(--ruler-fade) 0 calc(5000px - var(--tick-y)) / 100% 100lvh no-repeat;
 }
 
 /* Hover framing calipers — two horizontal beams that project out of the ruler
@@ -736,39 +730,37 @@ a:focus-visible {
   .dial-ruler__hover { display: none; }
 }
 
-/* Optional Pure-CSS Scroll-Driven Timeline Driver (`data-optical-driver="css"`).
-   Drives `--bright` (0 → 1 → 0) and `--lit-angle` (135deg → 90deg → 45deg)
-   directly on the compositor thread via `animation-timeline: view()`, allowing
-   real-time 120Hz A/B comparison against the Resize-Cached JS optical curve. */
+/* Optional Pure-CSS Scroll-Driven Timeline Driver (`data-optical-driver="css"`,
+   or `?optical=css`). Drives `--bright` and `--lit-angle` from
+   `animation-timeline: view()` for A/B comparison against the JS optical curve.
+
+   `cover 0%` is the moment an entry's top edge enters at the viewport bottom,
+   so `cover (100dvh - Y)` is the moment that edge reaches viewport-y Y — true
+   for any entry height. Both ranges are measured from that edge:
+     - bright peaks when the edge sits on the dial and decays quadratically
+       over --optical-reach (3 lines) either side, mirroring brightFromDistance;
+     - lit-angle sweeps 135deg → 45deg as the edge passes the lamp ±350px. */
 @supports (animation-timeline: view()) {
-  @keyframes optical-pass {
-    0% {
-      --bright: 0;
-      --lit-angle: 135deg;
-    }
-    40% {
-      --bright: 0;
-      --lit-angle: 120deg;
-    }
-    58% {
-      --bright: 1;
-      --lit-angle: 90deg;
-    }
-    76% {
-      --bright: 0;
-      --lit-angle: 60deg;
-    }
-    100% {
-      --bright: 0;
-      --lit-angle: 45deg;
-    }
+  @keyframes optical-bright {
+    0%   { --bright: 0; animation-timing-function: cubic-bezier(0.11, 0, 0.5, 0); }
+    50%  { --bright: 1; animation-timing-function: cubic-bezier(0.5, 1, 0.89, 1); }
+    100% { --bright: 0; }
+  }
+  @keyframes optical-angle {
+    from { --lit-angle: 135deg; }
+    to   { --lit-angle: 45deg; }
   }
 
   :root[data-optical-driver="css"] .cv-intro,
   :root[data-optical-driver="css"] .cv-entry {
-    animation: optical-pass linear both;
-    animation-timeline: view();
-    animation-range: cover 0% cover 100%;
+    --optical-reach: calc(3 * var(--lamp-gap));
+    animation: optical-bright linear both, optical-angle linear both;
+    animation-timeline: view(), view();
+    animation-range:
+      cover calc(100dvh - var(--dial-y) - var(--optical-reach))
+      cover calc(100dvh - var(--dial-y) + var(--optical-reach)),
+      cover calc(100dvh - var(--tick-y) - 350px)
+      cover calc(100dvh - var(--tick-y) + 350px);
   }
 }
 

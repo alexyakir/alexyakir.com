@@ -4,6 +4,8 @@ const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const canHoverFine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 const root = document.documentElement;
 
+if (new URLSearchParams(location.search).get("optical") === "css") root.dataset.opticalDriver = "css";
+
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
 const toggle = document.querySelector(".theme-toggle");
@@ -138,14 +140,6 @@ document.fonts?.ready?.then(() => {
   window.dispatchEvent(new CustomEvent("cv:layout"));
 });
 
-function dialY() {
-  return cachedDialY;
-}
-
-function titleTopByIndex(i) {
-  return entryCache[i].titleDocTop - window.scrollY;
-}
-
 // Module-level hover state. The ruler-hover module owns updates; the lamp's
 // updateFalloff reads it to add a tiny --bright floor on the hovered entry
 // (a hint of warmth on hover, never enough to compete with the dialed entry).
@@ -217,7 +211,10 @@ function initLamp() {
   let ackedIdx = -1;
   let userEngaged = false;
 
+  // Sub-pixel docking error (fractional dial-y, rounded scroll offsets) counts
+  // as fully dialed so a docked entry always lands at exactly --bright: 1.
   function brightFromDistance(d, range) {
+    if (d < 1) return 1;
     if (d >= range) return 0;
     const t = 1 - d / range;
     return t * t;
@@ -336,16 +333,16 @@ function initLamp() {
       typeof CSS !== "undefined" &&
       CSS.supports("animation-timeline: view()");
 
+    let ackedChanged = false;
     for (let i = 0; i < entryCache.length; i++) {
       const item = entryCache[i];
       const el = item.el;
       const d = Math.abs((item.titleDocTop - scrollY) - dial);
 
-      const wasAcked = el.classList.contains("is-acked");
       const isAcked = i === ackedIdx;
-      if (wasAcked !== isAcked) {
+      if (el.classList.contains("is-acked") !== isAcked) {
         el.classList.toggle("is-acked", isAcked);
-        window.dispatchEvent(new CustomEvent("cv:ackedchange", { detail: { ackedIdx } }));
+        ackedChanged = true;
       }
       if (isAcked) el.classList.remove("is-lit-hold");
 
@@ -379,6 +376,9 @@ function initLamp() {
         item.prevAngle = angle;
         el.style.setProperty("--lit-angle", `${angle.toFixed(1)}deg`);
       }
+    }
+    if (ackedChanged) {
+      window.dispatchEvent(new CustomEvent("cv:ackedchange", { detail: { ackedIdx } }));
     }
 
     const lampTarget = Math.max(scrollBloom, cursorBloom);
@@ -729,10 +729,6 @@ if (!reduced) {
   const FADE_OUT_MS = 180;
   const IDLE_MS = 220;
 
-  function rulerTargetAlpha() {
-    return cachedRulerAlpha;
-  }
-
   if (track) {
     let current = null;
     let idleTimer = 0;
@@ -744,7 +740,7 @@ if (!reduced) {
       current?.stop();
       current = animate(
         track,
-        { opacity: rulerTargetAlpha() },
+        { opacity: cachedRulerAlpha },
         { duration: FADE_IN_MS / 1000, ease: circOut }
       );
     }
