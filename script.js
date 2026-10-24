@@ -23,10 +23,7 @@ if (toggle) {
     syncPressed();
     const alphaPx = parseFloat(getComputedStyle(root).getPropertyValue("--ruler-alpha"));
     cachedRulerAlpha = Number.isFinite(alphaPx) ? alphaPx : (next === "dark" ? 0.14 : 0.08);
-    const inactiveMod = next === "dark" ? "light" : "dark";
-    for (const v of document.querySelectorAll(`.cv-entry__video:not(.cv-entry__video--${inactiveMod})`)) {
-      v.play().catch(() => {});
-    }
+    syncEntryVideos();
   });
 }
 
@@ -523,6 +520,63 @@ function initLamp() {
   }
 }
 
+// iOS Safari ignores muted autoplay until the video is actually on screen, and
+// Low Power Mode ignores it until a tap. Several 60fps loops started together
+// also get dropped. Posters cover the wait. Only the on-screen cut for the
+// active theme is asked to play; the other theme cut stays mounted (so a
+// switch can resume it) but paused.
+const entryVideos = [...document.querySelectorAll(".cv-entry__video")];
+const videosInView = new Set();
+
+function videoMatchesTheme(v) {
+  const theme = root.dataset.theme === "light" ? "light" : "dark";
+  if (v.classList.contains("cv-entry__video--dark")) return theme === "dark";
+  if (v.classList.contains("cv-entry__video--light")) return theme === "light";
+  return true;
+}
+
+function playEntryVideo(v) {
+  v.muted = true;
+  v.playsInline = true;
+  v.setAttribute("playsinline", "");
+  v.setAttribute("webkit-playsinline", "");
+  if (v.preload !== "auto") v.preload = "auto";
+  const pending = v.play();
+  if (pending) pending.catch(() => {});
+}
+
+function syncEntryVideos() {
+  if (root.getAttribute("data-boot") === "scroll") return;
+  for (const v of entryVideos) {
+    const shouldPlay = videoMatchesTheme(v) && videosInView.has(v);
+    if (shouldPlay) {
+      if (v.paused || v.ended) playEntryVideo(v);
+    } else if (!v.paused) {
+      v.pause();
+    }
+  }
+}
+
+if (entryVideos.length && "IntersectionObserver" in window) {
+  const videoWatch = new IntersectionObserver((observed) => {
+    for (const entry of observed) {
+      if (entry.isIntersecting) videosInView.add(entry.target);
+      else videosInView.delete(entry.target);
+    }
+    syncEntryVideos();
+  }, { rootMargin: "12% 0px", threshold: 0.05 });
+  for (const v of entryVideos) videoWatch.observe(v);
+} else {
+  for (const v of entryVideos) videosInView.add(v);
+}
+
+window.addEventListener("pointerup", syncEntryVideos, { passive: true });
+window.addEventListener("touchend", syncEntryVideos, { passive: true });
+window.addEventListener("pageshow", syncEntryVideos);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") syncEntryVideos();
+});
+
 // Boot sequence
 if (!reduced && root.getAttribute("data-boot") === "scroll") {
   let cleaned = false;
@@ -588,6 +642,7 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
     window.removeEventListener("keydown", finishBoot);
     measureLayout();
     initLamp();
+    syncEntryVideos();
   }
 
   bootAnim.finished.then(finishBoot).catch(() => {});
@@ -599,6 +654,7 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
   root.removeAttribute("data-boot");
   measureLayout();
   initLamp();
+  syncEntryVideos();
 }
 
 // Hover warmth — a mouse resting on an undialed entry lifts it to

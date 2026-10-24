@@ -6,10 +6,10 @@ Self-taught in code, Alex ran a design studio shipping MVPs for startups, moved 
 
 ## Projects
 
-- [Shadow Stack](https://shadowstack.alexyakir.com): App to create smooth shadows using a system of depth that sets how high each surface floats above the ground.
-- [Figma 3D Tilt](https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt): Figma Community plugin that explores layer structure in 3D.
 - [Functional UI Kit](https://functional-ui-kit.com/): Award-winning UI-Kit aligning what's possible.
 - [EasySizes](https://apps.shopify.com/easysizes): Shopify app for real-life size comparisons.
+- [Shadow Stack](https://shadowstack.alexyakir.com): App to create smooth shadows using a system of depth that sets how high each surface floats above the ground.
+- [Figma 3D Tilt](https://www.figma.com/community/plugin/1592501914078287014/figma-3d-tilt): Figma Community plugin that explores layer structure in 3D.
 - Image Puzzle Editor (coming soon): Turns a flat photo into pieces you can pick up, swap, or remove.
 - [alexyakir.com source](https://github.com/alexyakir/alexyakir.com): Open-source code for this site.
 

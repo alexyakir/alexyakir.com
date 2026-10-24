@@ -4,14 +4,10 @@
   initial-value: 0;
 }
 
-/* Single brightness variable driving the entire dim→lit transition. 0 is
-   fully dimmed (opacity 0.22, sweep gradient parked off the text); 1 is
-   fully lit (opacity 1, sweep covering the text). Both opacity and the
-   sweep gradient are derived from --bright via calc() — one variable,
-   one transition, one set of trigger selectors. inherits: true so the
-   text-clipped gradient on .cv-entry__title and __body picks up the
-   parent .cv-entry's animated value automatically; no separate transition
-   on the children. */
+/* Single brightness variable for each intro and entry. 0 is away from the
+   lamp, 1 is dialed. The sheet on that block (see .cv-intro::after) is the
+   only dim: words and pictures fade together. inherits so a child can read
+   the parent's value. */
 @property --bright {
   syntax: "<number>";
   inherits: true;
@@ -299,17 +295,18 @@ html {
   flex-direction: column;
   max-width: min(450px, 54ch);
 }
-/* Emissive Glass Stage — backlit digital showcases resting on the workbench.
-   Emits its own photons, so it stays at 88%–100% opacity even when surrounding
-   reflective ink recedes into ambient shadow (0.22). Stacking --dark and --light
-   cuts in a 1x1 CSS Grid cell (grid-area: 1 / 1) via opacity + visibility keeps
-   both video decoders mounted in WebKit/Firefox so switching themes never drops
-   the frame buffer or stalls autoplay. */
+/* Picture box. Stays fully opaque: fading this box is what makes iOS Safari
+   drop playback. The entry sheet above it does the dimming. translateZ keeps
+   the hardware video layer inside the stage so that sheet paints over the
+   picture instead of the phone drawing the video on top. Stacked theme cuts
+   share one grid cell; opacity + visibility hide the inactive one without
+   display:none, so it can resume on a theme switch. */
 .cv-entry__stage {
   container-type: inline-size;
   display: grid;
-  margin-block-start: 1lh;
-  opacity: calc(0.88 + var(--bright) * 0.12);
+  margin-block-start: var(--lamp-gap);
+  isolation: isolate;
+  transform: translateZ(0);
 }
 /* height:auto guards the aspect ratio: a width/height attribute on the media
    sets a presentational height that survives the width override otherwise. */
@@ -338,6 +335,12 @@ html {
     calc(100svh - var(--dial-y) - 5 * var(--lamp-gap))
   );
 }
+/* The shelf is a hard rectangle. The shared 18px radius bites into it,
+   so this clip uses the small radius already on the theme toggle. */
+#image-puzzle-editor .cv-entry__video {
+  border-radius: 4px;
+  overflow: hidden;
+}
 :root[data-theme="dark"]  .cv-entry__shot--light,
 :root[data-theme="dark"]  .cv-entry__video--light,
 :root[data-theme="light"] .cv-entry__shot--dark,
@@ -355,9 +358,9 @@ html {
    title-through-video, so the hover pill can envelope the entry without
    inheriting a phantom band of padding above the title. The first entry
    has its breathing room from cv-body::before (= --dial-y); subsequent
-   entries get 2 line-heights of margin = 1lh halo room + 1lh structural. */
+   entries get 3 line-heights of margin = 1lh halo room + 2lh structural. */
 .cv-intro + .cv-entry,
-.cv-entry + .cv-entry { margin-top: calc(2 * var(--lamp-gap)); }
+.cv-entry + .cv-entry { margin-top: calc(3 * var(--lamp-gap)); }
 
 /* Anchor jumps (#shadow-stack) land the title on the dial. This is a
    per-entry scroll-margin, not scroll-padding on html: scroll-padding also
@@ -366,7 +369,23 @@ html {
 .cv-intro,
 .cv-entry {
   position: relative;
+  isolation: isolate;
+  color: var(--text-lit);
   scroll-margin-top: var(--dial-y);
+}
+/* One sheet per intro and per entry, including entries that are only words.
+   Page color. At rest it covers 78%, which leaves the old 22% of the block
+   showing; at the lamp it is gone. It does not catch clicks, so links and
+   the entry itself still receive them. */
+.cv-intro::after,
+.cv-entry::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: var(--surface);
+  opacity: calc(0.78 * (1 - var(--bright, 0)));
 }
 
 .cv-entry { display: flex; flex-direction: column; }
@@ -374,26 +393,14 @@ html {
    bump in the system happens on .cv-entry__title — nowhere else. */
 .cv-entry__head { font-size: inherit; font-weight: inherit; width: fit-content; }
 .cv-entry__title { font-weight: 600; text-wrap: balance; }
-/* Even line lengths across body copy and the intro paragraph. */
+/* balance evens the rag, but Chrome gives up past 6 lines (pretty past 8)
+   and wraps as if the property were unset. Path is longer than that, so
+   each beat is its own block and stays under the cap. */
 .cv-entry__body,
-.cv-intro__text,
-.cv-intro__lead { width: fit-content; max-width: 54ch; text-wrap-style: balance; }
-
-/* The lead-in reads as the intro's next sentence, one blank line below it. */
-.cv-intro__lead { margin-block-start: var(--lamp-gap); }
-
-/* Reflective Ink — printed typography and etched vector marks on the workbench
-   have no light of their own; they rely on proximity to the Focal Horizon
-   (--bright). Recedes into ambient shadow (0.22) out of focus and reaches 1.0
-   in focus, while .cv-entry__stage (emissive glass) remains isolated from this
-   deep dim so WebKit/Blink never suspend hardware video decoding. */
-.cv-intro__text,
-.cv-intro__lead,
-.cv-entry__head,
-.cv-entry__body,
-.cv-clients {
-  opacity: calc(0.22 + var(--bright) * 0.78);
-}
+.cv-intro__text { width: fit-content; max-width: 54ch; text-wrap: balance; }
+.cv-entry__beat { display: block; text-wrap: balance; }
+#path .cv-entry__body { width: 100%; }
+.cv-entry__body + .cv-entry__body { margin-block-start: var(--lamp-gap); }
 
 /* Team logo grid — part of the intro, three equal columns on fixed rows of
    two lines each, every mark left-aligned and vertically centred in its cell.
@@ -411,7 +418,7 @@ html {
   grid-auto-rows: calc(var(--lamp-gap) * 2);
   margin-block-start: calc(var(--lamp-gap) / 3);
   width: 100%;
-  color: color-mix(in srgb, var(--ink-soft), var(--text-lit) calc(var(--bright, 0) * 100%));
+  color: inherit;
   cursor: default;
   user-select: none;
   -webkit-user-select: none;
@@ -440,39 +447,6 @@ html {
 .cv-clients__logo--honeybook { --logo-h: 9.5px; }
 .cv-clients__logo--navina    { --logo-h: 20px; }
 
-/* Light infusion. Two stacked gradients clipped to the text:
-     1. The sweep — --text-lit through --ink-lit-fade to transparent at
-        the leading edge. Stop positions are calc()ed from --bright so
-        the band slides as the parent's --bright animates.
-     2. The resting fade — soft → fade-to-surface, what the text reads as
-        when no light is on it.
-
-   --bright maps linearly into the old --sweep range of -25% → 120%
-   (span 145%): trailing transparent stop = bright * 145% - 3%, with
-   ink-lit-fade trailing 40% behind. At bright=0 both stops are off-text
-   on the origin side (CSS clamps them to 0%) so the lit layer is fully
-   transparent. At bright=1 the lit gradient covers the full text.
-
-   --lit-angle is set per-entry by JS as the entry's signed position
-   relative to the lamp: 135° below the lamp (origin top-left), 90° at
-   lamp height (origin left), 45° above (origin bottom-left). */
-.cv-intro__text,
-.cv-intro__lead,
-.cv-entry__title,
-.cv-entry__body {
-  background-image:
-    linear-gradient(var(--lit-angle, 135deg),
-      var(--text-lit) 0%,
-      var(--ink-lit-fade) calc(var(--bright) * 145% - 43%),
-      transparent calc(var(--bright) * 145% - 3%),
-      transparent 100%),
-    linear-gradient(to right, var(--ink-soft), var(--ink-fade));
-  -webkit-background-clip: text;
-          background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
-
 /* The bright trigger. Three reasons an entry can be lit — dialed at the
    detent, click-committed mid-scroll, or hovered with a real pointer.
    --bright is driven by JS (script.js: setBright) rather than a CSS
@@ -493,13 +467,8 @@ html {
 a {
   color: inherit;
   text-decoration: underline;
-  /* Underline takes the text's own colour — soft ink at rest, brightening to
-     the lit tone with --bright as the entry dials in — so it reads as part of
-     the text instead of a faint grey rule. Kept a native underline (not a
-     gradient via background/border) so skip-ink still lets descenders punch
-     through. text-decoration-color is single-colour only, so a literal
-     left-to-right gradient isn't possible without breaking that. */
-  text-decoration-color: color-mix(in srgb, var(--ink-soft), var(--text-lit) calc(var(--bright, 0) * 100%));
+  /* Same colour as the words, so the entry sheet fades the underline with them. */
+  text-decoration-color: currentColor;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 1.5px;
 }
@@ -509,11 +478,17 @@ a:focus-visible {
   outline-offset: 2px;
   border-radius: 2px;
 }
+/* The sheet covers the entry, so a keyboard ring drawn with the link would
+   sit under it. Lift only the focused link above that sheet. */
+.cv-intro a:focus-visible,
+.cv-entry a:focus-visible {
+  position: relative;
+  z-index: 3;
+}
 
 .cv-entry__body a:hover,
 .cv-intro a:hover {
   color: var(--ink-strong);
-  -webkit-text-fill-color: var(--ink-strong);
   text-decoration-color: var(--ink-strong);
 }
 
@@ -755,30 +730,28 @@ a:focus-visible {
 }
 
 @media print {
-  :root {
+  /* Match the theme selectors. A bare :root loses to :root[data-theme],
+     which would leave dark-mode white ink on the white paper. */
+  :root,
+  :root[data-theme="light"],
+  :root[data-theme="dark"] {
     --ink: #000;
     --ink-strong: #000;
     --ink-soft: #444;
     --ink-lit: #000;
     --ink-fade: #444;
     --ink-lit-fade: #000;
+    --text-lit: #000;
     --blue: #000;
     --blue-soft: rgba(0, 0, 0, 0.3);
     --surface: #fff;
     --surface-end: #fff;
   }
   body { background: #fff; }
-  .cv-intro__text,
-  .cv-intro__lead,
-  .cv-entry__title,
-  .cv-entry__body {
-    background: none;
-    -webkit-background-clip: border-box;
-            background-clip: border-box;
-    color: var(--ink);
-    -webkit-text-fill-color: currentColor;
-    opacity: 1;
-  }
+  .cv-intro::after,
+  .cv-entry::after { content: none; }
+  .cv-intro,
+  .cv-entry { color: #000; }
   .cv { padding: 48px; }
   @page { margin: 0.5in; size: letter; }
 }
