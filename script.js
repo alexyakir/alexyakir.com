@@ -570,8 +570,11 @@ function initLamp() {
   }
 }
 
-// Clips play as soon as they have a frame. Nothing pauses them for scroll.
+// The phone will not start a muted loop that is off screen, and it drops
+// the lot if every clip is asked to play in one go. Each clip starts when
+// it is actually on screen. Nothing pauses it for scrolling away.
 const entryVideos = [...document.querySelectorAll(".cv-entry__video")];
+const videosOnScreen = new Set();
 
 function videoMatchesTheme(v) {
   const theme = root.dataset.theme === "light" ? "light" : "dark";
@@ -581,12 +584,19 @@ function videoMatchesTheme(v) {
 }
 
 function playEntryVideo(v) {
+  if (!videoMatchesTheme(v)) return;
+  if (!v.paused && !v.ended) return;
   v.muted = true;
+  v.defaultMuted = true;
   v.playsInline = true;
   v.setAttribute("playsinline", "");
   v.setAttribute("webkit-playsinline", "");
-  const pending = v.play();
-  if (pending) pending.catch(() => {});
+  const start = () => {
+    const pending = v.play();
+    if (pending) pending.catch(() => {});
+  };
+  if (v.readyState >= 2) start();
+  else v.addEventListener("canplay", start, { once: true });
 }
 
 function syncEntryVideos() {
@@ -595,19 +605,27 @@ function syncEntryVideos() {
       if (!v.paused) v.pause();
       continue;
     }
-    if (!v.paused && !v.ended) continue;
-    if (v.readyState >= 2) {
-      playEntryVideo(v);
-      continue;
-    }
-    if (v._waitReady) continue;
-    v._waitReady = true;
-    v.addEventListener("canplay", () => {
-      v._waitReady = false;
-      if (videoMatchesTheme(v)) playEntryVideo(v);
-    }, { once: true });
+    if (videosOnScreen.has(v)) playEntryVideo(v);
   }
 }
+
+if (entryVideos.length && "IntersectionObserver" in window) {
+  const videoWatch = new IntersectionObserver((observed) => {
+    for (const entry of observed) {
+      if (entry.isIntersecting) {
+        videosOnScreen.add(entry.target);
+        playEntryVideo(entry.target);
+      } else {
+        videosOnScreen.delete(entry.target);
+      }
+    }
+  }, { threshold: 0.01 });
+  for (const v of entryVideos) videoWatch.observe(v);
+}
+
+// Low Power Mode ignores the first play() until a tap.
+window.addEventListener("touchend", syncEntryVideos, { passive: true });
+window.addEventListener("pointerup", syncEntryVideos, { passive: true });
 
 // The bar is fixed to the bottom on every width. Hoist it out of the intro
 // so that stacking context cannot paint later entries over it.

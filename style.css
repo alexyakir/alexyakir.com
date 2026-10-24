@@ -872,6 +872,14 @@ a:focus-visible {
     width: 100%;
   }
 
+  /* The portrait clip is the cupboard. On this width it uses the whole
+     column; the desktop height cap would shrink it to a narrow strip. */
+  .cv-entry__video--portrait {
+    justify-self: stretch;
+    width: 100%;
+    height: auto;
+  }
+
   .cv-intro::after,
   .cv-entry::after { opacity: 0; }
 
