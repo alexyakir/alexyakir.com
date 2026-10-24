@@ -341,6 +341,16 @@ html {
   border-radius: 4px;
   overflow: hidden;
 }
+/* EasySizes widget corner is a 62px radius on the 1440-wide frame, the circle
+   the border follows. The shared 18px clip is a different curve, so on a
+   narrow column it slices that stroke where the top and right edges meet.
+   Scale the same radius with the picture: the stage is the container, the
+   video is its full inline size, and one length (not a percentage) stays
+   circular. */
+#easysizes .cv-entry__video {
+  border-radius: calc(100cqi * 62 / 1440);
+  overflow: hidden;
+}
 :root[data-theme="dark"]  .cv-entry__shot--light,
 :root[data-theme="dark"]  .cv-entry__video--light,
 :root[data-theme="light"] .cv-entry__shot--dark,
