@@ -2,6 +2,7 @@ import { animate, circOut, easeOut, stagger } from "https://cdn.jsdelivr.net/npm
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const canHoverFine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+const phoneQuery = window.matchMedia("(max-width: 1200px)");
 const root = document.documentElement;
 
 if (new URLSearchParams(location.search).get("optical") === "css") root.dataset.opticalDriver = "css";
@@ -83,7 +84,9 @@ function measureLayout() {
   }
 
   const isBooting = root.getAttribute("data-boot") === "scroll";
-  const bootOffset = isBooting ? 16 : 0;
+  // Phone boot slides sideways. The 16px correction is for the wide page's
+  // vertical rise, and would lift every measurement on the phone.
+  const bootOffset = isBooting && !phoneLayout() ? 16 : 0;
 
   for (let i = 0; i < entryCache.length; i++) {
     const item = entryCache[i];
@@ -127,17 +130,56 @@ function currentIndex() {
 // finishes. Cleared on the next scrollend after we set it.
 let programmaticScroll = false;
 
+function phoneLayout() {
+  return phoneQuery.matches;
+}
+
+// On the phone the opening is a rest at scroll 0. Docking the intro title
+// on the lamp would scroll the name off the top.
+function snapPointFor(i) {
+  const item = entryCache[i];
+  if (!item) return 0;
+  if (phoneLayout() && i === 0) return 0;
+  return Math.max(0, item.titleDocTop - cachedDialY);
+}
+
+function homeLeaveY() {
+  if (entryCache.length < 2) return 48;
+  const project = Math.max(0, entryCache[1].titleDocTop - cachedDialY);
+  return Math.max(48, project * 0.5);
+}
+
+function nearestProjectTop(scrollY) {
+  let best = 0;
+  let bestDist = Infinity;
+  for (let i = 1; i < entryCache.length; i++) {
+    const p = snapPointFor(i);
+    const d = Math.abs(p - scrollY);
+    if (d < bestDist) {
+      bestDist = d;
+      best = p;
+    }
+  }
+  return best;
+}
+
+function phoneRestTop(scrollY) {
+  if (scrollY < homeLeaveY()) return 0;
+  return nearestProjectTop(scrollY);
+}
+
 function scrollToIndex(i) {
   if (!entryCache.length) return;
   const clamped = Math.max(0, Math.min(entryCache.length - 1, i));
   const item = entryCache[clamped];
   if (!item) return;
-  const top = Math.max(0, item.titleDocTop - cachedDialY);
+  const top = snapPointFor(clamped);
   programmaticScroll = true;
   window.scrollTo({ top, behavior: "smooth" });
 }
 
 window.addEventListener("keydown", (e) => {
+  if (phoneLayout()) return;
   const t = e.target;
   if (t && t.matches && t.matches("input, textarea, [contenteditable]")) return;
 
@@ -272,8 +314,10 @@ function initLamp() {
 
     if (dialedIdx !== prevDialedIdx) {
       if (prevDialedIdx !== null && dialedIdx !== -1) {
-        detent();
-        detentPulse();
+        if (!phoneLayout()) {
+          detent();
+          detentPulse();
+        }
         ackedIdx = dialedIdx;
       }
       prevDialedIdx = dialedIdx;
@@ -283,7 +327,7 @@ function initLamp() {
     if (dialedIdx !== ackedIdx) {
       if (dialedIdx === -1) ackedIdx = -1;
       else if (velEMA === 0) {
-        detentPulse();
+        if (!phoneLayout()) detentPulse();
         ackedIdx = dialedIdx;
       }
     }
@@ -375,6 +419,7 @@ function initLamp() {
   function snapToNearest() {
     snapTimer = 0;
     if (!entryCache.length) return;
+    if (phoneLayout()) return;
     const scrollY = window.scrollY;
     const moved = scrollY - restScrollY;
     let idx = currentIndex();
@@ -465,6 +510,11 @@ function initLamp() {
   function dockNearest() {
     measureLayout();
     if (!entryCache.length) return;
+    if (phoneLayout()) {
+      markRest();
+      updateFalloff();
+      return;
+    }
     const scrollY = window.scrollY;
     const dial = cachedDialY;
     let bestSigned = 0;
@@ -577,16 +627,32 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") syncEntryVideos();
 });
 
+// The bar is fixed to the bottom on every width. Hoist it out of the intro
+// so that stacking context cannot paint later entries over it.
+const socialBar = document.querySelector(".social-bar");
+
+function syncSocialDock() {
+  if (!socialBar) return;
+  socialBar.classList.remove("is-docked");
+  socialBar.style.transform = "";
+  if (socialBar.parentElement !== document.body) document.body.appendChild(socialBar);
+}
+
+syncSocialDock();
+
 // Boot sequence
 if (!reduced && root.getAttribute("data-boot") === "scroll") {
   let cleaned = false;
 
   const firstItem = entryCache[0];
-  if (firstItem) {
+  const phoneBoot = phoneLayout();
+  // The wide page docks the intro on the lamp before the sequence. On the
+  // phone that scroll would start with the name already gone.
+  if (!phoneBoot && firstItem) {
     const scrollTarget = Math.max(0, firstItem.titleDocTop - cachedDialY);
     if (scrollTarget !== window.scrollY) window.scrollTo(0, scrollTarget);
-    firstItem.el.classList.add("is-acked");
   }
+  if (firstItem) firstItem.el.classList.add("is-acked");
 
   const idLines = [...document.querySelectorAll(".cv-id__line")]
     .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
@@ -597,31 +663,52 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
     getComputedStyle(root).getPropertyValue("--ruler-alpha")
   ) || 0.08;
 
-  const bootAnim = animate([
+  const bootSequence = [
     [".theme-toggle__lamp",
       { opacity: [0, 1] },
       { type: "tween", duration: 0.18, at: PRE }],
+  ];
 
-    [idLines,
+  if (phoneBoot) {
+    // The links under the lamp are gone, so their stagger plays down the
+    // opening and then each entry.
+    const beats = [
+      document.querySelector(".cv-id__name"),
+      document.querySelector(".cv-id__tagline"),
+      document.querySelector(".cv-intro .cv-entry__head"),
+      document.querySelector(".cv-intro__text"),
+      document.querySelector(".cv-clients"),
+      ...document.querySelectorAll(".cv-entry"),
+    ].filter(Boolean);
+    bootSequence.push([
+      beats,
       { opacity: [0, 1], x: [-12, 0] },
-      { type: "tween", duration: 0.5, delay: stagger(0.06), ease, at: "-0.06" }],
+      { type: "tween", duration: 0.5, delay: stagger(0.06), ease, at: "-0.06" },
+    ]);
+  } else {
+    bootSequence.push(
+      [idLines,
+        { opacity: [0, 1], x: [-12, 0] },
+        { type: "tween", duration: 0.5, delay: stagger(0.06), ease, at: "-0.06" }],
+      [".cv-intro",
+        { opacity: [0, 1], y: [16, 0], filter: ["blur(4px)", "blur(0px)"] },
+        { type: "tween", duration: 0.7, ease, at: PRE + 0.28 }],
+      [".cv-entry",
+        { opacity: [0, 1], y: [16, 0] },
+        { type: "tween", duration: 0.55, delay: stagger(0.05), ease, at: PRE + 0.32 }],
+    );
+  }
 
-    [".cv-intro",
-      { opacity: [0, 1], y: [16, 0], filter: ["blur(4px)", "blur(0px)"] },
-      { type: "tween", duration: 0.7, ease, at: PRE + 0.28 }],
-
-    [".cv-entry",
-      { opacity: [0, 1], y: [16, 0] },
-      { type: "tween", duration: 0.55, delay: stagger(0.05), ease, at: PRE + 0.32 }],
-
+  bootSequence.push(
     [".dial-ruler",
       { clipPath: ["inset(0% 0% 100% 0%)", "inset(0% 0% 0% 0%)"] },
       { type: "tween", duration: 0.9, ease, at: PRE }],
-
     [".dial-ruler__track",
       { opacity: [0, rulerAlpha, rulerAlpha, 0] },
       { type: "tween", duration: 1.4, times: [0, 0.2, 0.7, 1], ease, at: PRE }],
-  ]);
+  );
+
+  const bootAnim = animate(bootSequence);
 
   function finishBoot() {
     if (cleaned) return;
@@ -629,7 +716,7 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
     root.removeAttribute("data-boot");
     bootAnim.stop();
     document.querySelectorAll(
-      ".theme-toggle__lamp, .cv-id__line, .cv-intro, .cv-entry, .dial-ruler__track, .dial-ruler"
+      ".theme-toggle__lamp, .cv-id__line, .cv-id__tagline, .cv-intro, .cv-intro .cv-entry__head, .cv-intro__text, .cv-clients, .social-bar, .cv-entry, .dial-ruler__track, .dial-ruler"
     ).forEach((n) => {
       n.style.opacity = "";
       n.style.transform = "";
@@ -643,6 +730,7 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
     measureLayout();
     initLamp();
     syncEntryVideos();
+    syncSocialDock();
   }
 
   bootAnim.finished.then(finishBoot).catch(() => {});
@@ -655,6 +743,7 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
   measureLayout();
   initLamp();
   syncEntryVideos();
+  syncSocialDock();
 }
 
 // Hover warmth — a mouse resting on an undialed entry lifts it to

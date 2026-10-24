@@ -269,6 +269,11 @@ html {
 
 .cv-id__link { text-decoration: none; }
 
+/* On the wide page the name stays a direct line in the rail. The tagline
+   only exists beside the narrow orb. */
+.cv-id__copy { display: contents; }
+.cv-id__tagline { display: none; }
+
 .cv-id__short { display: none; }
 
 @media (hover: hover) and (pointer: fine) {
@@ -341,15 +346,16 @@ html {
   border-radius: 4px;
   overflow: hidden;
 }
-/* EasySizes widget corner is a 62px radius on the 1440-wide frame, the circle
-   the border follows. The shared 18px clip is a different curve, so on a
-   narrow column it slices that stroke where the top and right edges meet.
-   Scale the same radius with the picture: the stage is the container, the
-   video is its full inline size, and one length (not a percentage) stays
-   circular. */
-#easysizes .cv-entry__video {
-  border-radius: calc(100cqi * 62 / 1440);
+/* The recording's outer pixel is gray. On the white page that pixel is a
+   hairline; the stage radius is the only edge, and the scale holds the
+   picture inside the clip. */
+#easysizes .cv-entry__stage {
+  border-radius: 18px;
   overflow: hidden;
+}
+#easysizes .cv-entry__video {
+  border-radius: 0;
+  transform: scale(1.012);
 }
 :root[data-theme="dark"]  .cv-entry__shot--light,
 :root[data-theme="dark"]  .cv-entry__video--light,
@@ -412,8 +418,15 @@ html {
 #path .cv-entry__body { width: 100%; }
 .cv-entry__body + .cv-entry__body { margin-block-start: var(--lamp-gap); }
 
-/* Team logo grid — part of the intro, three equal columns on fixed rows of
-   two lines each, every mark left-aligned and vertically centred in its cell.
+/* Team logo grid — part of the intro, three columns on fixed rows of
+   two lines each. Each track is the mark itself, and the gutter is one
+   row tall, so the block starts on the paragraph's left edge and stops
+   short of its right. Column one holds the matching wide wordmarks
+   (NanoCo, HoneyBook, Navina) and centres them. Column three holds the
+   next match (Shopify, NanoClaw, Figma) and aligns them to the end of
+   that track, so the block's right edge is theirs. The middle marks
+   stay centred in their own track.
+   The vw cap only keeps that gutter inside a narrow phone.
    Plain marks, not links: the grid credits teams without sending visitors away.
 
    Heights give every mark the same "stain": blurred at reading distance
@@ -424,10 +437,13 @@ html {
   --logo-scale: 1;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, max-content);
   grid-auto-rows: calc(var(--lamp-gap) * 2);
+  column-gap: min(calc(var(--lamp-gap) * 2), 8vw);
+  row-gap: 6px;
   margin-block-start: calc(var(--lamp-gap) / 3);
-  width: 100%;
+  width: max-content;
+  max-width: 100%;
   color: inherit;
   cursor: default;
   user-select: none;
@@ -437,7 +453,13 @@ html {
 .cv-clients__item {
   display: flex;
   align-items: center;
+  justify-content: center;
   min-width: 0;
+}
+
+/* Last column: a shorter mark hangs from the block's right edge. */
+.cv-clients__item:nth-child(3n) {
+  justify-content: flex-end;
 }
 
 .cv-clients__logo {
@@ -451,9 +473,15 @@ html {
 .cv-clients__logo--figma     { --logo-h: 19.5px; }
 .cv-clients__logo--nanoco    { --logo-h: 9.5px; }
 .cv-clients__logo--agoda     { --logo-h: 26.5px; }
-.cv-clients__logo--shopify   { --logo-h: 17.5px; }
+.cv-clients__logo--shopify   { --logo-h: 19px; }
 .cv-clients__logo--shenkar   { --logo-h: 17.5px; }
-.cv-clients__logo--anima     { --logo-h: 22px; }
+.cv-clients__logo--nanoclaw {
+  --logo-h: 11px;
+  aspect-ratio: 793 / 116;
+  background: currentColor;
+  -webkit-mask: url("images/nanoclaw-wordmark.png") left center / contain no-repeat;
+          mask: url("images/nanoclaw-wordmark.png") left center / contain no-repeat;
+}
 .cv-clients__logo--honeybook { --logo-h: 9.5px; }
 .cv-clients__logo--navina    { --logo-h: 20px; }
 
@@ -678,31 +706,207 @@ a:focus-visible {
   scroll-behavior: auto;
 }
 
-/* Mobile: trim identity labels, reorder by width, tighten gap, right-only padding.
-   Visual order: AY, X, CV, Email, Figma, GitHub, LinkedIn.
-   Scoped --mobile-order and --mobile-falloff tokens remap falloff without
-   fragile nth-of-type selectors.
-   Font drops to 16px via --base-fs; --lamp-gap and 1lh-driven margins
-   auto-scale with it so the baseline grid stays consistent (24px here). */
-@media (max-width: 600px) {
-  /* Phone media is narrower, so it needs less room below. */
-  :root { --base-fs: 16px; --room-below-for-media: 320px; }
+/* Narrow window. One column, capped, everything already lit. No lamp, no
+   ticks, no dimming. The name uses the entry-title weight, the line under
+   it uses the body. */
+@media (max-width: 1200px) {
+  :root {
+    --base-fs: 16px;
+    --room-below-for-media: 320px;
+  }
 
   .cv {
-    column-gap: 9px;
-    padding-inline: 0 20px;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 500px;
+    margin-inline: auto;
+    padding-inline: 20px;
   }
 
-  .cv-id__full  { display: none; }
-  .cv-id__short { display: inline; }
-
-  .cv-id__link {
-    order: var(--mobile-order, 0);
-    --line-falloff: var(--mobile-falloff, 0.5);
+  /* Name, tagline, orb. The orb is exactly as tall as those two lines,
+     the way the scribble is on jakub.kr. The experience block and the
+     entries follow, unchanged, so this row sits above the first entry. */
+  .cv-id {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    column-gap: 12px;
+    position: static;
+    height: auto;
+    padding-top: 1.75rem;
   }
 
-  /* 16/18: logos shrink with the phone type scale. */
-  .cv-clients { --logo-scale: 0.89; }
+  .cv-id__copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  /* First flex item. Its box is the two line-heights beside it,
+     and the circle fills that box. */
+  .theme-toggle {
+    display: grid;
+    place-items: center;
+    position: relative;
+    flex: 0 0 auto;
+    align-self: stretch;
+    width: calc(2 * var(--base-fs) * var(--base-lh));
+    height: calc(2 * var(--base-fs) * var(--base-lh));
+  }
+
+  .theme-toggle::before {
+    left: 50%;
+    right: auto;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
+  .theme-toggle:focus-visible { border-radius: 50%; }
+
+  /* White in the dark, a whisper of the filament blue in the light.
+     The disc stays solid. The gaussian is the throw underneath it. */
+  .theme-toggle__lamp {
+    --orb: #fff;
+    --orb-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/></svg>");
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    clip-path: none;
+    box-shadow: none;
+    filter: none;
+    background-color: var(--orb);
+    background-image: var(--orb-noise);
+    background-size: 48px 48px;
+    background-blend-mode: multiply;
+    transition-property: background, box-shadow, transform, filter;
+  }
+
+  :root[data-theme="light"] .theme-toggle__lamp {
+    --orb: color-mix(in srgb, var(--lamp-fill) 16%, white);
+  }
+
+  .theme-toggle__lamp::after {
+    width: auto;
+    height: auto;
+    /* Starts inside the lower half and falls a little past the rim,
+       so the gaussian reads as light leaving the lamp, not a second disc. */
+    inset: 55% 8% -22% 8%;
+    border-radius: 50%;
+    clip-path: none;
+    box-shadow: none;
+    background: var(--orb);
+    filter: blur(14px);
+    opacity: 0.5;
+    -webkit-mask: linear-gradient(to bottom, #000 0%, transparent 100%);
+            mask: linear-gradient(to bottom, #000 0%, transparent 100%);
+  }
+
+  .theme-toggle:hover .theme-toggle__lamp {
+    box-shadow: none;
+    filter: none;
+  }
+
+  .theme-toggle:hover .theme-toggle__lamp::after {
+    filter: blur(11px);
+    opacity: 0.85;
+  }
+
+  .theme-toggle:active .theme-toggle__lamp { transform: scale(0.96); }
+
+  /* Ticks only. Glued to the viewport's left edge. The track stays at
+     opacity 0 until scroll, which is what makes them appear while moving. */
+  .dial-ruler {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100lvh;
+    z-index: 24;
+  }
+
+  .cv-id__name {
+    padding-top: 0;
+    margin: 0;
+    /* Same size and weight as "Projects and experience". */
+    font-size: inherit;
+    line-height: var(--base-lh);
+    font-weight: 600;
+    color: var(--text-lit);
+    text-shadow: none;
+    text-wrap: balance;
+  }
+
+  .cv-id__tagline {
+    display: block;
+    margin: 0;
+    /* Same size and weight as the paragraph under that heading. */
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: 300;
+    color: var(--text-lit);
+  }
+
+  :root[data-boot="scroll"] .cv-id__tagline {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+
+  .cv-id__full  { display: inline; }
+  .cv-id__short { display: none; }
+  .cv-id__link  { display: none; }
+
+  .cv-body {
+    max-width: none;
+    width: 100%;
+    min-width: 0;
+    margin-top: calc(3 * var(--lamp-gap));
+  }
+  .cv-body::before { block-size: 0; }
+
+  .cv-intro__text,
+  .cv-entry__body {
+    max-width: none;
+    width: 100%;
+  }
+
+  .cv-intro::after,
+  .cv-entry::after { opacity: 0; }
+
+  .cv-clients {
+    --logo-scale: 0.89;
+    /* Matches the ink-to-ink gap between logo rows (row height, the 6px
+       row-gap, and the centering inside each row). */
+    margin-block-start: 18px;
+  }
+
+  .social-home { display: none; }
+
+  :root[data-boot="scroll"] .cv-intro {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  :root[data-boot="scroll"] .cv-intro .cv-entry__head,
+  :root[data-boot="scroll"] .cv-intro__text,
+  :root[data-boot="scroll"] .cv-clients,
+  :root[data-boot="scroll"] .cv-entry {
+    opacity: 0;
+    transform: translateX(-12px);
+    filter: none;
+    will-change: opacity, transform;
+  }
+}
+
+@media (max-width: 1200px) and (prefers-reduced-motion: reduce) {
+  .theme-toggle__lamp,
+  .theme-toggle__lamp::after { transition: none; }
+  .theme-toggle:active .theme-toggle__lamp { transform: none; }
 }
 
 /* Optional Pure-CSS Scroll-Driven Timeline Driver (`data-optical-driver="css"`,
@@ -739,9 +943,16 @@ a:focus-visible {
   }
 }
 
+/* The bar is position:fixed, so this slot must not take a line. On a narrow
+   window the slot is removed and the bar stays at the bottom of the viewport. */
+.social-home { display: contents; }
+
+@media (max-width: 1200px) {
+  .social-home { display: none; }
+}
+
 /* Floating social bar. Same destinations as the identity column, as icons,
-   fixed to the bottom of the viewport. No edge: the surface is a light
-   frost of the page behind it. */
+   fixed to the bottom of the narrow viewport. Hidden on the desktop rail. */
 .social-bar {
   /* Pikaicons stroke set, drawn on a 24px grid. 20px is the next size down
      they render, so the icons and the bar both step down together. Spacing
@@ -761,6 +972,7 @@ a:focus-visible {
   bottom: calc(16px + env(safe-area-inset-bottom, 0px));
 }
 
+
 .social-bar__glass {
   padding: calc(var(--stroke) * 2);
   border: 0;
@@ -769,10 +981,11 @@ a:focus-visible {
   /* Surface frost, plus a hair of ink so the plate still reads on a flat
      page of the same color. The blur is what makes it glass. */
   background:
-    linear-gradient(color-mix(in srgb, var(--ink) 6%, transparent), color-mix(in srgb, var(--ink) 6%, transparent)),
-    color-mix(in srgb, var(--surface) 34%, transparent);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  backdrop-filter: blur(18px) saturate(1.2);
+    linear-gradient(color-mix(in srgb, var(--ink) 14%, transparent), color-mix(in srgb, var(--ink) 14%, transparent)),
+    color-mix(in srgb, var(--surface) 62%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 16%, transparent);
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  backdrop-filter: blur(28px) saturate(1.5);
 }
 
 .social-bar__list {
@@ -847,16 +1060,39 @@ a:focus-visible {
   stroke: url(#social-icon-ink);
 }
 
+:root[data-theme="light"] .social-bar {
+  --icon-lit: #0a0a0a;
+  --icon-rest: #0a0a0a;
+}
+
 :root[data-theme="dark"] .social-bar {
-  /* --ink-lit sits a few steps from --ink, so a white-to-white fade
-     disappears on the stroke. Borrow the lamp's blue, the same lit note
-     the light theme already uses, and let the far end settle softer. */
-  --icon-lit: color-mix(in srgb, var(--blue) 40%, var(--ink-lit));
-  --icon-rest: color-mix(in srgb, var(--ink) 55%, var(--ink-soft));
+  --icon-lit: #fff;
+  --icon-rest: #fff;
+}
+
+/* Light plate is the page white. Dark plate sits a hair above the #0a0a0a
+   page so the pill reads without a gray frame. */
+:root[data-theme="light"] .social-bar__glass {
+  background: #fff;
+  box-shadow: 0 0 0 1px color-mix(in srgb, #0a0a0a 8%, transparent);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+:root[data-theme="dark"] .social-bar__glass {
+  background: #111111;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 :root[data-theme="dark"] .social-bar__tip {
-  box-shadow: 0 0 0 1px color-mix(in srgb, #fafafa 14%, transparent);
+  background: #111111;
+  box-shadow: none;
+}
+
+@media (min-width: 1201px) {
+  .social-bar { display: none; }
 }
 
 /* One shared label for the whole bar. The window slides and resizes onto
@@ -875,8 +1111,6 @@ a:focus-visible {
   transform: translateX(var(--x));
   overflow: hidden;
   border-radius: 6px;
-  /* Stays a dark chip in both themes. The hairline only shows on a dark
-     page, where the fill matches the surface and the shape would vanish. */
   background: #0a0a0a;
   color: #fafafa;
   pointer-events: none;
@@ -961,7 +1195,8 @@ a:focus-visible {
     --surface-end: #fff;
   }
   body { background: #fff; }
-  .social-bar { display: none; }
+  .social-bar,
+  .theme-toggle { display: none; }
   .cv-intro::after,
   .cv-entry::after { content: none; }
   .cv-intro,
