@@ -753,3 +753,128 @@ if (!reduced) {
     }, { passive: true });
   }
 }
+
+// Spatial tooltip. One window for every icon: it travels and resizes, and
+// the label strip counter-slides so the word stays put inside the window.
+// First hover waits briefly and appears in place. Moving across the bar
+// animates immediately. Keyboard placement does not travel.
+(() => {
+  const bar = document.querySelector(".social-bar");
+  if (!bar) return;
+  const links = [...bar.querySelectorAll(".social-bar__link")];
+  const labels = [...bar.querySelectorAll(".social-bar__tip-label")];
+  const tip = bar.querySelector(".social-bar__tip");
+  if (!tip || !links.length || links.length !== labels.length) return;
+
+  const OPEN_DELAY = 90;
+  const CLOSE_DELAY = 50;
+  const FORGET_MS = 160;
+
+  let openIndex = -1;
+  let pending = -1;
+  let enterTimer = 0;
+  let leaveTimer = 0;
+  let forgetTimer = 0;
+
+  function place(index, travel) {
+    const linkBox = links[index].getBoundingClientRect();
+    const barBox = bar.getBoundingClientRect();
+    const width = Math.ceil(labels[index].getBoundingClientRect().width);
+    let shift = 0;
+    for (let j = 0; j < index; j++) shift -= labels[j].offsetWidth;
+    const center = linkBox.left + linkBox.width / 2 - barBox.left;
+    const x = Math.round(center - width / 2);
+
+    if (!travel) tip.classList.add("is-instant");
+    tip.style.setProperty("--x", `${x}px`);
+    tip.style.setProperty("--w", `${width}px`);
+    tip.style.setProperty("--shift", `${shift}px`);
+    if (!travel) {
+      tip.getBoundingClientRect();
+      tip.classList.remove("is-instant");
+    }
+  }
+
+  function show(index, viaPointer) {
+    clearTimeout(leaveTimer);
+    clearTimeout(forgetTimer);
+    const canSlide = openIndex >= 0 && openIndex !== index && viaPointer && !reduced;
+    openIndex = index;
+    place(index, canSlide);
+    tip.classList.add("is-open");
+  }
+
+  function hide(forgetNow) {
+    tip.classList.remove("is-open");
+    clearTimeout(forgetTimer);
+    if (forgetNow) openIndex = -1;
+    else forgetTimer = setTimeout(() => { openIndex = -1; }, FORGET_MS);
+  }
+
+  if (canHoverFine) {
+    links.forEach((link, index) => {
+      link.addEventListener("pointerenter", () => {
+        clearTimeout(leaveTimer);
+        pending = index;
+        if (openIndex >= 0) {
+          clearTimeout(enterTimer);
+          enterTimer = 0;
+          show(index, true);
+          return;
+        }
+        if (enterTimer) return;
+        enterTimer = setTimeout(() => {
+          enterTimer = 0;
+          if (pending >= 0) show(pending, true);
+        }, OPEN_DELAY);
+      });
+    });
+
+    bar.addEventListener("pointerleave", () => {
+      clearTimeout(enterTimer);
+      enterTimer = 0;
+      pending = -1;
+      clearTimeout(leaveTimer);
+      leaveTimer = setTimeout(() => {
+        if (bar.matches(":focus-within")) return;
+        hide(false);
+      }, CLOSE_DELAY);
+    });
+  }
+
+  bar.addEventListener("focusin", (event) => {
+    const link = event.target.closest(".social-bar__link");
+    if (!link || !bar.contains(link)) return;
+    const index = links.indexOf(link);
+    if (index < 0) return;
+    clearTimeout(enterTimer);
+    enterTimer = 0;
+    clearTimeout(leaveTimer);
+    show(index, false);
+  });
+
+  bar.addEventListener("focusout", (event) => {
+    if (bar.contains(event.relatedTarget)) return;
+    if (canHoverFine && bar.matches(":hover")) return;
+    clearTimeout(enterTimer);
+    enterTimer = 0;
+    hide(false);
+  });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    if (!tip.classList.contains("is-open") && !enterTimer) return;
+    clearTimeout(enterTimer);
+    enterTimer = 0;
+    pending = -1;
+    clearTimeout(leaveTimer);
+    hide(true);
+  });
+
+  function follow() {
+    if (openIndex >= 0 && tip.classList.contains("is-open")) place(openIndex, false);
+  }
+
+  window.addEventListener("resize", follow);
+  document.fonts?.ready.then(follow);
+})();

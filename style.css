@@ -729,6 +729,209 @@ a:focus-visible {
   }
 }
 
+/* Floating social bar. Same destinations as the identity column, as icons,
+   fixed to the bottom of the viewport. No edge: the surface is a light
+   frost of the page behind it. */
+.social-bar {
+  /* Pikaicons stroke set, drawn on a 24px grid. 20px is the next size down
+     they render, so the icons and the bar both step down together. Spacing
+     stays on the 2px stroke. */
+  --stroke: 2px;
+  --icon: 20px;
+  /* Same relationship as the type: a little of the lit color toward the
+     lamp, resting ink at the far end. Faint on purpose. */
+  --icon-lit: color-mix(in srgb, var(--ink-lit) 34%, var(--ink));
+  --icon-rest: var(--ink);
+  position: fixed;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  width: fit-content;
+  margin-inline: auto;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
+
+.social-bar__glass {
+  padding: calc(var(--stroke) * 2);
+  border: 0;
+  border-radius: calc(var(--stroke) * 4);
+  overflow: hidden;
+  /* Surface frost, plus a hair of ink so the plate still reads on a flat
+     page of the same color. The blur is what makes it glass. */
+  background:
+    linear-gradient(color-mix(in srgb, var(--ink) 6%, transparent), color-mix(in srgb, var(--ink) 6%, transparent)),
+    color-mix(in srgb, var(--surface) 34%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+}
+
+.social-bar__list {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  /* 4px so the 40px hit areas meet without overlapping. */
+  gap: calc(var(--stroke) * 2);
+  list-style: none;
+}
+
+.social-bar__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--icon) + var(--stroke) * 8);
+  height: calc(var(--icon) + var(--stroke) * 8);
+  border-radius: calc(var(--stroke) * 2);
+  color: var(--ink);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition-property: background-color, color, transform;
+  transition-duration: 180ms, 180ms, 120ms;
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* The visible button is 36px. This keeps the click at 40px without growing the bar. */
+.social-bar__link::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+}
+
+.social-bar__link:active {
+  transform: scale(0.96);
+}
+
+.social-bar__link:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 0;
+  border-radius: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .social-bar__link:hover {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    color: var(--ink-strong);
+  }
+}
+
+.social-bar__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.social-bar__icon {
+  display: block;
+  width: var(--icon);
+  height: var(--icon);
+  flex: none;
+}
+
+/* One gradient across the 24px canvas, shared by every stroke. A per-path
+   box would shade each shape on its own and break the single falloff. */
+.social-bar__icon path {
+  stroke: url(#social-icon-ink);
+}
+
+:root[data-theme="dark"] .social-bar {
+  /* --ink-lit sits a few steps from --ink, so a white-to-white fade
+     disappears on the stroke. Borrow the lamp's blue, the same lit note
+     the light theme already uses, and let the far end settle softer. */
+  --icon-lit: color-mix(in srgb, var(--blue) 40%, var(--ink-lit));
+  --icon-rest: color-mix(in srgb, var(--ink) 55%, var(--ink-soft));
+}
+
+:root[data-theme="dark"] .social-bar__tip {
+  box-shadow: 0 0 0 1px color-mix(in srgb, #fafafa 14%, transparent);
+}
+
+/* One shared label for the whole bar. The window slides and resizes onto
+   the hovered icon; the word strip moves the other way by the same easing,
+   so the label feels planted in space and the window reveals it. */
+.social-bar__tip {
+  --x: 0px;
+  --w: 0px;
+  --shift: 0px;
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  bottom: calc(100% + 8px);
+  height: 26px;
+  width: var(--w);
+  transform: translateX(var(--x));
+  overflow: hidden;
+  border-radius: 6px;
+  /* Stays a dark chip in both themes. The hairline only shows on a dark
+     page, where the fill matches the surface and the shape would vanish. */
+  background: #0a0a0a;
+  color: #fafafa;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  translate: 0 4px;
+  transition:
+    transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    width 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 140ms cubic-bezier(0.32, 0.72, 0, 1),
+    translate 140ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.social-bar__tip.is-open {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.social-bar__tip.is-instant,
+.social-bar__tip.is-instant .social-bar__tip-track {
+  transition: none;
+}
+
+.social-bar__tip-track {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  height: 100%;
+  transform: translateX(var(--shift));
+  transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.social-bar__tip-label {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.social-bar__tip-mark {
+  display: block;
+  width: 12px;
+  height: 12px;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-bar__link {
+    transition: none;
+  }
+  .social-bar__link:active {
+    transform: none;
+  }
+  .social-bar__tip,
+  .social-bar__tip-track {
+    transition: none;
+  }
+}
+
 @media print {
   /* Match the theme selectors. A bare :root loses to :root[data-theme],
      which would leave dark-mode white ink on the white paper. */
@@ -748,6 +951,7 @@ a:focus-visible {
     --surface-end: #fff;
   }
   body { background: #fff; }
+  .social-bar { display: none; }
   .cv-intro::after,
   .cv-entry::after { content: none; }
   .cv-intro,
