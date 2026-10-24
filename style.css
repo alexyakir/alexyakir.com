@@ -724,13 +724,12 @@ a:focus-visible {
     padding-inline: 20px;
   }
 
-  /* Name, tagline, orb. The orb is exactly as tall as those two lines,
-     the way the scribble is on jakub.kr. The experience block and the
-     entries follow, unchanged, so this row sits above the first entry. */
+  /* Name and tagline on the right, a smaller orb on the left.
+     The experience block and the entries follow below. */
   .cv-id {
     display: flex;
     flex-direction: row;
-    align-items: stretch;
+    align-items: center;
     column-gap: 12px;
     position: static;
     height: auto;
@@ -744,16 +743,15 @@ a:focus-visible {
     min-width: 0;
   }
 
-  /* First flex item. Its box is the two line-heights beside it,
-     and the circle fills that box. */
+  /* Smaller than the two lines. The row is still a flex pair:
+     the orb on the left, the name and tagline stacked on the right. */
   .theme-toggle {
     display: grid;
     place-items: center;
     position: relative;
     flex: 0 0 auto;
-    align-self: stretch;
-    width: calc(2 * var(--base-fs) * var(--base-lh));
-    height: calc(2 * var(--base-fs) * var(--base-lh));
+    width: calc(var(--base-fs) * var(--base-lh) * 1.25);
+    height: calc(var(--base-fs) * var(--base-lh) * 1.25);
   }
 
   .theme-toggle::before {
@@ -793,15 +791,15 @@ a:focus-visible {
   .theme-toggle__lamp::after {
     width: auto;
     height: auto;
-    /* Starts inside the lower half and falls a little past the rim,
-       so the gaussian reads as light leaving the lamp, not a second disc. */
-    inset: 55% 8% -22% 8%;
+    /* Gaussian under the disc only. It starts at the lower rim and dies
+       quickly, so the throw points down without a second circle. */
+    inset: 58% 6% -20% 6%;
     border-radius: 50%;
     clip-path: none;
     box-shadow: none;
     background: var(--orb);
-    filter: blur(14px);
-    opacity: 0.5;
+    filter: blur(10px);
+    opacity: 0.45;
     -webkit-mask: linear-gradient(to bottom, #000 0%, transparent 100%);
             mask: linear-gradient(to bottom, #000 0%, transparent 100%);
   }

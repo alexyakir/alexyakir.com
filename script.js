@@ -570,13 +570,8 @@ function initLamp() {
   }
 }
 
-// iOS Safari ignores muted autoplay until the video is actually on screen, and
-// Low Power Mode ignores it until a tap. Several 60fps loops started together
-// also get dropped. Posters cover the wait. Only the on-screen cut for the
-// active theme is asked to play; the other theme cut stays mounted (so a
-// switch can resume it) but paused.
+// Clips play as soon as they have a frame. Nothing pauses them for scroll.
 const entryVideos = [...document.querySelectorAll(".cv-entry__video")];
-const videosInView = new Set();
 
 function videoMatchesTheme(v) {
   const theme = root.dataset.theme === "light" ? "light" : "dark";
@@ -590,42 +585,29 @@ function playEntryVideo(v) {
   v.playsInline = true;
   v.setAttribute("playsinline", "");
   v.setAttribute("webkit-playsinline", "");
-  if (v.preload !== "auto") v.preload = "auto";
   const pending = v.play();
   if (pending) pending.catch(() => {});
 }
 
 function syncEntryVideos() {
-  if (root.getAttribute("data-boot") === "scroll") return;
   for (const v of entryVideos) {
-    const shouldPlay = videoMatchesTheme(v) && videosInView.has(v);
-    if (shouldPlay) {
-      if (v.paused || v.ended) playEntryVideo(v);
-    } else if (!v.paused) {
-      v.pause();
+    if (!videoMatchesTheme(v)) {
+      if (!v.paused) v.pause();
+      continue;
     }
+    if (!v.paused && !v.ended) continue;
+    if (v.readyState >= 2) {
+      playEntryVideo(v);
+      continue;
+    }
+    if (v._waitReady) continue;
+    v._waitReady = true;
+    v.addEventListener("canplay", () => {
+      v._waitReady = false;
+      if (videoMatchesTheme(v)) playEntryVideo(v);
+    }, { once: true });
   }
 }
-
-if (entryVideos.length && "IntersectionObserver" in window) {
-  const videoWatch = new IntersectionObserver((observed) => {
-    for (const entry of observed) {
-      if (entry.isIntersecting) videosInView.add(entry.target);
-      else videosInView.delete(entry.target);
-    }
-    syncEntryVideos();
-  }, { rootMargin: "12% 0px", threshold: 0.05 });
-  for (const v of entryVideos) videoWatch.observe(v);
-} else {
-  for (const v of entryVideos) videosInView.add(v);
-}
-
-window.addEventListener("pointerup", syncEntryVideos, { passive: true });
-window.addEventListener("touchend", syncEntryVideos, { passive: true });
-window.addEventListener("pageshow", syncEntryVideos);
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") syncEntryVideos();
-});
 
 // The bar is fixed to the bottom on every width. Hoist it out of the intro
 // so that stacking context cannot paint later entries over it.
