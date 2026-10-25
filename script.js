@@ -644,6 +644,7 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
     // The links under the lamp are gone, so their stagger plays down the
     // opening and then each entry.
     const beats = [
+      document.querySelector(".cv-id__avatar"),
       document.querySelector(".cv-id__name"),
       document.querySelector(".cv-id__tagline"),
       document.querySelector(".cv-intro .cv-entry__head"),
@@ -687,7 +688,7 @@ if (!reduced && root.getAttribute("data-boot") === "scroll") {
     root.removeAttribute("data-boot");
     bootAnim.stop();
     document.querySelectorAll(
-      ".theme-toggle__lamp, .cv-id__line, .cv-id__tagline, .cv-intro, .cv-intro .cv-entry__head, .cv-intro__text, .cv-clients, .social-bar, .cv-entry, .dial-ruler__track, .dial-ruler"
+      ".theme-toggle__lamp, .cv-id__avatar, .cv-id__line, .cv-id__tagline, .cv-intro, .cv-intro .cv-entry__head, .cv-intro__text, .cv-clients, .social-bar, .cv-entry, .dial-ruler__track, .dial-ruler"
     ).forEach((n) => {
       n.style.opacity = "";
       n.style.transform = "";
