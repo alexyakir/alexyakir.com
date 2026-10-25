@@ -570,11 +570,9 @@ function initLamp() {
   }
 }
 
-// The phone will not start a muted loop that is off screen, and it drops
-// the lot if every clip is asked to play in one go. Each clip starts when
-// it is actually on screen. Nothing pauses it for scrolling away.
+// Just play. iOS rejects the first attempt until a finger is down, so the
+// same call runs once now and again on the first touch. No view checks.
 const entryVideos = [...document.querySelectorAll(".cv-entry__video")];
-const videosOnScreen = new Set();
 
 function videoMatchesTheme(v) {
   const theme = root.dataset.theme === "light" ? "light" : "dark";
@@ -583,49 +581,22 @@ function videoMatchesTheme(v) {
   return true;
 }
 
-function playEntryVideo(v) {
-  if (!videoMatchesTheme(v)) return;
-  if (!v.paused && !v.ended) return;
-  v.muted = true;
-  v.defaultMuted = true;
-  v.playsInline = true;
-  v.setAttribute("playsinline", "");
-  v.setAttribute("webkit-playsinline", "");
-  const start = () => {
-    const pending = v.play();
-    if (pending) pending.catch(() => {});
-  };
-  if (v.readyState >= 2) start();
-  else v.addEventListener("canplay", start, { once: true });
-}
-
 function syncEntryVideos() {
   for (const v of entryVideos) {
+    v.muted = true;
+    v.playsInline = true;
     if (!videoMatchesTheme(v)) {
-      if (!v.paused) v.pause();
+      v.pause();
       continue;
     }
-    if (videosOnScreen.has(v)) playEntryVideo(v);
+    const pending = v.play();
+    if (pending) pending.catch(() => {});
   }
 }
 
-if (entryVideos.length && "IntersectionObserver" in window) {
-  const videoWatch = new IntersectionObserver((observed) => {
-    for (const entry of observed) {
-      if (entry.isIntersecting) {
-        videosOnScreen.add(entry.target);
-        playEntryVideo(entry.target);
-      } else {
-        videosOnScreen.delete(entry.target);
-      }
-    }
-  }, { threshold: 0.01 });
-  for (const v of entryVideos) videoWatch.observe(v);
-}
-
-// Low Power Mode ignores the first play() until a tap.
-window.addEventListener("touchend", syncEntryVideos, { passive: true });
-window.addEventListener("pointerup", syncEntryVideos, { passive: true });
+syncEntryVideos();
+window.addEventListener("touchstart", syncEntryVideos, { capture: true, passive: true });
+window.addEventListener("pointerdown", syncEntryVideos, { capture: true, passive: true });
 
 // The bar is fixed to the bottom on every width. Hoist it out of the intro
 // so that stacking context cannot paint later entries over it.
